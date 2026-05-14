@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Календарь путешествий - Туры на Камчатку</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Montserrat:wght@600&family=Gadugi:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .notification-toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #ffbd4e;
+            color: #000;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            z-index: 10000;
+            animation: slideInRight 0.3s ease;
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .calendar-hero {
+            position: relative;
+            min-height: 400px;
+            height: 50vh;
+            margin-top: 120px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
+        .calendar-hero__bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        .calendar-hero__bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .calendar-hero__overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(41,52,62,0.85) 0%, rgba(0,0,0,0.7) 100%);
+            z-index: 1;
+        }
+        .calendar-hero .container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+        }
+        .calendar-hero__title {
+            font-size: clamp(36px, 6vw, 72px);
+            font-weight: 700;
+            text-align: right;
+            line-height: 1.2;
+        }
+        .calendar-hero__title .accent { color: #ffbd4e; }
+
+        .months-wrapper {
+            padding: 50px 0 20px;
+            background: #29343e;
+        }
+        .months-nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 80px;
+            position: relative;
+            flex-wrap: wrap;
+        }
+        .months-line {
+            position: absolute;
+            top: 12px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(255,255,255,0.2);
+            z-index: 0;
+        }
+        .month-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            padding: 0;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s;
+        }
+        .month-dot {
+            width: 21px;
+            height: 21px;
+            background: rgba(255,189,78,0.5);
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+        .month-dot.active {
+            width: 27px;
+            height: 27px;
+            background: #ffbd4e;
+            box-shadow: 0 0 10px rgba(255,189,78,0.5);
+        }
+        .month-ring {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            border: 2px solid #ffbd4e;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        .month-btn.active .month-ring {
+            opacity: 1;
+            animation: ringPulse 2s ease-in-out infinite;
+        }
+        @keyframes ringPulse {
+            0%, 100% { transform: translateX(-50%) scale(1); opacity: 1; }
+            50% { transform: translateX(-50%) scale(1.1); opacity: 0.7; }
+        }
+        .month-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.4);
+            transition: all 0.3s;
+        }
+        .month-name.active {
+            font-size: 22px;
+            color: #fff;
+        }
+        .months-bottom-line {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,189,78,0.3), transparent);
+            margin-top: 30px;
+        }
+
+        .tour-content {
+            display: none;
+            padding: 60px 0;
+            background: #29343e;
+        }
+        .tour-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .tour-card-simple {
+            display: flex;
+            gap: 50px;
+            flex-wrap: wrap;
+            background: rgba(255,255,255,0.05);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid rgba(255,189,78,0.2);
+        }
+        .tour-card-simple__image {
+            flex: 1;
+            min-width: 280px;
+        }
+        .tour-card-simple__image img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 20px;
+        }
+        .tour-card-simple__info {
+            flex: 1;
+            min-width: 280px;
+        }
+        .tour-card-simple__info h2 {
+            font-size: 32px;
+            color: #ffbd4e;
+            margin-bottom: 25px;
+        }
+        .tour-details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        .tour-detail-item {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+        .tour-detail-icon {
+            width: 40px;
+            flex-shrink: 0;
+        }
+        .tour-detail-text h4 {
+            font-size: 14px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 5px;
+        }
+        .tour-detail-text p {
+            font-size: 14px;
+            color: #fff;
+        }
+        .tour-description {
+            margin: 20px 0;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .tour-description p {
+            color: rgba(255,255,255,0.7);
+            line-height: 1.6;
+        }
+        .btn-book {
+            display: inline-block;
+            background: #ffbd4e;
+            color: #000;
+            padding: 12px 32px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-book:hover {
+            background: #ffaa2e;
+            transform: translateY(-2px);
+        }
+        .no-tours {
+            text-align: center;
+            padding: 60px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        @media (max-width: 768px) {
+            .months-nav { gap: 40px; }
+            .month-name { font-size: 14px; }
+            .month-name.active { font-size: 16px; }
+            .month-dot { width: 16px; height: 16px; }
+            .month-dot.active { width: 20px; height: 20px; }
+            .month-ring { width: 40px; height: 40px; top: -10px; }
+            .tour-card-simple { padding: 25px; }
+            .tour-details-grid { grid-template-columns: 1fr; }
+            .tour-card-simple__info h2 { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+<div class="site-container">
+    <header class="header">
+    <div class="container header__inner">
+        <a href="index.html">
+            <img class="logo" src="img/v0_2119.png" alt="Logo">
+        </a>
+        <nav class="navbar">
+            <a href="index.html" class="nav-link">ГЛАВНАЯ</a>
+            <a href="cruises.html" class="nav-link">КРУИЗЫ</a>
+            <a href="ideas.html" class="nav-link">ИДЕИ</a>
+            <a href="calendar.html" class="nav-link">КАЛЕНДАРЬ</a>
+            <a href="contacts.html" class="nav-link">КОНТАКТЫ</a>
+            <a href="profile.html" class="nav-link" id="profileLink">ПРОФИЛЬ</a>
+        </nav>
+    </div>
+</header>
+
+    <main>
+        <section class="calendar-hero">
+            <div class="calendar-hero__bg">
+                <img src="img/Group%20186%20(1).png" alt="Calendar">
+            </div>
+            <div class="calendar-hero__overlay"></div>
+            <div class="container">
+                <h1 class="calendar-hero__title">
+                    КАЛЕНДАРЬ <span class="accent">ПУТЕШЕСТВИЙ</span>
+                </h1>
+            </div>
+        </section>
+
+        <div class="months-wrapper">
+            <div class="container" style="position: relative;">
+                <div class="months-nav" id="monthsNav">
+                    <div class="months-line"></div>
+                </div>
+                <div class="months-bottom-line"></div>
+            </div>
+        </div>
+
+        <div id="toursContent"></div>
+
+        <section class="subscribe">
+            <div class="subscribe__bg">
+                <img src="img/Group%20190%20(1).png" alt="Background">
+                <div class="subscribe__overlay"></div>
+            </div>
+            <div class="container">
+                <div class="subscribe__content">
+                    <h3 class="subscribe__title">мы всегда на связи</h3>
+                    <form class="subscribe__form" id="subscribeForm">
+                        <input type="text" placeholder="ваше имя" class="subscribe__input" id="subName">
+                        <input type="email" placeholder="ваша электронная почта" class="subscribe__input" id="subEmail">
+                        <button type="submit" class="subscribe__btn">отправить</button>
+                    </form>
+                    <img class="subscribe__decor" src="img/Group%20182%201.png" alt="Decor">
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer__inner">
+            <div class="footer__col">
+                <h4>О КОМПАНИИ</h4>
+                <ul>
+                    <li><a href="#">Преимущества</a></li>
+                    <li><a href="#">Команда</a></li>
+                    <li><a href="#">Фотоотчеты</a></li>
+                    <li><a href="#">Документы и лицензии</a></li>
+                </ul>
+            </div>
+            <div class="footer__col">
+                <h4>УСЛУГИ</h4>
+                <ul>
+                    <li><a href="#">Выбрать тур</a></li>
+                    <li><a href="#">Бронь</a></li>
+                    <li><a href="#">Оплата</a></li>
+                    <li><a href="#">Гарантия</a></li>
+                </ul>
+            </div>
+            <div class="footer__col">
+                <h4>КОНТАКТЫ</h4>
+                <ul>
+                    <li><a href="tel:1-951-280-0269">1-951-280-0269</a></li>
+                    <li><a href="mailto:generation@mail.com">generation@mail.com</a></li>
+                    <li>Москва</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer__copyright">
+            <p>Политика обработки персональных данных</p>
+        </div>
+    </footer>
+</div>
+
+<script>
+    const API_URL = 'http://localhost:3000/api';
+    let allTours = [];
+    let currentMonth = null;
+
+    function getToken() {
+        return localStorage.getItem('token');
+    }
+
+    function showNotification(message, isError = false) {
+        const notification = document.createElement('div');
+        notification.textContent = message;
+        notification.style.cssText = `
+            position: fixed; bottom: 20px; right: 20px;
+            background: ${isError ? '#e74c3c' : '#ffbd4e'};
+            color: ${isError ? '#fff' : '#000'};
+            padding: 12px 24px; border-radius: 12px;
+            font-weight: 600; z-index: 10000;
+            animation: slideInRight 0.3s ease;
+        `;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 3000);
+    }
+
+    async function loadTours() {
+        try {
+            const response = await fetch(`${API_URL}/tours?status=active,upcoming`);
+            const data = await response.json();
+            allTours = data.tours || [];
+            generateMonths();
+            if (allTours.length > 0) {
+                const months = [...new Set(allTours.map(t => t.start_date ? new Date(t.start_date).getMonth() : null).filter(m => m !== null))];
+                if (months.length > 0) {
+                    currentMonth = months[0];
+                    renderToursByMonth(currentMonth);
+                }
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки туров:', error);
+        }
+    }
+
+    function getMonthName(monthIndex) {
+        const months = ['ЯНВАРЬ', 'ФЕВРАЛЬ', 'МАРТ', 'АПРЕЛЬ', 'МАЙ', 'ИЮНЬ', 'ИЮЛЬ', 'АВГУСТ', 'СЕНТЯБРЬ', 'ОКТЯБРЬ', 'НОЯБРЬ', 'ДЕКАБРЬ'];
+        return months[monthIndex];
+    }
+
+    function generateMonths() {
+        const monthsSet = new Set();
+        allTours.forEach(tour => {
+            if (tour.start_date) {
+                const month = new Date(tour.start_date).getMonth();
+                monthsSet.add(month);
+            }
+        });
+
+        const sortedMonths = Array.from(monthsSet).sort((a, b) => a - b);
+        const navContainer = document.getElementById('monthsNav');
+
+        if (sortedMonths.length === 0) {
+            navContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Туры не найдены</div>';
+            return;
+        }
+
+        navContainer.innerHTML = `
+            <div class="months-line"></div>
+            ${sortedMonths.map(month => `
+                <button class="month-btn ${currentMonth === month ? 'active' : ''}" data-month="${month}">
+                    <span class="month-dot ${currentMonth === month ? 'active' : ''}"></span>
+                    <span class="month-name ${currentMonth === month ? 'active' : ''}">${getMonthName(month)}</span>
+                    ${currentMonth === month ? '<span class="month-ring"></span>' : ''}
+                </button>
+            `).join('')}
+        `;
+
+        document.querySelectorAll('.month-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const month = parseInt(btn.dataset.month);
+                currentMonth = month;
+
+                document.querySelectorAll('.month-btn').forEach(b => {
+                    b.classList.remove('active');
+                    const dot = b.querySelector('.month-dot');
+                    const name = b.querySelector('.month-name');
+                    const ring = b.querySelector('.month-ring');
+                    if (dot) dot.classList.remove('active');
+                    if (name) name.classList.remove('active');
+                    if (ring) ring.remove();
+                });
+
+                btn.classList.add('active');
+                const activeDot = btn.querySelector('.month-dot');
+                const activeName = btn.querySelector('.month-name');
+                if (activeDot) activeDot.classList.add('active');
+                if (activeName) activeName.classList.add('active');
+
+                if (!btn.querySelector('.month-ring')) {
+                    const ring = document.createElement('span');
+                    ring.className = 'month-ring';
+                    btn.appendChild(ring);
+                }
+
+                renderToursByMonth(month);
+            });
+        });
+    }
+
+    function renderToursByMonth(month) {
+        const monthTours = allTours.filter(tour => {
+            if (!tour.start_date) return false;
+            const tourMonth = new Date(tour.start_date).getMonth();
+            return tourMonth === month;
+        });
+
+        const container = document.getElementById('toursContent');
+
+        if (monthTours.length === 0) {
+            container.innerHTML = `
+                <div class="container">
+                    <div class="no-tours">В этом месяце нет запланированных туров</div>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = monthTours.map(tour => `
+            <div class="tour-content active">
+                <div class="container">
+                    <div class="tour-card-simple">
+                        <div class="tour-card-simple__image">
+                            <img src="${tour.main_image_url || 'img/Group%20167%201.png'}" alt="${tour.title}">
+                        </div>
+                        <div class="tour-card-simple__info">
+                            <h2>${tour.destination || tour.title}</h2>
+                            <div class="tour-details-grid">
+                                <div class="tour-detail-item">
+                                    <div class="tour-detail-icon">📍</div>
+                                    <div class="tour-detail-text">
+                                        <h4>Вид отдыха</h4>
+                                        <p>${tour.difficulty_level === 'easy' ? 'Легкий' : tour.difficulty_level === 'moderate' ? 'Средний' : tour.difficulty_level === 'challenging' ? 'Сложный' : 'Экстремальный'} уровень, ${tour.duration_days} дней</p>
+                                    </div>
+                                </div>
+                                <div class="tour-detail-item">
+                                    <div class="tour-detail-icon">📅</div>
+                                    <div class="tour-detail-text">
+                                        <h4>Даты</h4>
+                                        <p>${formatDate(tour.start_date)} – ${formatDate(tour.end_date)}</p>
+                                    </div>
+                                </div>
+                                <div class="tour-detail-item">
+                                    <div class="tour-detail-icon">💰</div>
+                                    <div class="tour-detail-text">
+                                        <h4>Стоимость</h4>
+                                        <p>${tour.price_rub?.toLocaleString() || tour.price_usd?.toLocaleString()} ${tour.price_rub ? '₽' : '$'} за человека</p>
+                                    </div>
+                                </div>
+                                <div class="tour-detail-item">
+                                    <div class="tour-detail-icon">👥</div>
+                                    <div class="tour-detail-text">
+                                        <h4>Группа</h4>
+                                        <p>до ${tour.max_group_size} человек</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tour-description">
+                                <p>${tour.short_description || tour.full_description?.substring(0, 200) || ''}</p>
+                            </div>
+                            <button class="btn-book" onclick="bookTour(${tour.id})">ЗАБРОНИРОВАТЬ</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function formatDate(dateString) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+
+    async function bookTour(tourId) {
+        const token = getToken();
+        if (!token) {
+            showNotification('Войдите в аккаунт для бронирования', true);
+            window.location.href = 'login.html';
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/bookings`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ tour_id: tourId, number_of_people: 1 })
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                showNotification('Тур успешно забронирован!');
+                setTimeout(() => window.location.href = 'profile.html', 1500);
+            } else {
+                showNotification(data.error || 'Ошибка бронирования', true);
+            }
+        } catch (error) {
+            showNotification('Ошибка соединения с сервером', true);
+        }
+    }
+
+    // Подписка
+    document.getElementById('subscribeForm')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('subName').value;
+        const email = document.getElementById('subEmail').value;
+
+        try {
+            const response = await fetch(`${API_URL}/subscribe`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email })
+            });
+            const data = await response.json();
+            showNotification(data.message || 'Спасибо за подписку!');
+            document.getElementById('subscribeForm').reset();
+        } catch (error) {
+            showNotification('Ошибка подписки', true);
+        }
+    });
+
+    // Хедер
+    window.addEventListener('scroll', function() {
+        const header = document.querySelector('.header');
+        if (window.scrollY > 100) header.classList.add('scrolled');
+        else header.classList.remove('scrolled');
+    });
+
+    const token = getToken();
+    const profileLink = document.getElementById('profileLink');
+    if (!token && profileLink) profileLink.href = 'login.html';
+
+    loadTours();
+    window.bookTour = bookTour;
+</script>
+<script src="/chat-widget.js"></script>
+</body>
+</html>

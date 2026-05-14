@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Контакты - Туры на Камчатку</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Montserrat:wght@600&family=Gadugi:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .notification-toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #ffbd4e;
+            color: #000;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            z-index: 10000;
+            animation: slideInRight 0.3s ease;
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .contacts-hero {
+            position: relative;
+            min-height: 400px;
+            height: 50vh;
+            margin-top: 120px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
+        .contacts-hero__bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        .contacts-hero__bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .contacts-hero__overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(41,52,62,0.85) 0%, rgba(0,0,0,0.7) 100%);
+            z-index: 1;
+        }
+        .contacts-hero .container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+        }
+        .contacts-hero__title {
+            font-size: clamp(36px, 6vw, 72px);
+            font-weight: 700;
+            text-align: right;
+            line-height: 1.2;
+        }
+        .contacts-hero__title .accent { color: #ffbd4e; }
+
+        .contacts-info {
+            padding: 80px 0;
+            background: #29343e;
+        }
+        .contacts-grid {
+            display: flex;
+            gap: 50px;
+            flex-wrap: wrap;
+        }
+        .contacts-info-card {
+            flex: 1;
+            min-width: 280px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 24px;
+            padding: 40px;
+            text-align: center;
+            border: 1px solid rgba(255,189,78,0.2);
+            transition: all 0.3s;
+        }
+        .contacts-info-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255,189,78,0.5);
+        }
+        .contacts-info-card .icon {
+            width: 70px;
+            height: 70px;
+            background: rgba(255,189,78,0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 30px;
+        }
+        .contacts-info-card h3 {
+            font-size: 22px;
+            color: #ffbd4e;
+            margin-bottom: 15px;
+        }
+        .contacts-info-card p {
+            color: rgba(255,255,255,0.7);
+            line-height: 1.5;
+        }
+        .contacts-info-card a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .contacts-info-card a:hover {
+            color: #ffbd4e;
+        }
+
+        .contacts-form-section {
+            padding: 60px 0;
+            background: #1e272f;
+        }
+        .contacts-form-wrapper {
+            display: flex;
+            gap: 50px;
+            flex-wrap: wrap;
+        }
+        .contacts-form-left {
+            flex: 1;
+            min-width: 280px;
+        }
+        .contacts-form-left h2 {
+            font-size: 32px;
+            color: #ffbd4e;
+            margin-bottom: 20px;
+        }
+        .contacts-form-left p {
+            color: rgba(255,255,255,0.7);
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .contacts-form-right {
+            flex: 1;
+            min-width: 280px;
+        }
+        .contact-form {
+            background: rgba(255,255,255,0.05);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid rgba(255,189,78,0.2);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 16px;
+            font-size: 16px;
+            color: #fff;
+            transition: all 0.3s;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #ffbd4e;
+            background: rgba(255,255,255,0.15);
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: #ffbd4e;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #000;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .submit-btn:hover {
+            background: #ffaa2e;
+            transform: translateY(-2px);
+        }
+
+        .map-section {
+            padding: 0 0 60px;
+            background: #29343e;
+        }
+        .map-container {
+            border-radius: 24px;
+            overflow: hidden;
+            height: 400px;
+        }
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        @media (max-width: 768px) {
+            .contacts-info { padding: 50px 0; }
+            .contacts-form-section { padding: 40px 0; }
+            .contacts-info-card { padding: 30px; }
+            .contact-form { padding: 30px; }
+        }
+    </style>
+</head>
+<body>
+<div class="site-container">
+    <header class="header">
+    <div class="container header__inner">
+        <a href="index.html">
+            <img class="logo" src="img/v0_2119.png" alt="Logo">
+        </a>
+        <nav class="navbar">
+            <a href="index.html" class="nav-link">ГЛАВНАЯ</a>
+            <a href="cruises.html" class="nav-link">КРУИЗЫ</a>
+            <a href="ideas.html" class="nav-link">ИДЕИ</a>
+            <a href="calendar.html" class="nav-link">КАЛЕНДАРЬ</a>
+            <a href="contacts.html" class="nav-link">КОНТАКТЫ</a>
+            <a href="profile.html" class="nav-link" id="profileLink">ПРОФИЛЬ</a>
+        </nav>
+    </div>
+</header>
+
+    <main>
+        <section class="contacts-hero">
+            <div class="contacts-hero__bg">
+                <img src="img/Rectangle%20149%201.png" alt="Contacts">
+            </div>
+            <div class="contacts-hero__overlay"></div>
+            <div class="container">
+                <h1 class="contacts-hero__title">
+                    <span class="accent">НАШИ</span> КОНТАКТЫ
+                </h1>
+            </div>
+        </section>
+
+        <section class="contacts-info">
+            <div class="container">
+                <div class="contacts-grid">
+                    <div class="contacts-info-card">
+                        <div class="icon">📞</div>
+                        <h3>Телефон</h3>
+                        <p><a href="tel:1-951-280-0269">1-951-280-0269</a></p>
+                        <p><a href="tel:8-800-555-35-35">8-800-555-35-35</a></p>
+                        <p style="font-size: 13px; margin-top: 10px;">Бесплатно по России</p>
+                    </div>
+                    <div class="contacts-info-card">
+                        <div class="icon">✉️</div>
+                        <h3>Email</h3>
+                        <p><a href="mailto:generation@mail.com">generation@mail.com</a></p>
+                        <p><a href="mailto:tours@kamchatka.ru">tours@kamchatka.ru</a></p>
+                        <p style="font-size: 13px; margin-top: 10px;">Отвечаем в течение 24 часов</p>
+                    </div>
+                    <div class="contacts-info-card">
+                        <div class="icon">📍</div>
+                        <h3>Адрес офиса</h3>
+                        <p>Москва, ул. Тверская, д. 15</p>
+                        <p>м. Тверская / м. Пушкинская</p>
+                        <p style="font-size: 13px; margin-top: 10px;">Пн-Пт: 10:00 - 19:00</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="contacts-form-section">
+            <div class="container">
+                <div class="contacts-form-wrapper">
+                    <div class="contacts-form-left">
+                        <h2>Свяжитесь с нами</h2>
+                        <p>Оставьте свои контактные данные и мы свяжемся с вами в ближайшее время. Наши специалисты помогут подобрать идеальный тур, ответят на все вопросы и рассчитают стоимость путешествия.</p>
+                        <div style="margin-top: 30px;">
+                            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                                <div style="width: 40px;">🕐</div>
+                                <div>Работаем ежедневно с 9:00 до 21:00</div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                                <div style="width: 40px;">💬</div>
+                                <div>Мессенджеры: WhatsApp, Telegram, Viber</div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <div style="width: 40px;">📱</div>
+                                <div>Мобильное приложение: App Store, Google Play</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="contacts-form-right">
+                        <form class="contact-form" id="contactForm">
+                            <div class="form-group">
+                                <input type="text" placeholder="Ваше имя" id="contactName" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="email" placeholder="Email" id="contactEmail" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="tel" placeholder="Телефон" id="contactPhone">
+                            </div>
+                            <div class="form-group">
+                                <select id="contactSubject">
+                                    <option value="question">Задать вопрос</option>
+                                    <option value="tour">Подбор тура</option>
+                                    <option value="booking">Проблема с бронированием</option>
+                                    <option value="cooperation">Сотрудничество</option>
+                                    <option value="other">Другое</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <textarea placeholder="Ваше сообщение" id="contactMessage" required></textarea>
+                            </div>
+                            <button type="submit" class="submit-btn">Отправить сообщение</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="map-section">
+            <div class="container" style="margin-top: 80px;">
+                <div class="map-container">
+                    <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3A123456789&source=constructor" allowfullscreen></iframe>
+                </div>
+            </div>
+        </section>
+
+        <section class="subscribe">
+            <div class="subscribe__bg">
+                <img src="img/Group%20190%20(1).png" alt="Background">
+                <div class="subscribe__overlay"></div>
+            </div>
+            <div class="container">
+                <div class="subscribe__content">
+                    <h3 class="subscribe__title">мы всегда на связи</h3>
+                    <form class="subscribe__form" id="subscribeForm">
+                        <input type="text" placeholder="ваше имя" class="subscribe__input" id="subName">
+                        <input type="email" placeholder="ваша электронная почта" class="subscribe__input" id="subEmail">
+                        <button type="submit" class="subscribe__btn">отправить</button>
+                    </form>
+                    <img class="subscribe__decor" src="img/Group%20182%201.png" alt="Decor">
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer__inner">
+            <div class="footer__col">
+                <h4>О КОМПАНИИ</h4>
+                <ul>
+                    <li><a href="#">Преимущества</a></li>
+                    <li><a href="#">Команда</a></li>
+                    <li><a href="#">Фотоотчеты</a></li>
+                    <li><a href="#">Документы и лицензии</a></li>
+                </ul>
+            </div>
+            <div class="footer__col">
+                <h4>УСЛУГИ</h4>
+                <ul>
+                    <li><a href="#">Выбрать тур</a></li>
+                    <li><a href="#">Бронь</a></li>
+                    <li><a href="#">Оплата</a></li>
+                    <li><a href="#">Гарантия</a></li>
+                </ul>
+            </div>
+            <div class="footer__col">
+                <h4>КОНТАКТЫ</h4>
+                <ul>
+                    <li><a href="tel:1-951-280-0269">1-951-280-0269</a></li>
+                    <li><a href="mailto:generation@mail.com">generation@mail.com</a></li>
+                    <li>Москва</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer__copyright">
+            <p>Политика обработки персональных данных</p>
+        </div>
+    </footer>
+</div>
+
+<script>
+    const API_URL = 'http://localhost:3000/api';
+
+    function getToken() {
+        return localStorage.getItem('token');
+    }
+
+    function showNotification(message, isError = false) {
+        const notification = document.createElement('div');
+        notification.textContent = message;
+        notification.style.cssText = `
+            position: fixed; bottom: 20px; right: 20px;
+            background: ${isError ? '#e74c3c' : '#ffbd4e'};
+            color: ${isError ? '#fff' : '#000'};
+            padding: 12px 24px; border-radius: 12px;
+            font-weight: 600; z-index: 10000;
+            animation: slideInRight 0.3s ease;
+        `;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 3000);
+    }
+
+    // Отправка контактной формы
+    document.getElementById('contactForm')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById('contactName').value;
+        const email = document.getElementById('contactEmail').value;
+        const phone = document.getElementById('contactPhone').value;
+        const subjectSelect = document.getElementById('contactSubject');
+        const subject = subjectSelect.options[subjectSelect.selectedIndex]?.text || 'Вопрос';
+        const message = document.getElementById('contactMessage').value;
+
+        try {
+            const response = await fetch(`${API_URL}/contacts`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, phone, subject, message })
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                showNotification(data.message || 'Сообщение отправлено! Мы свяжемся с вами.');
+                document.getElementById('contactForm').reset();
+            } else {
+                showNotification(data.error || 'Ошибка отправки', true);
+            }
+        } catch (error) {
+            showNotification('Ошибка соединения с сервером', true);
+        }
+    });
+
+    // Подписка
+    document.getElementById('subscribeForm')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('subName').value;
+        const email = document.getElementById('subEmail').value;
+
+        try {
+            const response = await fetch(`${API_URL}/subscribe`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email })
+            });
+            const data = await response.json();
+            showNotification(data.message || 'Спасибо за подписку!');
+            document.getElementById('subscribeForm').reset();
+        } catch (error) {
+            showNotification('Ошибка подписки', true);
+        }
+    });
+
+    // Хедер при скролле
+    window.addEventListener('scroll', function() {
+        const header = document.querySelector('.header');
+        if (window.scrollY > 100) header.classList.add('scrolled');
+        else header.classList.remove('scrolled');
+    });
+
+    const token = getToken();
+    const profileLink = document.getElementById('profileLink');
+    if (!token && profileLink) profileLink.href = 'login.html';
+</script>
+<script src="/chat-widget.js"></script>
+</body>
+</html>

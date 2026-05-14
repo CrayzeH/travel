@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Круизы - Туры на Камчатку</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Montserrat:wght@600&family=Gadugi:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .cruises-hero {
+            position: relative;
+            min-height: 400px;
+            height: 50vh;
+            margin-top: 120px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
+        .cruises-hero__bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        .cruises-hero__bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .cruises-hero__overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(41,52,62,0.85) 0%, rgba(0,0,0,0.7) 100%);
+            z-index: 1;
+        }
+        .cruises-hero .container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+        }
+        .cruises-hero__title {
+            font-size: clamp(36px, 6vw, 72px);
+            font-weight: 700;
+            text-align: right;
+            line-height: 1.2;
+        }
+        .cruises-hero__title .accent { color: #ffbd4e; }
+        .cruises-list {
+            padding: 60px 0;
+            background: #29343e;
+        }
+        .cruises-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+        }
+        .cruise-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid rgba(255,189,78,0.1);
+        }
+        .cruise-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(255,189,78,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .cruise-card__image {
+            height: 220px;
+            overflow: hidden;
+        }
+        .cruise-card__image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        .cruise-card:hover .cruise-card__image img {
+            transform: scale(1.05);
+        }
+        .cruise-card__content {
+            padding: 25px;
+        }
+        .cruise-card__title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #ffbd4e;
+            margin-bottom: 10px;
+        }
+        .cruise-card__info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+        }
+        .cruise-card__description {
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        .cruise-card__price {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffbd4e;
+        }
+        .cruise-card__old-price {
+            font-size: 16px;
+            color: rgba(255,255,255,0.4);
+            text-decoration: line-through;
+            margin-left: 10px;
+        }
+        .filter-section {
+            padding: 30px 0;
+            background: #1e272f;
+        }
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .filter-chip {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 10px 24px;
+            border-radius: 50px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .filter-chip.active {
+            background: #ffbd4e;
+            color: #000;
+            border-color: #ffbd4e;
+        }
+        @media (max-width: 768px) {
+            .cruises-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="site-container">
+    <header class="header">
+    <div class="container header__inner">
+        <a href="index.html">
+            <img class="logo" src="img/v0_2119.png" alt="Logo">
+        </a>
+        <nav class="navbar">
+            <a href="index.html" class="nav-link">ГЛАВНАЯ</a>
+            <a href="cruises.html" class="nav-link">КРУИЗЫ</a>
+            <a href="ideas.html" class="nav-link">ИДЕИ</a>
+            <a href="calendar.html" class="nav-link">КАЛЕНДАРЬ</a>
+            <a href="contacts.html" class="nav-link">КОНТАКТЫ</a>
+            <a href="profile.html" class="nav-link" id="profileLink">ПРОФИЛЬ</a>
+        </nav>
+    </div>
+</header>
+
+    <main>
+        <section class="cruises-hero">
+            <div class="cruises-hero__bg">
+                <img src="img/Group%20193%201.png" alt="Cruises">
+            </div>
+            <div class="cruises-hero__overlay"></div>
+            <div class="container">
+                <h1 class="cruises-hero__title">
+                    НАШИ <span class="accent">КРУИЗЫ</span>
+                </h1>
+            </div>
+        </section>
+
+        <section class="filter-section">
+            <div class="container">
+                <div class="filter-buttons" id="filterButtons">
+                    <button class="filter-chip active" data-filter="all">Все круизы</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="cruises-list">
+            <div class="container">
+                <div class="cruises-grid" id="cruisesGrid">
+                    <div style="text-align: center; padding: 50px; width: 100%;">Загрузка круизов...</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="subscribe">
+            <div class="subscribe__bg">
+                <img src="img/Group%20190%20(1).png" alt="Background">
+                <div class="subscribe__overlay"></div>
+            </div>
+            <div class="container">
+                <div class="subscribe__content">
+                    <h3 class="subscribe__title">мы всегда на связи</h3>
+                    <form class="subscribe__form" id="subscribeForm">
+                        <input type="text" placeholder="ваше имя" class="subscribe__input" id="subName">
+                        <input type="email" placeholder="ваша электронная почта" class="subscribe__input" id="subEmail">
+                        <button type="submit" class="subscribe__btn">отправить</button>
+                    </form>
+                    <img class="subscribe__decor" src="img/Group%20182%201.png" alt="Decor">
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer__inner">
+            <div class="footer__col">
+                <h4>О КОМПАНИИ</h4>
+                <ul>
+                    <li><a href="#">Преимущества</a></li>
+                    <li><a href="#">Команда</a></li>
+                    <li><a href="#">Фотоотчеты</a></li>
+                    <li><a href="#">Документы и лицензии</a></li>
+                </ul>
+            </div>
+            <div class="footer__col">
+                <h4>УСЛУГИ</h4>
+                <ul>
+                    <li><a href="#">Выбрать тур</a></li>
+                    <li><a href="#">Бронь</a></li>
+                    <li><a href="#">Оплата</a></li>
+                    <li><a href="#">Гарантия</a></li>
+                </ul>
+            </div>
+            <div class="footer__col">
+                <h4>КОНТАКТЫ</h4>
+                <ul>
+                    <li><a href="tel:1-951-280-0269">1-951-280-0269</a></li>
+                    <li><a href="mailto:generation@mail.com">generation@mail.com</a></li>
+                    <li>Москва</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer__copyright">
+            <p>Политика обработки персональных данных</p>
+        </div>
+    </footer>
+</div>
+
+<script>
+    const API_URL = 'http://localhost:3000/api';
+    let allCruises = [];
+
+    function getToken() {
+        return localStorage.getItem('token');
+    }
+
+    function showNotification(message, isError = false) {
+        const notification = document.createElement('div');
+        notification.textContent = message;
+        notification.style.cssText = `
+            position: fixed; bottom: 20px; right: 20px;
+            background: ${isError ? '#e74c3c' : '#ffbd4e'};
+            color: ${isError ? '#fff' : '#000'};
+            padding: 12px 24px; border-radius: 12px;
+            font-weight: 600; z-index: 10000;
+            animation: slideInRight 0.3s ease;
+        `;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 3000);
+    }
+
+    async function loadCruises() {
+        try {
+            const response = await fetch(`${API_URL}/tours?is_cruise=1&status=active,upcoming`);
+            const data = await response.json();
+            allCruises = data.tours || [];
+            renderCruises(allCruises);
+            renderFilters();
+        } catch (error) {
+            console.error('Ошибка загрузки круизов:', error);
+            document.getElementById('cruisesGrid').innerHTML = '<div style="text-align: center; padding: 50px;">Ошибка загрузки данных</div>';
+        }
+    }
+
+    function renderCruises(cruises) {
+        const container = document.getElementById('cruisesGrid');
+        if (cruises.length === 0) {
+            container.innerHTML = '<div style="text-align: center; padding: 50px;">Круизы не найдены</div>';
+            return;
+        }
+
+        container.innerHTML = cruises.map(cruise => `
+            <div class="cruise-card" onclick="location.href='cruise.html?slug=${cruise.slug}'">
+                <div class="cruise-card__image">
+                    <img src="${cruise.main_image_url || 'img/Group%20193%201.png'}" alt="${cruise.title}">
+                </div>
+                <div class="cruise-card__content">
+                    <h3 class="cruise-card__title">${cruise.title}</h3>
+                    <div class="cruise-card__info">
+                        <span>📅 ${cruise.duration_days} дней</span>
+                        <span>👥 до ${cruise.max_group_size} чел</span>
+                        <span>📍 ${cruise.destination}</span>
+                    </div>
+                    <p class="cruise-card__description">${cruise.short_description || cruise.full_description?.substring(0, 100) || ''}...</p>
+                    <div>
+                        <span class="cruise-card__price">${cruise.price_rub?.toLocaleString() || cruise.price_usd?.toLocaleString()} ${cruise.price_rub ? '₽' : '$'}</span>
+                        ${cruise.old_price_rub ? `<span class="cruise-card__old-price">${cruise.old_price_rub.toLocaleString()} ₽</span>` : ''}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function renderFilters() {
+        const destinations = [...new Set(allCruises.map(c => c.destination))];
+        const filterContainer = document.getElementById('filterButtons');
+
+        const filterButtons = `
+            <button class="filter-chip active" data-filter="all">Все круизы</button>
+            ${destinations.map(dest => `<button class="filter-chip" data-filter="${dest}">${dest}</button>`).join('')}
+        `;
+
+        filterContainer.innerHTML = filterButtons;
+
+        document.querySelectorAll('.filter-chip').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const filter = btn.dataset.filter;
+                if (filter === 'all') {
+                    renderCruises(allCruises);
+                } else {
+                    const filtered = allCruises.filter(c => c.destination === filter);
+                    renderCruises(filtered);
+                }
+            });
+        });
+    }
+
+    // Подписка
+    document.getElementById('subscribeForm')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('subName').value;
+        const email = document.getElementById('subEmail').value;
+
+        try {
+            const response = await fetch(`${API_URL}/subscribe`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email })
+            });
+            const data = await response.json();
+            showNotification(data.message || 'Спасибо за подписку!');
+            document.getElementById('subscribeForm').reset();
+        } catch (error) {
+            showNotification('Ошибка подписки', true);
+        }
+    });
+
+    // Хедер
+    window.addEventListener('scroll', function() {
+        const header = document.querySelector('.header');
+        if (window.scrollY > 100) header.classList.add('scrolled');
+        else header.classList.remove('scrolled');
+    });
+
+    const token = getToken();
+    const profileLink = document.getElementById('profileLink');
+    if (!token && profileLink) profileLink.href = 'login.html';
+
+    loadCruises();
+</script>
+<script src="/chat-widget.js"></script>
+</body>
+</html>

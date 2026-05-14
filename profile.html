@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет - Туры на Камчатку</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@600&family=Gadugi:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .notification-toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #ffbd4e;
+            color: #000;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            z-index: 10000;
+            animation: slideInRight 0.3s ease;
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .profile-hero {
+            position: relative;
+            min-height: 400px;
+            height: 50vh;
+            margin-top: 120px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
+        .profile-hero__bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        .profile-hero__bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .profile-hero__overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(41, 52, 62, 0.85) 0%, rgba(0, 0, 0, 0.7) 100%);
+            z-index: 1;
+        }
+        .profile-hero .container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+        }
+        .profile-hero__title {
+            font-size: clamp(36px, 6vw, 72px);
+            font-weight: 700;
+            text-align: right;
+            line-height: 1.2;
+        }
+        .profile-hero__title .accent { color: #ffbd4e; }
+        .profile-content { padding: 60px 0 80px; background: #29343e; }
+        .profile-grid { display: flex; gap: 40px; flex-wrap: wrap; }
+        .profile-sidebar { flex: 0.8; min-width: 280px; }
+        .profile-avatar-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 40px 30px;
+            text-align: center;
+            border: 1px solid rgba(255, 189, 78, 0.2);
+            margin-bottom: 30px;
+        }
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 25px;
+            position: relative;
+            cursor: pointer;
+        }
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid #ffbd4e;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        .profile-avatar-overlay {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: #ffbd4e;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .profile-name { font-family: "Gadugi-Bold", Helvetica; font-size: 24px; color: #ffbd4e; margin-bottom: 8px; }
+        .profile-joined { font-size: 14px; color: rgba(255, 255, 255, 0.5); margin-bottom: 25px; }
+        .profile-status {
+            display: inline-block;
+            background: rgba(255, 189, 78, 0.15);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 12px;
+            color: #ffbd4e;
+            margin-bottom: 20px;
+        }
+        .profile-stats {
+            display: flex;
+            justify-content: space-around;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .stat-item { text-align: center; }
+        .stat-number { font-family: "Gadugi-Bold", Helvetica; font-size: 28px; color: #fff; }
+        .stat-label { font-size: 12px; color: rgba(255, 255, 255, 0.5); }
+        .profile-main { flex: 2; min-width: 300px; }
+        .profile-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 35px 40px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+        .profile-section:hover { border-color: rgba(255, 189, 78, 0.3); }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .section-header h3 { font-family: "Gadugi-Bold", Helvetica; font-size: 22px; color: #ffbd4e; }
+        .edit-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+        .edit-btn:hover { color: #ffbd4e; }
+        .info-row { display: flex; margin-bottom: 20px; flex-wrap: wrap; }
+        .info-label { width: 140px; font-size: 14px; color: rgba(255, 255, 255, 0.5); }
+        .info-value { flex: 1; font-size: 16px; color: #fff; }
+        .tour-item {
+            display: flex;
+            gap: 20px;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            flex-wrap: wrap;
+        }
+        .tour-item:last-child { border-bottom: none; }
+        .tour-item-image {
+            width: 100px;
+            height: 70px;
+            border-radius: 12px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .tour-item-image img { width: 100%; height: 100%; object-fit: cover; }
+        .tour-item-info { flex: 1; }
+        .tour-item-title { font-family: "Gadugi-Bold", Helvetica; font-size: 18px; color: #fff; margin-bottom: 5px; }
+        .tour-item-date { font-size: 13px; color: rgba(255, 255, 255, 0.5); margin-bottom: 8px; }
+        .tour-item-status {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .status-confirmed { background: rgba(76, 175, 80, 0.2); color: #4caf50; }
+        .status-pending { background: rgba(255, 189, 78, 0.2); color: #ffbd4e; }
+        .status-completed { background: rgba(33, 150, 243, 0.2); color: #2196f3; }
+        .status-cancelled { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
+        .tour-item-price { text-align: right; flex-shrink: 0; }
+        .tour-price-value { font-family: "Gadugi-Bold", Helvetica; font-size: 18px; color: #ffbd4e; }
+        .tour-price-label { font-size: 11px; color: rgba(255, 255, 255, 0.4); }
+        .edit-form { display: none; margin-top: 20px; }
+        .edit-form.active { display: block; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 14px; color: rgba(255, 255, 255, 0.5); margin-bottom: 8px; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            font-size: 16px;
+            color: #fff;
+            transition: all 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #ffbd4e;
+        }
+        .form-actions { display: flex; gap: 15px; margin-top: 25px; }
+        .btn-save {
+            background: #ffbd4e;
+            color: #000;
+            padding: 10px 24px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-save:hover { background: #ffaa2e; transform: translateY(-2px); }
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 10px 24px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-cancel:hover { background: rgba(255, 255, 255, 0.2); }
+        .view-mode { display: block; }
+        .view-mode.hidden { display: none; }
+        .logout-btn {
+            display: block;
+            width: 100%;
+            background: rgba(255, 100, 100, 0.15);
+            border: 1px solid rgba(255, 100, 100, 0.3);
+            color: #ff6b6b;
+            padding: 14px;
+            border-radius: 16px;
+            text-align: center;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        .logout-btn:hover {
+            background: rgba(255, 100, 100, 0.25);
+            transform: translateY(-2px);
+        }
+        .cancel-booking-btn {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            color: #e74c3c;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 8px;
+        }
+        .cancel-booking-btn:hover {
+            background: rgba(231, 76, 60, 0.4);
+        }
+        @media (max-width: 768px) {
+            .profile-section { padding: 25px 20px; }
+            .info-label { width: 100%; margin-bottom: 5px; }
+            .tour-item { flex-direction: column; }
+            .tour-item-price { text-align: left; }
+            .section-header h3 { font-size: 18px; }
+        }
+        #avatarInput { display: none; }
+    </style>
+</head>
+<body>
+<div class="site-container">
+    <header class="header">
+    <div class="container header__inner">
+        <a href="index.html">
+            <img class="logo" src="img/v0_2119.png" alt="Logo">
+        </a>
+        <nav class="navbar">
+            <a href="index.html" class="nav-link">ГЛАВНАЯ</a>
+            <a href="cruises.html" class="nav-link">КРУИЗЫ</a>
+            <a href="ideas.html" class="nav-link">ИДЕИ</a>
+            <a href="calendar.html" class="nav-link">КАЛЕНДАРЬ</a>
+            <a href="contacts.html" class="nav-link">КОНТАКТЫ</a>
+            <a href="profile.html" class="nav-link" id="profileLink">ПРОФИЛЬ</a>
+        </nav>
+    </div>
+</header>
+
+    <main>
+        <section class="profile-hero">
+            <div class="profile-hero__bg">
+                <img src="img/Group%20186.png" alt="Background">
+            </div>
+            <div class="profile-hero__overlay"></div>
+            <div class="container">
+                <h1 class="profile-hero__title">
+                    ЛИЧНЫЙ <span class="accent">КАБИНЕТ</span>
+                </h1>
+            </div>
+        </section>
+
+        <section class="profile-content">
+            <div class="container">
+                <div class="profile-grid" id="profileContent">
+                    <div style="text-align: center; padding: 50px; width: 100%;">Загрузка данных...</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="subscribe">
+            <div class="subscribe__bg">
+                <img src="img/Group%20190%20(1).png" alt="Background">
+                <div class="subscribe__overlay"></div>
+            </div>
+            <div class="container">
+                <div class="subscribe__content">
+                    <h3 class="subscribe__title">мы всегда на связи</h3>
+                    <form class="subscribe__form" id="subscribeForm">
+                        <input type="text" placeholder="ваше имя" class="subscribe__input" id="subName">
+                        <input type="email" placeholder="ваша электронная почта" class="subscribe__input" id="subEmail">
+                        <button type="submit" class="subscribe__btn">отправить</button>
+                    </form>
+                    <img class="subscribe__decor" src="img/Group%20182%201.png" alt="Decor">
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer__inner">
+            <div class="footer__col">
+                <h4>О КОМПАНИИ</h4>
+                <ul>
+                    <li><a href="#">Преимущества</a></li>
+                    <li><a href="#">Команда</a></li>
+                    <li><a href="#">Фотоотчеты</a></li>
+                    <li><a href="#">Документы и лицензии</a></li>
+                </ul>
+            </div>
+            <div class="footer__col">
+                <h4>УСЛУГИ</h4>
+                <ul>
+                    <li><a href="#">Выбрать тур</a></li>
+                    <li><a href="#">Бронь</a></li>
+                    <li><a href="#">Оплата</a></li>
+                    <li><a href="#">Гарантия</a></li>
+                </ul>
+            </div>
+            <div class="footer__col">
+                <h4>КОНТАКТЫ</h4>
+                <ul>
+                    <li><a href="tel:1-951-280-0269">1-951-280-0269</a></li>
+                    <li><a href="mailto:generation@mail.com">generation@mail.com</a></li>
+                    <li>Москва</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer__copyright">
+            <p>Политика обработки персональных данных</p>
+        </div>
+    </footer>
+</div>
+
+<input type="file" id="avatarInput" accept="image/*">
+
+<script>
+    const API_URL = 'http://localhost:3000/api';
+    let currentUser = null;
+    let userStats = null;
+    let userBookings = [];
+
+    function getToken() {
+        return localStorage.getItem('token');
+    }
+
+    function checkAuthAndLoad() {
+        const token = getToken();
+        if (!token) {
+            window.location.href = 'index.html';
+            return;
+        }
+        loadProfile();
+    }
+
+    function showNotification(message, isError = false) {
+        const notification = document.createElement('div');
+        notification.textContent = message;
+        notification.className = 'notification-toast';
+        if (isError) {
+            notification.style.background = '#e74c3c';
+            notification.style.color = '#fff';
+        }
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 3000);
+    }
+
+    async function loadProfile() {
+        try {
+            const response = await fetch(`${API_URL}/users/profile`, {
+                headers: { 'Authorization': `Bearer ${getToken()}` }
+            });
+            const data = await response.json();
+
+            if (data.user) {
+                currentUser = data.user;
+                userStats = data.stats;
+                renderProfile();
+                loadBookings();
+            } else {
+                window.location.href = 'index.html';
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки профиля:', error);
+            window.location.href = 'index.html';
+        }
+    }
+
+    async function loadBookings() {
+        try {
+            const response = await fetch(`${API_URL}/bookings/my`, {
+                headers: { 'Authorization': `Bearer ${getToken()}` }
+            });
+            const data = await response.json();
+            userBookings = data.bookings || [];
+            renderBookings();
+        } catch (error) {
+            console.error('Ошибка загрузки бронирований:', error);
+        }
+    }
+
+    function getStatusText(status) {
+        const statusMap = {
+            'pending': 'Ожидает подтверждения',
+            'confirmed': 'Подтвержден',
+            'paid': 'Оплачен',
+            'cancelled': 'Отменен',
+            'completed': 'Завершен'
+        };
+        return statusMap[status] || status;
+    }
+
+    function getStatusClass(status) {
+        const classMap = {
+            'pending': 'status-pending',
+            'confirmed': 'status-confirmed',
+            'paid': 'status-confirmed',
+            'cancelled': 'status-cancelled',
+            'completed': 'status-completed'
+        };
+        return classMap[status] || 'status-pending';
+    }
+
+    async function cancelBooking(bookingId) {
+        if (!confirm('Вы уверены, что хотите отменить бронирование?')) return;
+
+        try {
+            const response = await fetch(`${API_URL}/bookings/${bookingId}/cancel`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}`
+                },
+                body: JSON.stringify({ cancel_reason: 'Отменено пользователем' })
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                showNotification('Бронирование отменено');
+                loadBookings();
+                loadProfile();
+            } else {
+                showNotification(data.error || 'Ошибка отмены', true);
+            }
+        } catch (error) {
+            showNotification('Ошибка соединения с сервером', true);
+        }
+    }
+
+    async function updateProfile(formData) {
+        try {
+            const response = await fetch(`${API_URL}/users/profile`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}`
+                },
+                body: JSON.stringify(formData)
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                showNotification('Профиль обновлен');
+                loadProfile();
+            } else {
+                showNotification(data.error || 'Ошибка обновления', true);
+            }
+        } catch (error) {
+            showNotification('Ошибка соединения с сервером', true);
+        }
+    }
+
+    async function updateNotifications(settings) {
+        try {
+            const response = await fetch(`${API_URL}/users/profile`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}`
+                },
+                body: JSON.stringify({
+                    ...currentUser,
+                    ...settings
+                })
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                showNotification('Настройки сохранены');
+                loadProfile();
+            } else {
+                showNotification(data.error || 'Ошибка сохранения', true);
+            }
+        } catch (error) {
+            showNotification('Ошибка соединения с сервером', true);
+        }
+    }
+
+    async function uploadAvatar(file) {
+        const formData = new FormData();
+        formData.append('avatar', file);
+
+        try {
+            const response = await fetch(`${API_URL}/users/avatar`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${getToken()}` },
+                body: formData
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                showNotification('Аватар обновлен');
+                loadProfile();
+            } else {
+                showNotification(data.error || 'Ошибка загрузки', true);
+            }
+        } catch (error) {
+            showNotification('Ошибка соединения с сервером', true);
+        }
+    }
+
+    function logout() {
+        localStorage.removeItem('token');
+        window.location.href = 'index.html';
+    }
+
+    function renderProfile() {
+        const container = document.getElementById('profileContent');
+        if (!currentUser) return;
+
+        container.innerHTML = `
+            <div class="profile-sidebar">
+                <div class="profile-avatar-card">
+                    <div class="profile-avatar" id="avatarClick">
+                        <img src="${currentUser.avatar_url || 'img/avatar-placeholder.png'}" alt="Avatar" id="avatarImg">
+                        <div class="profile-avatar-overlay">✎</div>
+                    </div>
+                    <h2 class="profile-name">${currentUser.full_name.split(' ')[0]}</h2>
+                    <p class="profile-joined">На сайте с ${new Date(currentUser.registration_date).toLocaleDateString('ru-RU')}</p>
+                    <span class="profile-status">Активный путешественник</span>
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">${userStats?.total_trips || 0}</div>
+                            <div class="stat-label">Поездок</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">${userStats?.total_countries || 0}</div>
+                            <div class="stat-label">Стран</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">${userStats?.total_days || 0}</div>
+                            <div class="stat-label">Дней</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="logout-btn" id="logoutBtn">Выйти из аккаунта</div>
+            </div>
+
+            <div class="profile-main">
+                <div class="profile-section">
+                    <div class="section-header">
+                        <h3>Личная информация</h3>
+                        <button class="edit-btn" id="editPersonalBtn">Редактировать</button>
+                    </div>
+                    <div id="personalView" class="view-mode">
+                        <div class="info-row"><div class="info-label">Полное имя</div><div class="info-value" id="displayFullName">${currentUser.full_name}</div></div>
+                        <div class="info-row"><div class="info-label">Email</div><div class="info-value" id="displayEmail">${currentUser.email}</div></div>
+                        <div class="info-row"><div class="info-label">Телефон</div><div class="info-value" id="displayPhone">${currentUser.phone || 'Не указан'}</div></div>
+                        <div class="info-row"><div class="info-label">Дата рождения</div><div class="info-value" id="displayBirthday">${currentUser.birth_date ? new Date(currentUser.birth_date).toLocaleDateString('ru-RU') : 'Не указана'}</div></div>
+                        <div class="info-row"><div class="info-label">Город</div><div class="info-value" id="displayCity">${currentUser.city || 'Не указан'}</div></div>
+                    </div>
+                    <div id="personalEdit" class="edit-form">
+                        <div class="form-group"><label>Полное имя</label><input type="text" id="editFullName" value="${currentUser.full_name}"></div>
+                        <div class="form-group"><label>Email</label><input type="email" id="editEmail" value="${currentUser.email}"></div>
+                        <div class="form-group"><label>Телефон</label><input type="tel" id="editPhone" value="${currentUser.phone || ''}"></div>
+                        <div class="form-group"><label>Дата рождения</label><input type="date" id="editBirthday" value="${currentUser.birth_date || ''}"></div>
+                        <div class="form-group"><label>Город</label><input type="text" id="editCity" value="${currentUser.city || ''}"></div>
+                        <div class="form-actions">
+                            <button class="btn-save" id="savePersonalBtn">Сохранить</button>
+                            <button class="btn-cancel" id="cancelPersonalBtn">Отмена</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-section">
+                    <div class="section-header">
+                        <h3>Мои бронирования</h3>
+                    </div>
+                    <div id="bookingsList">Загрузка...</div>
+                </div>
+
+                <div class="profile-section">
+                    <div class="section-header">
+                        <h3>Настройки уведомлений</h3>
+                        <button class="edit-btn" id="editNotificationsBtn">Редактировать</button>
+                    </div>
+                    <div id="notificationsView" class="view-mode">
+                        <div class="info-row"><div class="info-label">Email рассылка</div><div class="info-value" id="displayEmailNotify">${currentUser.email_notifications ? 'Включена' : 'Отключена'}</div></div>
+                        <div class="info-row"><div class="info-label">SMS уведомления</div><div class="info-value" id="displaySmsNotify">${currentUser.sms_notifications ? 'Включена' : 'Отключена'}</div></div>
+                        <div class="info-row"><div class="info-label">Акции и скидки</div><div class="info-value" id="displayPromoNotify">${currentUser.promo_notifications ? 'Включена' : 'Отключена'}</div></div>
+                    </div>
+                    <div id="notificationsEdit" class="edit-form">
+                        <div class="form-group"><label><input type="checkbox" id="editEmailNotify" ${currentUser.email_notifications ? 'checked' : ''}> Email рассылка</label></div>
+                        <div class="form-group"><label><input type="checkbox" id="editSmsNotify" ${currentUser.sms_notifications ? 'checked' : ''}> SMS уведомления</label></div>
+                        <div class="form-group"><label><input type="checkbox" id="editPromoNotify" ${currentUser.promo_notifications ? 'checked' : ''}> Акции и скидки</label></div>
+                        <div class="form-actions">
+                            <button class="btn-save" id="saveNotificationsBtn">Сохранить</button>
+                            <button class="btn-cancel" id="cancelNotificationsBtn">Отмена</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        attachEventListeners();
+    }
+
+    function renderBookings() {
+        const container = document.getElementById('bookingsList');
+        if (!container) return;
+
+        if (userBookings.length === 0) {
+            container.innerHTML = '<div class="empty-state">У вас пока нет бронирований. <a href="index.html" style="color: #ffbd4e;">Выберите тур</a></div>';
+            return;
+        }
+
+        container.innerHTML = userBookings.map(booking => `
+            <div class="tour-item">
+                <div class="tour-item-image">
+                    <img src="${booking.main_image_url || 'img/Group%20167%201.png'}" alt="${booking.title}">
+                </div>
+                <div class="tour-item-info">
+                    <h4 class="tour-item-title">${booking.title}</h4>
+                    <p class="tour-item-date">${booking.start_date ? new Date(booking.start_date).toLocaleDateString('ru-RU') : ''} - ${booking.end_date ? new Date(booking.end_date).toLocaleDateString('ru-RU') : ''}</p>
+                    <span class="tour-item-status ${getStatusClass(booking.status)}">${getStatusText(booking.status)}</span>
+                    ${booking.status === 'pending' || booking.status === 'confirmed' ? `<div><button class="cancel-booking-btn" data-booking-id="${booking.id}">Отменить бронирование</button></div>` : ''}
+                </div>
+                <div class="tour-item-price">
+                    <div class="tour-price-value">${booking.total_price_rub?.toLocaleString() || booking.total_price_usd?.toLocaleString()} ${booking.total_price_rub ? '₽' : '$'}</div>
+                    <div class="tour-price-label">${booking.number_of_people} ${getPersonText(booking.number_of_people)}</div>
+                </div>
+            </div>
+        `).join('');
+
+        document.querySelectorAll('.cancel-booking-btn').forEach(btn => {
+            btn.addEventListener('click', () => cancelBooking(btn.dataset.bookingId));
+        });
+    }
+
+    function getPersonText(count) {
+        if (count % 10 === 1 && count % 100 !== 11) return 'человек';
+        if ([2,3,4].includes(count % 10) && ![12,13,14].includes(count % 100)) return 'человека';
+        return 'человек';
+    }
+
+    function attachEventListeners() {
+        // Личная информация
+        const personalView = document.getElementById('personalView');
+        const personalEdit = document.getElementById('personalEdit');
+        const editPersonalBtn = document.getElementById('editPersonalBtn');
+        const savePersonalBtn = document.getElementById('savePersonalBtn');
+        const cancelPersonalBtn = document.getElementById('cancelPersonalBtn');
+
+        if (editPersonalBtn) {
+            editPersonalBtn.addEventListener('click', () => {
+                personalView.classList.add('hidden');
+                personalEdit.classList.add('active');
+            });
+        }
+
+        if (cancelPersonalBtn) {
+            cancelPersonalBtn.addEventListener('click', () => {
+                personalView.classList.remove('hidden');
+                personalEdit.classList.remove('active');
+            });
+        }
+
+        if (savePersonalBtn) {
+            savePersonalBtn.addEventListener('click', () => {
+                updateProfile({
+                    full_name: document.getElementById('editFullName').value,
+                    email: document.getElementById('editEmail').value,
+                    phone: document.getElementById('editPhone').value,
+                    birth_date: document.getElementById('editBirthday').value,
+                    city: document.getElementById('editCity').value,
+                    email_notifications: currentUser.email_notifications,
+                    sms_notifications: currentUser.sms_notifications,
+                    promo_notifications: currentUser.promo_notifications
+                });
+            });
+        }
+
+        // Уведомления
+        const notificationsView = document.getElementById('notificationsView');
+        const notificationsEdit = document.getElementById('notificationsEdit');
+        const editNotificationsBtn = document.getElementById('editNotificationsBtn');
+        const saveNotificationsBtn = document.getElementById('saveNotificationsBtn');
+        const cancelNotificationsBtn = document.getElementById('cancelNotificationsBtn');
+
+        if (editNotificationsBtn) {
+            editNotificationsBtn.addEventListener('click', () => {
+                notificationsView.classList.add('hidden');
+                notificationsEdit.classList.add('active');
+            });
+        }
+
+        if (cancelNotificationsBtn) {
+            cancelNotificationsBtn.addEventListener('click', () => {
+                notificationsView.classList.remove('hidden');
+                notificationsEdit.classList.remove('active');
+            });
+        }
+
+        if (saveNotificationsBtn) {
+            saveNotificationsBtn.addEventListener('click', () => {
+                updateNotifications({
+                    email_notifications: document.getElementById('editEmailNotify').checked ? 1 : 0,
+                    sms_notifications: document.getElementById('editSmsNotify').checked ? 1 : 0,
+                    promo_notifications: document.getElementById('editPromoNotify').checked ? 1 : 0
+                });
+            });
+        }
+
+        // Аватар
+        const avatarClick = document.getElementById('avatarClick');
+        const avatarInput = document.getElementById('avatarInput');
+        if (avatarClick) {
+            avatarClick.addEventListener('click', () => avatarInput.click());
+        }
+        if (avatarInput) {
+            avatarInput.addEventListener('change', (e) => {
+                if (e.target.files[0]) uploadAvatar(e.target.files[0]);
+            });
+        }
+
+        // Выход
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) logoutBtn.addEventListener('click', logout);
+    }
+
+    // Подписка
+    document.getElementById('subscribeForm')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('subName').value;
+        const email = document.getElementById('subEmail').value;
+
+        try {
+            const response = await fetch(`${API_URL}/subscribe`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email })
+            });
+            const data = await response.json();
+            showNotification(data.message || 'Спасибо за подписку!');
+            document.getElementById('subscribeForm').reset();
+        } catch (error) {
+            showNotification('Ошибка подписки', true);
+        }
+    });
+
+    // Хедер при скролле
+    window.addEventListener('scroll', function() {
+        const header = document.querySelector('.header');
+        if (window.scrollY > 100) header.classList.add('scrolled');
+        else header.classList.remove('scrolled');
+    });
+
+    checkAuthAndLoad();
+</script>
+<script src="/chat-widget.js"></script>
+</body>
+</html>
