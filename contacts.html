@@ -216,6 +216,278 @@
             .contacts-info-card { padding: 30px; }
             .contact-form { padding: 30px; }
         }
+
+        .contacts-hero {
+            min-height: 480px;
+            height: 56vh;
+        }
+        .contacts-hero__bg img {
+            transform: scale(1.04);
+        }
+        .contacts-hero__overlay {
+            background:
+                radial-gradient(circle at 74% 20%, rgba(255,189,78,0.16), transparent 30%),
+                linear-gradient(90deg, rgba(23,31,38,0.94) 0%, rgba(23,31,38,0.64) 52%, rgba(23,31,38,0.28) 100%),
+                linear-gradient(180deg, rgba(23,31,38,0.08), #29343e 100%);
+        }
+        .contacts-hero__title {
+            text-align: left;
+            max-width: 760px;
+            letter-spacing: 0;
+        }
+        .contacts-hero__lead {
+            max-width: 620px;
+            margin-top: 18px;
+            color: rgba(255,255,255,0.78);
+            font-size: clamp(15px, 2vw, 19px);
+            line-height: 1.65;
+        }
+        .contacts-hero__actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 28px;
+        }
+        .contacts-hero__action {
+            border: 1px solid rgba(255,189,78,0.42);
+            background: rgba(16,24,30,0.48);
+            color: #fff;
+            padding: 11px 15px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 13px;
+            transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+        }
+        .contacts-hero__action:hover {
+            background: #ffbd4e;
+            color: #111820;
+            border-color: #ffbd4e;
+        }
+        .contacts-info {
+            padding: 70px 0;
+            background: #29343e;
+        }
+        .contacts-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+        .contacts-info-card {
+            position: relative;
+            min-width: 0;
+            border-radius: 8px;
+            padding: 28px;
+            text-align: left;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.025)),
+                #1d2831;
+            border: 1px solid rgba(255,189,78,0.18);
+            box-shadow: 0 16px 34px rgba(0,0,0,0.18);
+        }
+        .contacts-info-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(255,189,78,0.55);
+            box-shadow: 0 24px 44px rgba(0,0,0,0.34);
+        }
+        .contacts-info-card .icon {
+            width: auto;
+            height: auto;
+            margin: 0 0 22px;
+            border-radius: 0;
+            background: transparent;
+            color: #ffbd4e;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+        }
+        .contacts-info-card h3 {
+            color: #fff;
+            font-size: 24px;
+            margin-bottom: 18px;
+        }
+        .contacts-info-card p {
+            color: rgba(255,255,255,0.68);
+            font-size: 15px;
+        }
+        .contacts-info-card a {
+            color: #ffbd4e;
+            font-weight: 700;
+        }
+        .contacts-form-section {
+            padding: 76px 0;
+            background:
+                radial-gradient(circle at 0 100%, rgba(255,83,121,0.12), transparent 34%),
+                #1f2a33;
+        }
+        .contacts-form-wrapper {
+            display: grid;
+            grid-template-columns: minmax(0, 0.9fr) minmax(360px, 1fr);
+            gap: 34px;
+            align-items: start;
+        }
+        .contacts-form-left {
+            min-width: 0;
+            padding: 34px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.035);
+        }
+        .contacts-form-left h2 {
+            color: #fff;
+            font-size: clamp(28px, 3.6vw, 44px);
+            line-height: 1.1;
+        }
+        .contacts-form-left h2::first-letter {
+            color: #ffbd4e;
+        }
+        .contacts-form-left p {
+            color: rgba(255,255,255,0.76);
+            font-size: 16px;
+            line-height: 1.75;
+        }
+        .contacts-form-left > div {
+            display: grid;
+            gap: 12px;
+        }
+        .contacts-form-left > div > div {
+            margin: 0 !important;
+            padding: 14px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.04);
+            color: rgba(255,255,255,0.82);
+        }
+        .contact-form {
+            border-radius: 8px;
+            padding: 30px;
+            background:
+                linear-gradient(145deg, rgba(28,39,48,0.98), rgba(12,18,23,0.96));
+            border: 1px solid rgba(255,189,78,0.26);
+            box-shadow: 0 22px 52px rgba(0,0,0,0.28);
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            border-radius: 4px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.14);
+            padding: 14px 15px;
+        }
+        .form-group select option {
+            color: #111820;
+        }
+        .submit-btn {
+            border-radius: 4px;
+            padding: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .map-section {
+            padding: 74px 0 84px;
+            background: #29343e;
+        }
+        .map-container {
+            position: relative;
+            height: 360px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,189,78,0.22);
+            background:
+                linear-gradient(135deg, rgba(255,189,78,0.12), transparent 34%),
+                linear-gradient(45deg, rgba(255,255,255,0.06) 0 1px, transparent 1px 72px),
+                #1d2831;
+            overflow: hidden;
+        }
+        .map-container iframe {
+            display: block;
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            filter: saturate(0.86) contrast(0.96);
+        }
+        .map-container::before,
+        .map-container::after {
+            content: '';
+            position: absolute;
+            pointer-events: none;
+        }
+        .map-container::before {
+            inset: 34px;
+            border: 1px solid rgba(255,255,255,0.12);
+            z-index: 1;
+        }
+        .map-container::after {
+            width: 16px;
+            height: 16px;
+            left: 50%;
+            top: 48%;
+            transform: translate(-50%, -50%) rotate(45deg);
+            background: #ffbd4e;
+            box-shadow: 0 0 0 12px rgba(255,189,78,0.14);
+            z-index: 1;
+        }
+        .map-card {
+            position: absolute;
+            left: 34px;
+            bottom: 34px;
+            max-width: 360px;
+            padding: 22px;
+            background: rgba(12,18,23,0.84);
+            border: 1px solid rgba(255,255,255,0.12);
+            backdrop-filter: blur(16px);
+            z-index: 2;
+        }
+        .map-card h3 {
+            margin: 0 0 8px;
+            color: #fff;
+            font-size: 22px;
+        }
+        .map-card p {
+            margin: 0;
+            color: rgba(255,255,255,0.72);
+            line-height: 1.5;
+        }
+        .map-card a {
+            display: inline-flex;
+            margin-top: 14px;
+            color: #ffbd4e;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+        }
+        @media (max-width: 992px) {
+            .contacts-grid,
+            .contacts-form-wrapper {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 768px) {
+            .contacts-hero {
+                margin-top: 90px;
+                min-height: 420px;
+                height: auto;
+                padding: 80px 0 64px;
+            }
+            .contacts-info,
+            .contacts-form-section,
+            .map-section {
+                padding: 52px 0;
+            }
+            .contacts-form-left,
+            .contact-form {
+                padding: 22px;
+            }
+            .map-container {
+                height: 320px;
+            }
+            .map-card {
+                left: 18px;
+                right: 18px;
+                bottom: 18px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -227,6 +499,8 @@
         </a>
         <nav class="navbar">
             <a href="index.html" class="nav-link">ГЛАВНАЯ</a>
+            <a href="tours.html" class="nav-link">ТУРЫ</a>
+
             <a href="cruises.html" class="nav-link">КРУИЗЫ</a>
             <a href="ideas.html" class="nav-link">ИДЕИ</a>
             <a href="calendar.html" class="nav-link">КАЛЕНДАРЬ</a>
@@ -246,6 +520,12 @@
                 <h1 class="contacts-hero__title">
                     <span class="accent">НАШИ</span> КОНТАКТЫ
                 </h1>
+                <p class="contacts-hero__lead">Подберем маршрут, ответим по бронированию и поможем собрать поездку под даты, бюджет и формат отдыха.</p>
+                <div class="contacts-hero__actions" aria-label="Быстрые контакты">
+                    <a class="contacts-hero__action" href="tel:8-800-555-35-35">8-800-555-35-35</a>
+                    <a class="contacts-hero__action" href="mailto:generation@mail.com">generation@mail.com</a>
+                    <a class="contacts-hero__action" href="#contactForm">Написать менеджеру</a>
+                </div>
             </div>
         </section>
 
@@ -253,24 +533,24 @@
             <div class="container">
                 <div class="contacts-grid">
                     <div class="contacts-info-card">
-                        <div class="icon">📞</div>
+                        <div class="icon">Телефон</div>
                         <h3>Телефон</h3>
                         <p><a href="tel:1-951-280-0269">1-951-280-0269</a></p>
                         <p><a href="tel:8-800-555-35-35">8-800-555-35-35</a></p>
                         <p style="font-size: 13px; margin-top: 10px;">Бесплатно по России</p>
                     </div>
                     <div class="contacts-info-card">
-                        <div class="icon">✉️</div>
+                        <div class="icon">Email</div>
                         <h3>Email</h3>
                         <p><a href="mailto:generation@mail.com">generation@mail.com</a></p>
                         <p><a href="mailto:tours@kamchatka.ru">tours@kamchatka.ru</a></p>
                         <p style="font-size: 13px; margin-top: 10px;">Отвечаем в течение 24 часов</p>
                     </div>
                     <div class="contacts-info-card">
-                        <div class="icon">📍</div>
+                        <div class="icon">Офис</div>
                         <h3>Адрес офиса</h3>
-                        <p>Москва, ул. Тверская, д. 15</p>
-                        <p>м. Тверская / м. Пушкинская</p>
+                        <p>Оренбург, ул. Советская, д. 27</p>
+                        <p>Центр города, рядом с пешеходной улицей</p>
                         <p style="font-size: 13px; margin-top: 10px;">Пн-Пт: 10:00 - 19:00</p>
                     </div>
                 </div>
@@ -329,9 +609,20 @@
         </section>
 
         <section class="map-section">
-            <div class="container" style="margin-top: 80px;">
+            <div class="container">
                 <div class="map-container">
-                    <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3A123456789&source=constructor" allowfullscreen></iframe>
+                    <iframe
+                        src="https://www.openstreetmap.org/export/embed.html?bbox=55.0870%2C51.7640%2C55.1110%2C51.7755&amp;layer=mapnik&amp;marker=51.7697%2C55.0990"
+                        title="Карта офиса в Оренбурге"
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"
+                        allowfullscreen>
+                    </iframe>
+                    <div class="map-card">
+                        <h3>Точка в Оренбурге</h3>
+                        <p>Оренбург, ул. Советская, д. 27. Маркер стоит в центре города, карту можно двигать и приближать прямо на странице.</p>
+                        <a href="https://www.openstreetmap.org/?mlat=51.7697&mlon=55.0990#map=17/51.7697/55.0990" target="_blank" rel="noopener">Открыть маршрут</a>
+                    </div>
                 </div>
             </div>
         </section>
@@ -412,6 +703,42 @@
         setTimeout(() => notification.remove(), 3000);
     }
 
+    function fillFieldIfEmpty(id, value) {
+        const field = document.getElementById(id);
+        if (!field || !value || field.value.trim()) return;
+        field.value = value;
+    }
+
+    async function prefillContactForms() {
+        const token = getToken();
+        if (!token) return;
+
+        try {
+            const response = await fetch(`${API_URL}/users/profile`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await response.json();
+            if (!response.ok || !data.user) return;
+
+            localStorage.setItem('user', JSON.stringify(data.user));
+            fillFieldIfEmpty('contactName', data.user.full_name);
+            fillFieldIfEmpty('contactEmail', data.user.email);
+            fillFieldIfEmpty('contactPhone', data.user.phone);
+            fillFieldIfEmpty('subName', data.user.full_name);
+            fillFieldIfEmpty('subEmail', data.user.email);
+        } catch (error) {
+            try {
+                const user = JSON.parse(localStorage.getItem('user') || 'null');
+                if (!user) return;
+                fillFieldIfEmpty('contactName', user.full_name);
+                fillFieldIfEmpty('contactEmail', user.email);
+                fillFieldIfEmpty('contactPhone', user.phone);
+                fillFieldIfEmpty('subName', user.full_name);
+                fillFieldIfEmpty('subEmail', user.email);
+            } catch (parseError) {}
+        }
+    }
+
     // Отправка контактной формы
     document.getElementById('contactForm')?.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -472,7 +799,9 @@
     const token = getToken();
     const profileLink = document.getElementById('profileLink');
     if (!token && profileLink) profileLink.href = 'login.html';
+    prefillContactForms();
 </script>
+<script src="/auth-nav.js"></script>
 <script src="/chat-widget.js"></script>
 </body>
 </html>

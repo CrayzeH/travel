@@ -25,8 +25,8 @@
         }
         .ideas-hero {
             position: relative;
-            min-height: 400px;
-            height: 50vh;
+            min-height: 460px;
+            height: 54vh;
             margin-top: 120px;
             overflow: hidden;
             display: flex;
@@ -44,6 +44,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transform: scale(1.03);
         }
         .ideas-hero__overlay {
             position: absolute;
@@ -51,7 +52,10 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, rgba(41,52,62,0.85) 0%, rgba(0,0,0,0.7) 100%);
+            background:
+                radial-gradient(circle at 72% 18%, rgba(255, 189, 78, 0.16), transparent 30%),
+                linear-gradient(90deg, rgba(23, 31, 38, 0.92) 0%, rgba(23, 31, 38, 0.62) 50%, rgba(23, 31, 38, 0.3) 100%),
+                linear-gradient(180deg, rgba(23, 31, 38, 0.1), #29343e 100%);
             z-index: 1;
         }
         .ideas-hero .container {
@@ -62,30 +66,42 @@
         .ideas-hero__title {
             font-size: clamp(36px, 6vw, 72px);
             font-weight: 700;
-            text-align: right;
+            text-align: left;
             line-height: 1.2;
+            max-width: 760px;
         }
         .ideas-hero__title .accent { color: #ffbd4e; }
+        .ideas-hero__lead {
+            max-width: 620px;
+            margin-top: 18px;
+            color: rgba(255,255,255,0.76);
+            font-size: clamp(15px, 2vw, 19px);
+            line-height: 1.65;
+        }
 
         .ideas-filters {
-            padding: 40px 0;
-            background: #1e272f;
+            padding: 28px 0;
+            background: #1f2a33;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
         }
         .filter-buttons {
             display: flex;
-            justify-content: center;
+            justify-content: flex-start;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 12px;
         }
         .filter-chip {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            padding: 10px 28px;
-            border-radius: 50px;
+            background: rgba(255,255,255,0.055);
+            border: 1px solid rgba(255,255,255,0.24);
+            padding: 11px 24px;
+            border-radius: 8px;
             color: #fff;
             cursor: pointer;
             transition: all 0.3s;
-            font-size: 14px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
         }
         .filter-chip.active {
             background: #ffbd4e;
@@ -98,7 +114,7 @@
         }
 
         .ideas-section-title {
-            padding: 40px 0 20px;
+            padding: 58px 0 20px;
             background: #29343e;
         }
         .title-line {
@@ -109,56 +125,91 @@
         }
 
         .ideas-cards {
-            padding: 40px 0 80px;
-            background: #29343e;
+            padding: 24px 0 90px;
+            background:
+                linear-gradient(135deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 70%),
+                #29343e;
         }
         .idea-card {
-            display: flex;
-            gap: 50px;
-            align-items: flex-start;
-            flex-wrap: wrap;
-            padding: 40px 0;
-            cursor: pointer;
-            transition: all 0.3s;
+            display: grid;
+            grid-template-columns: 78px minmax(260px, 430px) minmax(0, 1fr);
+            gap: 54px;
+            align-items: center;
+            padding: 42px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.36);
+            cursor: default;
+            opacity: 0;
+            transform: translateY(18px);
+            animation: ideaPageIn 0.55s ease forwards;
+            transition: transform 0.3s ease;
         }
         .idea-card:hover {
-            transform: translateX(10px);
+            transform: translateY(-4px);
         }
         .idea-card__image {
-            flex: 1;
-            min-width: 280px;
             position: relative;
-            border-radius: 20px;
+            height: 250px;
+            border-radius: 8px;
             overflow: hidden;
+            border: 1px dashed rgba(255,255,255,0.34);
+            background:
+                linear-gradient(135deg, rgba(255,189,78,0.14), rgba(91,155,174,0.16)),
+                rgba(255,255,255,0.04);
         }
         .idea-card__image img {
             width: 100%;
-            height: 280px;
+            height: 100%;
             object-fit: cover;
             transition: transform 0.3s;
+            display: block;
         }
         .idea-card:hover .idea-card__image img {
             transform: scale(1.03);
         }
         .idea-card__date {
-            position: absolute;
-            bottom: 15px;
-            left: 15px;
-            background: rgba(0,0,0,0.6);
-            padding: 5px 12px;
-            border-radius: 20px;
+            position: static;
+            background: transparent;
+            padding: 0;
+            border-radius: 0;
             font-size: 13px;
-            color: #fff;
+            color: rgba(255,255,255,0.82);
+            text-transform: uppercase;
+            line-height: 1.1;
+        }
+        .idea-card__day {
+            display: block;
+            margin-top: 7px;
+            color: #5b9bae;
+            font-size: 34px;
+            font-weight: 800;
+            line-height: 1;
+        }
+        .idea-card__missing {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 22px;
+            color: rgba(255,255,255,0.72);
+            font-size: 13px;
+            line-height: 1.45;
+            text-align: center;
+            word-break: break-word;
+        }
+        .idea-card__missing[hidden] {
+            display: none !important;
         }
         .idea-card__content {
-            flex: 1;
-            min-width: 280px;
+            min-width: 0;
         }
         .idea-card__title {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 700;
-            color: #ffbd4e;
-            margin-bottom: 20px;
+            color: #fff;
+            margin-bottom: 18px;
+            text-transform: uppercase;
+            line-height: 1.2;
         }
         .idea-card__description {
             font-size: 16px;
@@ -171,17 +222,34 @@
             align-items: center;
             gap: 10px;
             color: #ffbd4e;
-            text-decoration: none;
+            text-decoration: underline;
+            text-underline-offset: 4px;
             font-weight: 600;
             transition: gap 0.3s;
+        }
+        .idea-card__tag {
+            display: block;
+            margin-top: 46px;
+            color: rgba(255,255,255,0.52);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
         }
         .idea-card__link:hover {
             gap: 15px;
         }
         .ideas-divider {
-            width: 100%;
-            height: 1px;
-            background: rgba(255,255,255,0.1);
+            display: none;
+        }
+        .ideas-empty {
+            padding: 54px 0;
+            color: rgba(255,255,255,0.72);
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.26);
+            border-bottom: 1px solid rgba(255,255,255,0.26);
+        }
+        @keyframes ideaPageIn {
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .pagination {
@@ -208,9 +276,15 @@
         }
 
         @media (max-width: 768px) {
-            .idea-card { flex-direction: column; gap: 25px; padding: 30px 0; }
+            .ideas-hero { margin-top: 90px; min-height: 400px; height: auto; padding: 80px 0; }
+            .filter-buttons { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; }
+            .filter-chip { flex: 0 0 auto; padding: 9px 18px; font-size: 12px; }
+            .idea-card { grid-template-columns: 1fr; gap: 18px; padding: 32px 0; }
+            .idea-card__date { display: flex; align-items: baseline; gap: 10px; }
+            .idea-card__day { display: inline; margin-top: 0; font-size: 30px; }
+            .idea-card__image { height: 230px; }
             .idea-card__title { font-size: 22px; }
-            .filter-chip { padding: 6px 18px; font-size: 12px; }
+            .idea-card__tag { margin-top: 28px; }
         }
     </style>
 </head>
@@ -223,6 +297,8 @@
         </a>
         <nav class="navbar">
             <a href="index.html" class="nav-link">ГЛАВНАЯ</a>
+            <a href="tours.html" class="nav-link">ТУРЫ</a>
+
             <a href="cruises.html" class="nav-link">КРУИЗЫ</a>
             <a href="ideas.html" class="nav-link">ИДЕИ</a>
             <a href="calendar.html" class="nav-link">КАЛЕНДАРЬ</a>
@@ -242,6 +318,7 @@
                 <h1 class="ideas-hero__title">
                     ИДЕИ <span class="accent">ПУТЕШЕСТВИЙ</span>
                 </h1>
+                <p class="ideas-hero__lead">Подборка направлений, маршрутов и форматов путешествий из нашей базы. Переключайте разделы и выбирайте идею для следующего маршрута.</p>
             </div>
         </section>
 
@@ -519,6 +596,97 @@
     });
 
     // Подписка
+    let allCategories = [];
+
+    function escapeHtml(value) {
+        return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        })[char]);
+    }
+
+    async function loadPosts() {
+        try {
+            const response = await fetch(`${API_URL}/travel-ideas?limit=99`);
+            const data = await response.json();
+            allCategories = data.categories || [];
+            allPosts = allCategories.flatMap(category => data.ideasByCategory?.[category.slug] || []);
+            currentFilter = 'all';
+            renderFilterButtons();
+            renderPosts();
+            renderPagination();
+        } catch (error) {
+            console.error('Ошибка загрузки идей:', error);
+            document.getElementById('ideasList').innerHTML = '<div class="ideas-empty">Ошибка загрузки идей путешествий</div>';
+        }
+    }
+
+    function renderFilterButtons() {
+        const container = document.getElementById('filterButtons');
+        if (!container) return;
+
+        container.innerHTML = `
+            <button class="filter-chip active" type="button" data-filter="all">Все идеи</button>
+            ${allCategories.map(category => `
+                <button class="filter-chip" type="button" data-filter="${escapeHtml(category.slug)}">${escapeHtml(category.name)}</button>
+            `).join('')}
+        `;
+
+        container.querySelectorAll('.filter-chip').forEach(btn => {
+            btn.addEventListener('click', () => {
+                container.querySelectorAll('.filter-chip').forEach(item => item.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                renderPosts();
+            });
+        });
+    }
+
+    function getFilteredPosts() {
+        if (currentFilter === 'all') return allPosts;
+        return allPosts.filter(post => post.category_slug === currentFilter);
+    }
+
+    function renderPosts() {
+        const posts = getFilteredPosts();
+        const container = document.getElementById('ideasList');
+
+        if (!posts.length) {
+            container.innerHTML = '<div class="ideas-empty">Идеи не найдены</div>';
+            return;
+        }
+
+        container.innerHTML = posts.map((post) => {
+            const imageUrl = `img/${post.image_url}`;
+            return `
+                <article class="idea-card">
+                    <div class="idea-card__date">
+                        <span>${escapeHtml(post.month_label)}</span>
+                        <span class="idea-card__day">${escapeHtml(post.day_label)}</span>
+                    </div>
+                    <a class="idea-card__image" href="${escapeHtml(post.link_url || 'ideas.html')}" aria-label="${escapeHtml(post.title)}">
+                        <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(post.title)}" loading="lazy" onload="this.nextElementSibling.hidden=true;" onerror="this.style.display='none'; this.nextElementSibling.hidden=false;">
+                        <span class="idea-card__missing" hidden>Нет картинки:<br>${escapeHtml(post.image_url)}</span>
+                    </a>
+                    <div class="idea-card__content">
+                        <h3 class="idea-card__title">${escapeHtml(post.title)}</h3>
+                        <p class="idea-card__description">${escapeHtml(post.description)}</p>
+                        <a class="idea-card__link" href="${escapeHtml(post.link_url || 'ideas.html')}">Узнать больше <span>↗</span></a>
+                        <span class="idea-card__tag">${escapeHtml(post.tag || post.category_name || '')}</span>
+                    </div>
+                </article>
+            `;
+        }).join('');
+    }
+
+    function renderPagination() {
+        const paginationContainer = document.getElementById('pagination');
+        if (paginationContainer) paginationContainer.innerHTML = '';
+    }
+
     document.getElementById('subscribeForm')?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const name = document.getElementById('subName').value;
@@ -551,6 +719,7 @@
 
     loadPosts();
 </script>
+<script src="/auth-nav.js"></script>
 <script src="/chat-widget.js"></script>
 </body>
 </html>

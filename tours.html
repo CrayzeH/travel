@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Туры - Туры на Камчатку</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Montserrat:wght@600&family=Gadugi:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { background: #29343e; }
+        .tours-page-hero {
+            position: relative; min-height: 520px; margin-top: 120px; overflow: hidden; display: flex; align-items: center;
+            background: #17222b;
+        }
+        .tours-page-hero__bg { position: absolute; inset: 0; }
+        .tours-page-hero__bg img { width: 100%; height: 100%; object-fit: cover; filter: saturate(1.04); transform: scale(1.03); }
+        .tours-page-hero__overlay {
+            position: absolute; inset: 0;
+            background:
+                radial-gradient(circle at 78% 18%, rgba(255, 189, 78, .2), transparent 28%),
+                linear-gradient(90deg, rgba(19, 28, 35, .92), rgba(19, 28, 35, .62) 52%, rgba(19, 28, 35, .25)),
+                linear-gradient(180deg, rgba(19, 28, 35, .08), #29343e 100%);
+        }
+        .tours-page-hero .container { position: relative; z-index: 1; }
+        .tours-page-eyebrow { color: rgba(255,255,255,.68); font-size: 13px; text-transform: uppercase; letter-spacing: .12em; margin-bottom: 12px; }
+        .tours-page-title { max-width: 760px; margin: 0; color: #fff; font-size: clamp(42px, 7vw, 86px); line-height: 1.04; text-transform: uppercase; }
+        .tours-page-title span { color: #ffbd4e; display: block; }
+        .tours-page-lead { max-width: 620px; margin: 22px 0 0; color: rgba(255,255,255,.78); font-size: clamp(15px, 2vw, 19px); line-height: 1.7; }
+        .tours-page-stats { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+        .tours-page-stat {
+            min-width: 140px; border: 1px solid rgba(255,189,78,.35); background: rgba(10,16,20,.42);
+            padding: 12px 15px; backdrop-filter: blur(8px); color: rgba(255,255,255,.78); font-size: 13px;
+        }
+        .tours-page-stat strong { display: block; color: #ffbd4e; font-size: 22px; line-height: 1; margin-bottom: 5px; }
+        .tours-page-controls {
+            padding: 24px 0; background: #1f2a33; border-top: 1px solid rgba(255,255,255,.06); border-bottom: 1px solid rgba(255,255,255,.06);
+        }
+        .tours-page-controls__inner { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center; }
+        .tours-page-filters { display: flex; flex-wrap: wrap; gap: 10px; min-width: 0; }
+        .tour-filter {
+            border: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.055); color: #fff; padding: 10px 17px;
+            border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+            transition: background .22s ease, color .22s ease, border-color .22s ease, transform .22s ease;
+        }
+        .tour-filter:hover { border-color: rgba(255,189,78,.55); transform: translateY(-1px); }
+        .tour-filter.active { background: #ffbd4e; color: #111820; border-color: #ffbd4e; }
+        .tours-page-search {
+            width: min(320px, 100%); border: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.055);
+            color: #fff; padding: 12px 14px; border-radius: 4px; font: inherit;
+        }
+        .tours-page-search::placeholder { color: rgba(255,255,255,.52); }
+        .tours-page-list { padding: 66px 0 86px; background: #29343e; }
+        .tours-page-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; margin-bottom: 26px; }
+        .tours-page-head h2 { margin: 0; color: #fff; font-size: clamp(28px, 4vw, 46px); text-transform: uppercase; }
+        .tours-page-head h2 span { color: #ffbd4e; }
+        .tours-page-count { color: rgba(255,255,255,.62); font-size: 14px; }
+        .tours-page-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 392px)); justify-content: start; gap: 24px; align-items: stretch; }
+        .tour-list-card {
+            position: relative; display: flex; flex-direction: column; min-height: 535px; background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.025)), #1d2831;
+            border: 1px solid rgba(255,189,78,.18); border-radius: 8px; overflow: hidden; box-shadow: 0 16px 34px rgba(0,0,0,.18);
+            cursor: pointer; transition: transform .28s ease, border-color .28s ease, box-shadow .28s ease;
+        }
+        .tour-list-card:hover { transform: translateY(-6px); border-color: rgba(255,189,78,.56); box-shadow: 0 24px 44px rgba(0,0,0,.34); }
+        .tour-list-card__image { position: relative; height: 248px; overflow: hidden; background: linear-gradient(135deg, rgba(255,189,78,.16), rgba(31,42,51,.9)); }
+        .tour-list-card__image::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(13,20,25,.02), rgba(13,20,25,.78)); z-index: 1; }
+        .tour-list-card__image img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+        .tour-list-card:hover .tour-list-card__image img { transform: scale(1.07); }
+        .tour-list-card__top, .tour-list-card__bottom {
+            position: absolute; left: 18px; right: 18px; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+        }
+        .tour-list-card__top { top: 16px; }
+        .tour-list-card__bottom { bottom: 16px; align-items: flex-end; }
+        .tour-list-card__badge, .tour-list-card__date {
+            border: 1px solid rgba(255,255,255,.24); background: rgba(12,18,22,.58); backdrop-filter: blur(10px);
+            color: #fff; padding: 7px 10px; font-size: 11px; line-height: 1; text-transform: uppercase; letter-spacing: .06em;
+        }
+        .tour-list-card__badge { color: #ffbd4e; border-color: rgba(255,189,78,.5); }
+        .tour-list-card__place { color: #fff; font-size: 13px; line-height: 1.35; text-transform: uppercase; letter-spacing: .08em; max-width: 72%; }
+        .tour-list-card__spots { color: #fff; font-size: 12px; line-height: 1.2; text-align: right; }
+        .tour-list-card__spots strong { display: block; color: #ffbd4e; font-size: 22px; line-height: 1; }
+        .tour-list-card__content { flex: 1; display: flex; flex-direction: column; padding: 22px; }
+        .tour-list-card__title { margin: 0 0 12px; color: #fff; font-size: 21px; font-weight: 700; line-height: 1.22; }
+        .tour-list-card__info { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 18px; }
+        .tour-list-card__info-item { border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.035); padding: 10px; min-width: 0; }
+        .tour-list-card__info-label { display: block; margin-bottom: 4px; color: rgba(255,255,255,.46); font-size: 11px; line-height: 1.15; }
+        .tour-list-card__info-value { display: block; color: rgba(255,255,255,.88); font-size: 13px; font-weight: 700; line-height: 1.2; word-break: break-word; }
+        .tour-list-card__description {
+            margin: 0 0 20px; color: rgba(255,255,255,.68); font-size: 14px; line-height: 1.6;
+            display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+        }
+        .tour-list-card__footer { margin-top: auto; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.1); display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; }
+        .tour-list-card__price-label { display: block; margin-bottom: 3px; color: rgba(255,255,255,.46); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; }
+        .tour-list-card__price { display: block; color: #ffbd4e; font-size: 25px; font-weight: 700; line-height: 1.1; }
+        .tour-list-card__cta {
+            min-width: 116px; border: 1px solid rgba(255,189,78,.75); background: #ffbd4e; color: #111820;
+            padding: 12px 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+        }
+        .tour-list-card:hover .tour-list-card__cta { background: transparent; color: #ffbd4e; }
+        .tours-page-empty, .tours-page-loading {
+            grid-column: 1 / -1; text-align: center; padding: 58px 22px; border: 1px solid rgba(255,189,78,.2);
+            background: rgba(255,255,255,.035); color: rgba(255,255,255,.72);
+        }
+        @media (max-width: 900px) {
+            .tours-page-controls__inner { grid-template-columns: 1fr; }
+            .tours-page-search { width: 100%; }
+        }
+        @media (max-width: 768px) {
+            .tours-page-hero { min-height: 430px; margin-top: 90px; padding: 78px 0 66px; }
+            .tours-page-grid { grid-template-columns: 1fr; gap: 18px; }
+            .tour-list-card { min-height: auto; }
+            .tour-list-card__image { height: 230px; }
+            .tour-list-card__info { grid-template-columns: 1fr; }
+            .tour-list-card__footer { align-items: stretch; flex-direction: column; }
+            .tour-list-card__cta { width: 100%; }
+            .tours-page-head { align-items: flex-start; flex-direction: column; }
+            .tours-page-filters { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; }
+            .tour-filter { flex: 0 0 auto; }
+        }
+        @media (max-width: 420px) {
+            .tours-page-stats { flex-direction: column; }
+            .tour-list-card__bottom { align-items: flex-start; flex-direction: column; }
+            .tour-list-card__place { max-width: 100%; }
+            .tour-list-card__spots { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+<div class="site-container">
+    <header class="header">
+        <div class="container header__inner">
+            <a href="index.html">
+                <img class="logo" src="img/v0_2119.png" alt="Logo">
+            </a>
+            <nav class="navbar">
+                <a href="index.html" class="nav-link">ГЛАВНАЯ</a>
+                <a href="tours.html" class="nav-link" style="color: #ffbd4e;">ТУРЫ</a>
+                <a href="cruises.html" class="nav-link">КРУИЗЫ</a>
+                <a href="ideas.html" class="nav-link">ИДЕИ</a>
+                <a href="calendar.html" class="nav-link">КАЛЕНДАРЬ</a>
+                <a href="contacts.html" class="nav-link">КОНТАКТЫ</a>
+                <a href="profile.html" class="nav-link" id="profileLink">ПРОФИЛЬ</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="tours-page-hero">
+            <div class="tours-page-hero__bg">
+                <img src="img/Group%20167%201.png" alt="Туры">
+            </div>
+            <div class="tours-page-hero__overlay"></div>
+            <div class="container">
+                <div class="tours-page-eyebrow">Маршруты из базы</div>
+                <h1 class="tours-page-title">Наши <span>туры</span></h1>
+                <p class="tours-page-lead">Активные путешествия, красивые маршруты и понятная организация: даты, места, уровень нагрузки и цена подтягиваются из базы.</p>
+                <div class="tours-page-stats">
+                    <div class="tours-page-stat"><strong id="heroToursCount">0</strong>туров доступно</div>
+                    <div class="tours-page-stat"><strong>3-18</strong>дней в пути</div>
+                    <div class="tours-page-stat"><strong>24/7</strong>поддержка команды</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="tours-page-controls">
+            <div class="container tours-page-controls__inner">
+                <div class="tours-page-filters" id="tourFilters">
+                    <button class="tour-filter active" data-filter="all">Все туры</button>
+                </div>
+                <input class="tours-page-search" id="tourSearch" type="search" placeholder="Поиск по названию или стране">
+            </div>
+        </section>
+
+        <section class="tours-page-list">
+            <div class="container">
+                <div class="tours-page-head">
+                    <h2>Выберите <span>маршрут</span></h2>
+                    <div class="tours-page-count" id="toursCount">Загрузка...</div>
+                </div>
+                <div class="tours-page-grid" id="toursGrid">
+                    <div class="tours-page-loading">Загрузка туров...</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer__inner">
+            <div class="footer__col">
+                <h4>О КОМПАНИИ</h4>
+                <ul>
+                    <li><a href="index.html#about">Преимущества</a></li>
+                    <li><a href="index.html#guides">Команда</a></li>
+                    <li><a href="ideas.html">Идеи путешествий</a></li>
+                </ul>
+            </div>
+            <div class="footer__col">
+                <h4>УСЛУГИ</h4>
+                <ul>
+                    <li><a href="tours.html">Выбрать тур</a></li>
+                    <li><a href="cruises.html">Круизы</a></li>
+                    <li><a href="calendar.html">Календарь</a></li>
+                </ul>
+            </div>
+            <div class="footer__col">
+                <h4>КОНТАКТЫ</h4>
+                <ul>
+                    <li><a href="tel:1-951-280-0269">1-951-280-0269</a></li>
+                    <li><a href="mailto:generation@mail.com">generation@mail.com</a></li>
+                    <li>Оренбург</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer__copyright">
+            <p>Политика обработки персональных данных</p>
+        </div>
+    </footer>
+</div>
+
+<script>
+const API_URL = 'http://localhost:3000/api';
+let allTours = [];
+let currentDestination = 'all';
+let currentSearch = '';
+
+function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    })[char]);
+}
+
+function formatPrice(tour) {
+    const value = tour.price_rub || tour.price_usd || 0;
+    const currency = tour.price_rub ? '₽' : '$';
+    return `${Number(value).toLocaleString('ru-RU')} ${currency}`;
+}
+
+function formatDateRange(tour) {
+    if (!tour.start_date) return 'Даты уточняются';
+    const start = new Date(tour.start_date);
+    const end = tour.end_date ? new Date(tour.end_date) : null;
+    const formatter = new Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: 'short' });
+    if (Number.isNaN(start.getTime())) return 'Даты уточняются';
+    if (!end || Number.isNaN(end.getTime())) return formatter.format(start);
+    return `${formatter.format(start)} - ${formatter.format(end)}`;
+}
+
+function difficultyLabel(level) {
+    return {
+        easy: 'Легкий',
+        moderate: 'Средний',
+        challenging: 'Сложный',
+        extreme: 'Экстрим'
+    }[level] || 'Комфорт';
+}
+
+function shortDescription(tour) {
+    const text = tour.short_description || tour.full_description || 'Продуманный маршрут с красивыми локациями, сопровождением команды и насыщенной программой.';
+    return text.length > 150 ? `${text.slice(0, 150).trim()}...` : text;
+}
+
+function getFilteredTours() {
+    const search = currentSearch.trim().toLowerCase();
+    return allTours.filter((tour) => {
+        const byDestination = currentDestination === 'all' || tour.destination === currentDestination;
+        const haystack = [tour.title, tour.destination, tour.country, tour.region].filter(Boolean).join(' ').toLowerCase();
+        const bySearch = !search || haystack.includes(search);
+        return byDestination && bySearch;
+    });
+}
+
+function renderTours() {
+    const tours = getFilteredTours();
+    const grid = document.getElementById('toursGrid');
+    document.getElementById('toursCount').textContent = `${tours.length} ${plural(tours.length, ['тур', 'тура', 'туров'])}`;
+
+    if (!tours.length) {
+        grid.innerHTML = '<div class="tours-page-empty">Туры не найдены. Попробуйте другое направление или поиск.</div>';
+        return;
+    }
+
+    grid.innerHTML = tours.map((tour) => {
+        const availableSpots = Math.max(0, tour.available_spots ?? tour.total_spots ?? tour.max_group_size ?? 0);
+        const totalSpots = tour.total_spots || tour.max_group_size || availableSpots || 1;
+        const destination = [tour.destination, tour.region || tour.country].filter(Boolean).join(' / ');
+
+        return `
+            <article class="tour-list-card" onclick="location.href='cruise.html?slug=${encodeURIComponent(tour.slug)}'">
+                <div class="tour-list-card__image">
+                    <img src="${escapeHtml(tour.main_image_url || 'img/Group%20167%201.png')}" alt="${escapeHtml(tour.title)}" loading="lazy" onerror="this.onerror=null;this.src='img/Group%20167%201.png';">
+                    <div class="tour-list-card__top">
+                        <span class="tour-list-card__badge">${escapeHtml(difficultyLabel(tour.difficulty_level))}</span>
+                        <span class="tour-list-card__date">${escapeHtml(formatDateRange(tour))}</span>
+                    </div>
+                    <div class="tour-list-card__bottom">
+                        <span class="tour-list-card__place">${escapeHtml(destination || tour.title)}</span>
+                        <span class="tour-list-card__spots"><strong>${availableSpots}</strong>мест из ${totalSpots}</span>
+                    </div>
+                </div>
+                <div class="tour-list-card__content">
+                    <h3 class="tour-list-card__title">${escapeHtml(tour.title)}</h3>
+                    <div class="tour-list-card__info">
+                        <span class="tour-list-card__info-item">
+                            <span class="tour-list-card__info-label">Дней</span>
+                            <span class="tour-list-card__info-value">${escapeHtml(tour.duration_days || '-')}</span>
+                        </span>
+                        <span class="tour-list-card__info-item">
+                            <span class="tour-list-card__info-label">Группа</span>
+                            <span class="tour-list-card__info-value">до ${escapeHtml(tour.max_group_size || totalSpots)} чел</span>
+                        </span>
+                        <span class="tour-list-card__info-item">
+                            <span class="tour-list-card__info-label">Формат</span>
+                            <span class="tour-list-card__info-value">${escapeHtml(difficultyLabel(tour.difficulty_level))}</span>
+                        </span>
+                    </div>
+                    <p class="tour-list-card__description">${escapeHtml(shortDescription(tour))}</p>
+                    <div class="tour-list-card__footer">
+                        <div>
+                            <span class="tour-list-card__price-label">стоимость от</span>
+                            <span class="tour-list-card__price">${escapeHtml(formatPrice(tour))}</span>
+                        </div>
+                        <button class="tour-list-card__cta" type="button">Подробнее</button>
+                    </div>
+                </div>
+            </article>
+        `;
+    }).join('');
+}
+
+function renderFilters() {
+    const destinations = [...new Set(allTours.map(tour => tour.destination).filter(Boolean))];
+    const filters = document.getElementById('tourFilters');
+    filters.innerHTML = `
+        <button class="tour-filter active" data-filter="all">Все туры</button>
+        ${destinations.map((destination, index) => `<button class="tour-filter" data-index="${index}">${escapeHtml(destination)}</button>`).join('')}
+    `;
+
+    filters.querySelectorAll('.tour-filter').forEach((button) => {
+        button.addEventListener('click', () => {
+            filters.querySelectorAll('.tour-filter').forEach(item => item.classList.remove('active'));
+            button.classList.add('active');
+            currentDestination = button.dataset.filter === 'all' ? 'all' : destinations[Number(button.dataset.index)];
+            renderTours();
+        });
+    });
+}
+
+function plural(number, forms) {
+    const n = Math.abs(number) % 100;
+    const n1 = n % 10;
+    if (n > 10 && n < 20) return forms[2];
+    if (n1 > 1 && n1 < 5) return forms[1];
+    if (n1 === 1) return forms[0];
+    return forms[2];
+}
+
+async function loadTours() {
+    try {
+        const response = await fetch(`${API_URL}/tours?is_cruise=0&status=active,upcoming`);
+        const data = await response.json();
+        allTours = data.tours || [];
+        document.getElementById('heroToursCount').textContent = allTours.length;
+        renderFilters();
+        renderTours();
+    } catch (error) {
+        console.error('Ошибка загрузки туров:', error);
+        document.getElementById('toursGrid').innerHTML = '<div class="tours-page-empty">Ошибка загрузки данных</div>';
+        document.getElementById('toursCount').textContent = 'Ошибка';
+    }
+}
+
+document.getElementById('tourSearch').addEventListener('input', (event) => {
+    currentSearch = event.target.value;
+    renderTours();
+});
+
+window.addEventListener('scroll', () => {
+    const header = document.querySelector('.header');
+    if (window.scrollY > 100) header.classList.add('scrolled');
+    else header.classList.remove('scrolled');
+});
+
+loadTours();
+</script>
+<script src="/auth-nav.js"></script>
+<script src="/chat-widget.js"></script>
+</body>
+</html>

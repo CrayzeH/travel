@@ -272,6 +272,407 @@
             .section-header h3 { font-size: 18px; }
         }
         #avatarInput { display: none; }
+
+        .profile-hero {
+            min-height: 460px;
+            height: 54vh;
+        }
+        .profile-hero__bg img {
+            transform: scale(1.04);
+            filter: saturate(1.08);
+        }
+        .profile-hero__overlay {
+            background:
+                radial-gradient(circle at 78% 24%, rgba(255,189,78,0.16), transparent 32%),
+                linear-gradient(90deg, rgba(19,28,35,0.96) 0%, rgba(19,28,35,0.7) 54%, rgba(19,28,35,0.34) 100%),
+                linear-gradient(180deg, rgba(41,52,62,0.05), #29343e 100%);
+        }
+        .profile-hero__title {
+            text-align: left;
+            max-width: 760px;
+            letter-spacing: 0;
+        }
+        .profile-hero__lead {
+            max-width: 610px;
+            margin-top: 16px;
+            color: rgba(255,255,255,0.76);
+            font-size: clamp(15px, 2vw, 19px);
+            line-height: 1.7;
+        }
+        .profile-content {
+            padding: 76px 0 90px;
+            background:
+                radial-gradient(circle at 6% 24%, rgba(255,189,78,0.08), transparent 28%),
+                linear-gradient(180deg, #29343e 0%, #202b34 100%);
+        }
+        .profile-grid {
+            display: grid;
+            grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+            gap: 26px;
+            align-items: start;
+        }
+        .profile-sidebar {
+            min-width: 0;
+            position: sticky;
+            top: 110px;
+        }
+        .profile-avatar-card,
+        .profile-section,
+        .profile-side-panel {
+            border-radius: 8px;
+            background:
+                linear-gradient(145deg, rgba(255,255,255,0.065), rgba(255,255,255,0.025)),
+                #1d2831;
+            border: 1px solid rgba(255,189,78,0.18);
+            box-shadow: 0 22px 54px rgba(0,0,0,0.22);
+        }
+        .profile-avatar-card {
+            position: relative;
+            overflow: hidden;
+            padding: 34px 28px 28px;
+            text-align: left;
+        }
+        .profile-avatar-card::before {
+            content: '';
+            position: absolute;
+            inset: 0 0 auto;
+            height: 118px;
+            background:
+                linear-gradient(135deg, rgba(255,189,78,0.2), transparent 62%),
+                url('img/Group%20186.png') center/cover;
+            opacity: 0.56;
+        }
+        .profile-avatar {
+            width: 132px;
+            height: 132px;
+            margin: 38px 0 22px;
+            z-index: 1;
+        }
+        .profile-avatar img {
+            border-radius: 50%;
+            border: 2px solid rgba(255,189,78,0.82);
+        }
+        .profile-avatar-overlay {
+            right: -8px;
+            bottom: -8px;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            color: #111820;
+            font-weight: 800;
+            box-shadow: 0 12px 26px rgba(0,0,0,0.28);
+        }
+        .profile-name {
+            position: relative;
+            color: #fff;
+            font-size: 30px;
+            line-height: 1.05;
+        }
+        .profile-joined {
+            color: rgba(255,255,255,0.58);
+            margin-bottom: 18px;
+        }
+        .profile-status {
+            border-radius: 4px;
+            border: 1px solid rgba(255,189,78,0.28);
+            background: rgba(255,189,78,0.1);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            border: 0;
+            padding-top: 24px;
+        }
+        .stat-item {
+            border: 1px solid rgba(255,255,255,0.09);
+            background: rgba(255,255,255,0.045);
+            padding: 14px 8px;
+            border-radius: 6px;
+        }
+        .stat-number {
+            color: #ffbd4e;
+            font-size: 28px;
+        }
+        .stat-label {
+            color: rgba(255,255,255,0.62);
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+        }
+        .profile-side-panel {
+            padding: 20px;
+            margin-bottom: 18px;
+        }
+        .profile-side-panel h3 {
+            margin: 0 0 10px;
+            color: #fff;
+            font-size: 18px;
+        }
+        .profile-side-panel p {
+            margin: 0;
+            color: rgba(255,255,255,0.68);
+            line-height: 1.55;
+            font-size: 14px;
+        }
+        .profile-side-link {
+            display: inline-flex;
+            margin-top: 14px;
+            color: #ffbd4e;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+            font-size: 14px;
+        }
+        .logout-btn {
+            border-radius: 6px;
+            margin-top: 0;
+        }
+        .profile-main {
+            min-width: 0;
+        }
+        .profile-section {
+            padding: 30px;
+            margin-bottom: 22px;
+        }
+        .profile-section:hover {
+            transform: translateY(-3px);
+            border-color: rgba(255,189,78,0.38);
+        }
+        .section-header {
+            gap: 16px;
+            margin-bottom: 24px;
+            border-bottom-color: rgba(255,255,255,0.09);
+        }
+        .section-header h3 {
+            color: #fff;
+            font-size: 24px;
+        }
+        .section-header h3::first-letter {
+            color: #ffbd4e;
+        }
+        .edit-btn {
+            border: 1px solid rgba(255,189,78,0.32);
+            border-radius: 4px;
+            padding: 10px 14px;
+            color: #ffbd4e;
+            background: rgba(255,189,78,0.08);
+        }
+        .edit-btn:hover {
+            background: #ffbd4e;
+            color: #111820;
+        }
+        .profile-info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+        .info-row {
+            display: block;
+            margin: 0;
+            padding: 16px;
+            border: 1px solid rgba(255,255,255,0.09);
+            background: rgba(255,255,255,0.038);
+            border-radius: 6px;
+        }
+        .info-label {
+            width: auto;
+            margin-bottom: 8px;
+            color: rgba(255,255,255,0.48);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 11px;
+        }
+        .info-value {
+            color: #fff;
+            font-size: 16px;
+            overflow-wrap: anywhere;
+        }
+        .notification-settings {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+        }
+        .notification-settings .info-row {
+            min-height: 116px;
+        }
+        .notification-settings .info-value {
+            display: inline-flex;
+            margin-top: 4px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(255,189,78,0.1);
+            color: #ffbd4e;
+            font-size: 13px;
+        }
+        .tour-item {
+            align-items: stretch;
+            gap: 18px;
+            padding: 18px;
+            margin-bottom: 14px;
+            border: 1px solid rgba(255,255,255,0.09);
+            border-radius: 8px;
+            background: rgba(255,255,255,0.04);
+        }
+        .tour-item:last-child {
+            margin-bottom: 0;
+            border-bottom: 1px solid rgba(255,255,255,0.09);
+        }
+        .tour-item-image {
+            width: 132px;
+            height: 96px;
+            border-radius: 6px;
+        }
+        .tour-item-title {
+            font-size: 19px;
+            line-height: 1.25;
+        }
+        .tour-item-date {
+            color: rgba(255,255,255,0.58);
+        }
+        .tour-item-status {
+            border-radius: 4px;
+            padding: 5px 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .tour-item-price {
+            min-width: 130px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-left: 16px;
+            border-left: 1px solid rgba(255,255,255,0.09);
+        }
+        .tour-price-value {
+            font-size: 21px;
+        }
+        .empty-state {
+            padding: 30px;
+            border: 1px dashed rgba(255,189,78,0.28);
+            border-radius: 8px;
+            background: rgba(255,189,78,0.055);
+            color: rgba(255,255,255,0.74);
+            line-height: 1.6;
+        }
+        .edit-form {
+            border-top: 1px solid rgba(255,255,255,0.08);
+            padding-top: 22px;
+        }
+        .edit-form.active {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+        .edit-form .form-group {
+            margin: 0;
+        }
+        .edit-form .form-actions {
+            grid-column: 1 / -1;
+        }
+        .form-group label {
+            color: rgba(255,255,255,0.66);
+        }
+        .form-group input,
+        .form-group select {
+            border-radius: 4px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.14);
+        }
+        .form-group input[type="checkbox"] {
+            width: auto;
+            margin-right: 8px;
+            accent-color: #ffbd4e;
+        }
+        .btn-save,
+        .btn-cancel,
+        .cancel-booking-btn {
+            border-radius: 4px;
+        }
+        .loading-profile {
+            width: 100%;
+            padding: 54px;
+            text-align: center;
+            border: 1px solid rgba(255,189,78,0.18);
+            background: rgba(255,255,255,0.04);
+            border-radius: 8px;
+            color: rgba(255,255,255,0.76);
+        }
+        @media (max-width: 1024px) {
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+            .profile-sidebar {
+                position: static;
+            }
+            .profile-avatar-card {
+                display: grid;
+                grid-template-columns: 150px minmax(0, 1fr);
+                column-gap: 24px;
+                align-items: end;
+            }
+            .profile-avatar {
+                grid-row: span 4;
+                margin-bottom: 0;
+            }
+            .profile-stats {
+                grid-column: 1 / -1;
+            }
+        }
+        @media (max-width: 768px) {
+            .profile-hero {
+                margin-top: 90px;
+                min-height: 410px;
+                height: auto;
+                padding: 82px 0 64px;
+            }
+            .profile-content {
+                padding: 52px 0 64px;
+            }
+            .profile-avatar-card {
+                display: block;
+                padding: 28px 22px;
+            }
+            .profile-avatar {
+                margin: 42px 0 20px;
+            }
+            .profile-section {
+                padding: 22px;
+            }
+            .profile-info-grid,
+            .notification-settings,
+            .edit-form.active {
+                grid-template-columns: 1fr;
+            }
+            .section-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+            .edit-btn,
+            .form-actions,
+            .btn-save,
+            .btn-cancel {
+                width: 100%;
+            }
+            .form-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .tour-item {
+                padding: 14px;
+            }
+            .tour-item-image {
+                width: 100%;
+                height: 180px;
+            }
+            .tour-item-price {
+                min-width: 0;
+                padding-left: 0;
+                padding-top: 14px;
+                border-left: 0;
+                border-top: 1px solid rgba(255,255,255,0.09);
+            }
+        }
     </style>
 </head>
 <body>
@@ -283,6 +684,8 @@
         </a>
         <nav class="navbar">
             <a href="index.html" class="nav-link">ГЛАВНАЯ</a>
+            <a href="tours.html" class="nav-link">ТУРЫ</a>
+
             <a href="cruises.html" class="nav-link">КРУИЗЫ</a>
             <a href="ideas.html" class="nav-link">ИДЕИ</a>
             <a href="calendar.html" class="nav-link">КАЛЕНДАРЬ</a>
@@ -302,13 +705,14 @@
                 <h1 class="profile-hero__title">
                     ЛИЧНЫЙ <span class="accent">КАБИНЕТ</span>
                 </h1>
+                <p class="profile-hero__lead">Управляйте данными, бронированиями и уведомлениями в одном спокойном рабочем пространстве.</p>
             </div>
         </section>
 
         <section class="profile-content">
             <div class="container">
                 <div class="profile-grid" id="profileContent">
-                    <div style="text-align: center; padding: 50px; width: 100%;">Загрузка данных...</div>
+                    <div class="loading-profile">Загрузка данных профиля...</div>
                 </div>
             </div>
         </section>
@@ -382,7 +786,7 @@
     function checkAuthAndLoad() {
         const token = getToken();
         if (!token) {
-            window.location.href = 'index.html';
+            window.location.href = 'login.html';
             return;
         }
         loadProfile();
@@ -413,11 +817,15 @@
                 renderProfile();
                 loadBookings();
             } else {
-                window.location.href = 'index.html';
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = 'login.html';
             }
         } catch (error) {
             console.error('Ошибка загрузки профиля:', error);
-            window.location.href = 'index.html';
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
         }
     }
 
@@ -562,6 +970,7 @@
     function renderProfile() {
         const container = document.getElementById('profileContent');
         if (!currentUser) return;
+        const firstName = currentUser.full_name.split(' ')[0] || currentUser.full_name;
 
         container.innerHTML = `
             <div class="profile-sidebar">
@@ -570,7 +979,7 @@
                         <img src="${currentUser.avatar_url || 'img/avatar-placeholder.png'}" alt="Avatar" id="avatarImg">
                         <div class="profile-avatar-overlay">✎</div>
                     </div>
-                    <h2 class="profile-name">${currentUser.full_name.split(' ')[0]}</h2>
+                    <h2 class="profile-name">${firstName}</h2>
                     <p class="profile-joined">На сайте с ${new Date(currentUser.registration_date).toLocaleDateString('ru-RU')}</p>
                     <span class="profile-status">Активный путешественник</span>
                     <div class="profile-stats">
@@ -588,6 +997,23 @@
                         </div>
                     </div>
                 </div>
+                <div class="profile-side-panel">
+                    <h3>Быстрый подбор</h3>
+                    <p>Можно сразу перейти к турам и подобрать ближайший маршрут под ваши даты.</p>
+                    <a class="profile-side-link" href="calendar.html">Открыть календарь</a>
+                </div>
+                <div class="profile-side-panel">
+                    <h3>Нужна помощь?</h3>
+                    <p>Напишите менеджеру, если надо уточнить бронь, оплату или условия поездки.</p>
+                    <a class="profile-side-link" href="contacts.html">Связаться</a>
+                </div>
+                ${currentUser.is_admin ? `
+                <div class="profile-side-panel">
+                    <h3>Администрирование</h3>
+                    <p>Заявки, бронирования, туры, круизы и пользователи.</p>
+                    <a class="profile-side-link" href="admin.html">Открыть админку</a>
+                </div>
+                ` : ''}
                 <div class="logout-btn" id="logoutBtn">Выйти из аккаунта</div>
             </div>
 
@@ -597,7 +1023,7 @@
                         <h3>Личная информация</h3>
                         <button class="edit-btn" id="editPersonalBtn">Редактировать</button>
                     </div>
-                    <div id="personalView" class="view-mode">
+                    <div id="personalView" class="view-mode profile-info-grid">
                         <div class="info-row"><div class="info-label">Полное имя</div><div class="info-value" id="displayFullName">${currentUser.full_name}</div></div>
                         <div class="info-row"><div class="info-label">Email</div><div class="info-value" id="displayEmail">${currentUser.email}</div></div>
                         <div class="info-row"><div class="info-label">Телефон</div><div class="info-value" id="displayPhone">${currentUser.phone || 'Не указан'}</div></div>
@@ -629,7 +1055,7 @@
                         <h3>Настройки уведомлений</h3>
                         <button class="edit-btn" id="editNotificationsBtn">Редактировать</button>
                     </div>
-                    <div id="notificationsView" class="view-mode">
+                    <div id="notificationsView" class="view-mode notification-settings">
                         <div class="info-row"><div class="info-label">Email рассылка</div><div class="info-value" id="displayEmailNotify">${currentUser.email_notifications ? 'Включена' : 'Отключена'}</div></div>
                         <div class="info-row"><div class="info-label">SMS уведомления</div><div class="info-value" id="displaySmsNotify">${currentUser.sms_notifications ? 'Включена' : 'Отключена'}</div></div>
                         <div class="info-row"><div class="info-label">Акции и скидки</div><div class="info-value" id="displayPromoNotify">${currentUser.promo_notifications ? 'Включена' : 'Отключена'}</div></div>
@@ -802,6 +1228,7 @@
 
     checkAuthAndLoad();
 </script>
+<script src="/auth-nav.js"></script>
 <script src="/chat-widget.js"></script>
 </body>
 </html>

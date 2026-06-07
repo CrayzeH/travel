@@ -9,8 +9,8 @@
     <style>
         .cruises-hero {
             position: relative;
-            min-height: 400px;
-            height: 50vh;
+            min-height: 430px;
+            height: 54vh;
             margin-top: 120px;
             overflow: hidden;
             display: flex;
@@ -28,6 +28,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transform: scale(1.03);
         }
         .cruises-hero__overlay {
             position: absolute;
@@ -35,7 +36,10 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, rgba(41,52,62,0.85) 0%, rgba(0,0,0,0.7) 100%);
+            background:
+                radial-gradient(circle at 78% 25%, rgba(255, 189, 78, 0.18), transparent 28%),
+                linear-gradient(90deg, rgba(23, 31, 38, 0.9) 0%, rgba(23, 31, 38, 0.55) 48%, rgba(23, 31, 38, 0.2) 100%),
+                linear-gradient(180deg, rgba(23, 31, 38, 0.2), #29343e 100%);
             z-index: 1;
         }
         .cruises-hero .container {
@@ -46,104 +50,330 @@
         .cruises-hero__title {
             font-size: clamp(36px, 6vw, 72px);
             font-weight: 700;
-            text-align: right;
+            text-align: left;
             line-height: 1.2;
+            max-width: 680px;
         }
         .cruises-hero__title .accent { color: #ffbd4e; }
+        .cruises-hero__lead {
+            max-width: 560px;
+            margin-top: 18px;
+            color: rgba(255, 255, 255, 0.78);
+            font-size: clamp(15px, 2vw, 19px);
+            line-height: 1.65;
+        }
+        .cruises-hero__stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 28px;
+        }
+        .cruises-hero__stat {
+            border: 1px solid rgba(255, 189, 78, 0.35);
+            background: rgba(16, 24, 30, 0.48);
+            backdrop-filter: blur(8px);
+            padding: 10px 14px;
+            color: rgba(255, 255, 255, 0.86);
+            font-size: 13px;
+            letter-spacing: 0;
+        }
+        .cruises-hero__stat strong {
+            display: block;
+            color: #ffbd4e;
+            font-size: 18px;
+            line-height: 1.1;
+            margin-bottom: 3px;
+        }
         .cruises-list {
-            padding: 60px 0;
+            padding: 66px 0 82px;
             background: #29343e;
         }
         .cruises-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fill, minmax(310px, 392px));
+            gap: 24px;
+            align-items: stretch;
+            justify-content: start;
         }
         .cruise-card {
-            background: rgba(255,255,255,0.05);
-            border-radius: 20px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            min-height: 520px;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.025)),
+                #1d2831;
+            border-radius: 8px;
             overflow: hidden;
-            transition: all 0.3s ease;
+            transition: transform 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease;
             cursor: pointer;
-            border: 1px solid rgba(255,189,78,0.1);
+            border: 1px solid rgba(255,189,78,0.18);
+            box-shadow: 0 16px 34px rgba(0,0,0,0.18);
+        }
+        .cruise-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            z-index: 3;
         }
         .cruise-card:hover {
-            transform: translateY(-10px);
-            border-color: rgba(255,189,78,0.3);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transform: translateY(-6px);
+            border-color: rgba(255,189,78,0.55);
+            box-shadow: 0 24px 44px rgba(0,0,0,0.34);
         }
         .cruise-card__image {
-            height: 220px;
+            position: relative;
+            height: 246px;
             overflow: hidden;
+            background:
+                linear-gradient(135deg, rgba(255,189,78,0.16), rgba(31,42,51,0.88)),
+                #1b252d;
+        }
+        .cruise-card__image::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(180deg, rgba(13, 20, 25, 0.03) 0%, rgba(13, 20, 25, 0.78) 100%),
+                linear-gradient(90deg, rgba(13, 20, 25, 0.34), transparent 55%);
+            z-index: 1;
         }
         .cruise-card__image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.3s;
+            transition: transform 0.5s ease;
         }
         .cruise-card:hover .cruise-card__image img {
-            transform: scale(1.05);
+            transform: scale(1.07);
+        }
+        .cruise-card__topline,
+        .cruise-card__route {
+            position: absolute;
+            left: 18px;
+            right: 18px;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .cruise-card__topline { top: 16px; }
+        .cruise-card__route { bottom: 16px; align-items: flex-end; }
+        .cruise-card__badge,
+        .cruise-card__rating {
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            background: rgba(12, 18, 22, 0.58);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            padding: 7px 10px;
+            font-size: 11px;
+            line-height: 1;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+        .cruise-card__badge {
+            color: #ffbd4e;
+            border-color: rgba(255, 189, 78, 0.5);
+        }
+        .cruise-card__rating { color: #ffbd4e; }
+        .cruise-card__place {
+            max-width: 72%;
+            color: #fff;
+            font-size: 13px;
+            line-height: 1.35;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .cruise-card__spots {
+            flex: 0 0 auto;
+            color: #fff;
+            font-size: 12px;
+            line-height: 1.2;
+            text-align: right;
+        }
+        .cruise-card__spots strong {
+            display: block;
+            color: #ffbd4e;
+            font-size: 22px;
+            line-height: 1;
         }
         .cruise-card__content {
-            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            padding: 22px;
         }
         .cruise-card__title {
-            font-size: 22px;
+            font-size: 21px;
             font-weight: 700;
-            color: #ffbd4e;
-            margin-bottom: 10px;
+            color: #fff;
+            margin-bottom: 12px;
+            line-height: 1.22;
+            letter-spacing: 0;
         }
         .cruise-card__info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            font-size: 14px;
-            color: rgba(255,255,255,0.6);
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+        .cruise-card__info-item {
+            min-width: 0;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.035);
+            padding: 10px;
+        }
+        .cruise-card__info-label {
+            display: block;
+            margin-bottom: 4px;
+            color: rgba(255,255,255,0.46);
+            font-size: 11px;
+            line-height: 1.15;
+        }
+        .cruise-card__info-value {
+            display: block;
+            color: rgba(255,255,255,0.88);
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.2;
+            word-break: break-word;
         }
         .cruise-card__description {
-            color: rgba(255,255,255,0.7);
+            color: rgba(255,255,255,0.68);
             font-size: 14px;
-            line-height: 1.5;
+            line-height: 1.6;
             margin-bottom: 20px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .cruise-card__footer {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 16px;
+            margin-top: auto;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .cruise-card__price-wrap {
+            min-width: 0;
+        }
+        .cruise-card__price-label {
+            display: block;
+            margin-bottom: 3px;
+            color: rgba(255,255,255,0.46);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
         }
         .cruise-card__price {
-            font-size: 24px;
+            display: block;
+            font-size: 25px;
             font-weight: 700;
             color: #ffbd4e;
+            line-height: 1.1;
         }
         .cruise-card__old-price {
-            font-size: 16px;
+            display: block;
+            margin-top: 4px;
+            font-size: 14px;
             color: rgba(255,255,255,0.4);
             text-decoration: line-through;
-            margin-left: 10px;
+        }
+        .cruise-card__cta {
+            flex: 0 0 auto;
+            min-width: 116px;
+            border: 1px solid rgba(255, 189, 78, 0.75);
+            background: #ffbd4e;
+            color: #111820;
+            padding: 12px 14px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            transition: background 0.25s ease, color 0.25s ease;
+        }
+        .cruise-card:hover .cruise-card__cta {
+            background: transparent;
+            color: #ffbd4e;
         }
         .filter-section {
-            padding: 30px 0;
-            background: #1e272f;
+            padding: 24px 0;
+            background: #1f2a33;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
         }
         .filter-buttons {
             display: flex;
-            justify-content: center;
+            justify-content: flex-start;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 10px;
         }
         .filter-chip {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            padding: 10px 24px;
-            border-radius: 50px;
+            background: rgba(255,255,255,0.055);
+            border: 1px solid rgba(255,255,255,0.16);
+            padding: 10px 18px;
+            border-radius: 4px;
             color: #fff;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
         }
+        .filter-chip:hover { border-color: rgba(255,189,78,0.55); }
         .filter-chip.active {
             background: #ffbd4e;
-            color: #000;
+            color: #111820;
             border-color: #ffbd4e;
         }
+        .cruises-empty {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 56px 22px;
+            border: 1px solid rgba(255,189,78,0.2);
+            background: rgba(255,255,255,0.035);
+            color: rgba(255,255,255,0.72);
+        }
+        .cruises-loading {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 56px 22px;
+            color: rgba(255,255,255,0.72);
+        }
         @media (max-width: 768px) {
-            .cruises-grid { grid-template-columns: 1fr; }
+            .cruises-hero {
+                min-height: 420px;
+                height: auto;
+                margin-top: 90px;
+                padding: 80px 0 64px;
+            }
+            .cruises-hero__lead { font-size: 15px; }
+            .cruises-hero__stats { gap: 8px; }
+            .cruises-hero__stat { flex: 1 1 140px; }
+            .cruises-grid { grid-template-columns: 1fr; gap: 18px; }
+            .cruise-card { min-height: auto; }
+            .cruise-card__image { height: 230px; }
+            .cruise-card__info { grid-template-columns: 1fr; }
+            .cruise-card__footer { align-items: stretch; flex-direction: column; }
+            .cruise-card__cta { width: 100%; }
+            .filter-buttons { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; }
+            .filter-chip { flex: 0 0 auto; }
+        }
+        @media (max-width: 420px) {
+            .cruises-hero__stats { flex-direction: column; }
+            .cruises-hero__stat { flex: 1 1 auto; }
+            .cruise-card__route { align-items: flex-start; flex-direction: column; }
+            .cruise-card__place { max-width: 100%; }
+            .cruise-card__spots { text-align: left; }
         }
     </style>
 </head>
@@ -156,6 +386,8 @@
         </a>
         <nav class="navbar">
             <a href="index.html" class="nav-link">ГЛАВНАЯ</a>
+            <a href="tours.html" class="nav-link">ТУРЫ</a>
+
             <a href="cruises.html" class="nav-link">КРУИЗЫ</a>
             <a href="ideas.html" class="nav-link">ИДЕИ</a>
             <a href="calendar.html" class="nav-link">КАЛЕНДАРЬ</a>
@@ -175,6 +407,12 @@
                 <h1 class="cruises-hero__title">
                     НАШИ <span class="accent">КРУИЗЫ</span>
                 </h1>
+                <p class="cruises-hero__lead">Маршруты по диким берегам, вулканическим бухтам и большим открытым видам. Выбирайте формат, даты и уровень нагрузки.</p>
+                <div class="cruises-hero__stats" aria-label="Преимущества круизов">
+                    <div class="cruises-hero__stat"><strong>8-14</strong>дней в пути</div>
+                    <div class="cruises-hero__stat"><strong>до 15</strong>человек в группе</div>
+                    <div class="cruises-hero__stat"><strong>24/7</strong>сопровождение</div>
+                </div>
             </div>
         </section>
 
@@ -189,7 +427,7 @@
         <section class="cruises-list">
             <div class="container">
                 <div class="cruises-grid" id="cruisesGrid">
-                    <div style="text-align: center; padding: 50px; width: 100%;">Загрузка круизов...</div>
+                    <div class="cruises-loading">Загрузка круизов...</div>
                 </div>
             </div>
         </section>
@@ -280,46 +518,122 @@
             renderFilters();
         } catch (error) {
             console.error('Ошибка загрузки круизов:', error);
-            document.getElementById('cruisesGrid').innerHTML = '<div style="text-align: center; padding: 50px;">Ошибка загрузки данных</div>';
+            document.getElementById('cruisesGrid').innerHTML = '<div class="cruises-empty">Ошибка загрузки данных</div>';
         }
+    }
+
+    function escapeHtml(value) {
+        return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        })[char]);
+    }
+
+    function formatPrice(cruise) {
+        const value = cruise.price_rub || cruise.price_usd || 0;
+        const currency = cruise.price_rub ? '₽' : '$';
+        return `${Number(value).toLocaleString('ru-RU')} ${currency}`;
+    }
+
+    function formatOldPrice(cruise) {
+        const value = cruise.old_price_rub || cruise.old_price_usd;
+        if (!value) return '';
+        return `${Number(value).toLocaleString('ru-RU')} ${cruise.old_price_rub ? '₽' : '$'}`;
+    }
+
+    function formatDateRange(cruise) {
+        if (!cruise.start_date) return 'Даты уточняются';
+        const start = new Date(cruise.start_date);
+        const end = cruise.end_date ? new Date(cruise.end_date) : null;
+        const formatter = new Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: 'short' });
+        if (!end || Number.isNaN(end.getTime())) return formatter.format(start);
+        return `${formatter.format(start)} - ${formatter.format(end)}`;
+    }
+
+    function getDifficultyLabel(level) {
+        const labels = {
+            easy: 'Легкий',
+            moderate: 'Средний',
+            challenging: 'Сложный',
+            extreme: 'Экстрим'
+        };
+        return labels[level] || 'Комфорт';
+    }
+
+    function getCruiseDescription(cruise) {
+        const text = cruise.short_description || cruise.full_description || 'Продуманный маршрут с красивыми остановками, сопровождением команды и насыщенной программой.';
+        return text.length > 155 ? `${text.slice(0, 155).trim()}...` : text;
     }
 
     function renderCruises(cruises) {
         const container = document.getElementById('cruisesGrid');
         if (cruises.length === 0) {
-            container.innerHTML = '<div style="text-align: center; padding: 50px;">Круизы не найдены</div>';
+            container.innerHTML = '<div class="cruises-empty">Круизы не найдены</div>';
             return;
         }
 
-        container.innerHTML = cruises.map(cruise => `
-            <div class="cruise-card" onclick="location.href='cruise.html?slug=${cruise.slug}'">
+        container.innerHTML = cruises.map((cruise) => {
+            const availableSpots = Math.max(0, (cruise.available_spots ?? cruise.total_spots ?? cruise.max_group_size ?? 0));
+            const totalSpots = cruise.total_spots || cruise.max_group_size || availableSpots || 1;
+            const rating = Number(cruise.avg_rating || cruise.rating || 0);
+            const ratingText = rating > 0 ? rating.toFixed(1) : 'NEW';
+            const oldPrice = formatOldPrice(cruise);
+            const destination = [cruise.destination, cruise.region || cruise.country].filter(Boolean).join(' / ');
+
+            return `
+            <article class="cruise-card" onclick="location.href='cruise.html?slug=${encodeURIComponent(cruise.slug)}'">
                 <div class="cruise-card__image">
-                    <img src="${cruise.main_image_url || 'img/Group%20193%201.png'}" alt="${cruise.title}">
+                    <img src="${escapeHtml(cruise.main_image_url || 'img/Group%20193%201.png')}" alt="${escapeHtml(cruise.title)}" loading="lazy" onerror="this.onerror=null;this.src='img/Group%20193%201.png';">
+                    <div class="cruise-card__topline">
+                        <span class="cruise-card__badge">${escapeHtml(getDifficultyLabel(cruise.difficulty_level))}</span>
+                        <span class="cruise-card__rating">${escapeHtml(ratingText)}</span>
+                    </div>
+                    <div class="cruise-card__route">
+                        <span class="cruise-card__place">${escapeHtml(destination || cruise.title)}</span>
+                        <span class="cruise-card__spots"><strong>${availableSpots}</strong>мест из ${totalSpots}</span>
+                    </div>
                 </div>
                 <div class="cruise-card__content">
-                    <h3 class="cruise-card__title">${cruise.title}</h3>
+                    <h3 class="cruise-card__title">${escapeHtml(cruise.title)}</h3>
                     <div class="cruise-card__info">
-                        <span>📅 ${cruise.duration_days} дней</span>
-                        <span>👥 до ${cruise.max_group_size} чел</span>
-                        <span>📍 ${cruise.destination}</span>
+                        <span class="cruise-card__info-item">
+                            <span class="cruise-card__info-label">Даты</span>
+                            <span class="cruise-card__info-value">${escapeHtml(formatDateRange(cruise))}</span>
+                        </span>
+                        <span class="cruise-card__info-item">
+                            <span class="cruise-card__info-label">Длительность</span>
+                            <span class="cruise-card__info-value">${escapeHtml(cruise.duration_days || '-')} дней</span>
+                        </span>
+                        <span class="cruise-card__info-item">
+                            <span class="cruise-card__info-label">Группа</span>
+                            <span class="cruise-card__info-value">до ${escapeHtml(cruise.max_group_size || totalSpots)} чел</span>
+                        </span>
                     </div>
-                    <p class="cruise-card__description">${cruise.short_description || cruise.full_description?.substring(0, 100) || ''}...</p>
-                    <div>
-                        <span class="cruise-card__price">${cruise.price_rub?.toLocaleString() || cruise.price_usd?.toLocaleString()} ${cruise.price_rub ? '₽' : '$'}</span>
-                        ${cruise.old_price_rub ? `<span class="cruise-card__old-price">${cruise.old_price_rub.toLocaleString()} ₽</span>` : ''}
+                    <p class="cruise-card__description">${escapeHtml(getCruiseDescription(cruise))}</p>
+                    <div class="cruise-card__footer">
+                        <div class="cruise-card__price-wrap">
+                            <span class="cruise-card__price-label">стоимость от</span>
+                            <span class="cruise-card__price">${escapeHtml(formatPrice(cruise))}</span>
+                            ${oldPrice ? `<span class="cruise-card__old-price">${escapeHtml(oldPrice)}</span>` : ''}
+                        </div>
+                        <button class="cruise-card__cta" type="button">Смотреть</button>
                     </div>
                 </div>
-            </div>
-        `).join('');
+            </article>
+        `;
+        }).join('');
     }
 
     function renderFilters() {
-        const destinations = [...new Set(allCruises.map(c => c.destination))];
+        const destinations = [...new Set(allCruises.map(c => c.destination).filter(Boolean))];
         const filterContainer = document.getElementById('filterButtons');
 
         const filterButtons = `
             <button class="filter-chip active" data-filter="all">Все круизы</button>
-            ${destinations.map(dest => `<button class="filter-chip" data-filter="${dest}">${dest}</button>`).join('')}
+            ${destinations.map((dest, index) => `<button class="filter-chip" data-filter-index="${index}">${escapeHtml(dest)}</button>`).join('')}
         `;
 
         filterContainer.innerHTML = filterButtons;
@@ -333,7 +647,8 @@
                 if (filter === 'all') {
                     renderCruises(allCruises);
                 } else {
-                    const filtered = allCruises.filter(c => c.destination === filter);
+                    const destination = destinations[Number(btn.dataset.filterIndex)];
+                    const filtered = allCruises.filter(c => c.destination === destination);
                     renderCruises(filtered);
                 }
             });
@@ -373,6 +688,7 @@
 
     loadCruises();
 </script>
+<script src="/auth-nav.js"></script>
 <script src="/chat-widget.js"></script>
 </body>
 </html>

@@ -37,6 +37,48 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage, limits: { fileSize: 5 * 1024 * 1024 } });
 
+const imageExtensionsByMime = {
+    'image/jpeg': '.jpg',
+    'image/png': '.png',
+    'image/webp': '.webp',
+    'image/gif': '.gif'
+};
+
+function safeImageBaseName(value) {
+    return String(value || 'image')
+        .toLowerCase()
+        .replace(/\.[^.]+$/, '')
+        .replace(/[^a-z0-9а-яё]+/gi, '-')
+        .replace(/^-+|-+$/g, '')
+        .slice(0, 60) || 'image';
+}
+
+const adminImageStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const imageDir = path.join(__dirname, 'img');
+        if (!fs.existsSync(imageDir)) {
+            fs.mkdirSync(imageDir, { recursive: true });
+        }
+        cb(null, imageDir);
+    },
+    filename: (req, file, cb) => {
+        const extension = imageExtensionsByMime[file.mimetype] || path.extname(file.originalname).toLowerCase();
+        const baseName = safeImageBaseName(req.body.slug || req.body.title || file.originalname);
+        cb(null, `${baseName}-${Date.now()}${extension}`);
+    }
+});
+
+const adminImageUpload = multer({
+    storage: adminImageStorage,
+    limits: { fileSize: 8 * 1024 * 1024 },
+    fileFilter: (req, file, cb) => {
+        if (!imageExtensionsByMime[file.mimetype]) {
+            return cb(new Error('Можно загружать только JPG, PNG, WEBP или GIF'));
+        }
+        cb(null, true);
+    }
+});
+
 // Подключение к базе данных
 const db = new sqlite3.Database(path.join(__dirname, 'tours.db'), (err) => {
     if (err) {
@@ -76,6 +118,450 @@ function dbAll(sql, params = []) {
             else resolve(rows);
         });
     });
+}
+
+function normalizeEmail(email) {
+    return String(email || '').trim().toLowerCase();
+}
+
+function normalizePhone(phone) {
+    const value = String(phone || '').trim();
+    return value ? value.replace(/[^\d]/g, '') : '';
+}
+
+function cleanOptionalText(value) {
+    const text = String(value || '').trim();
+    return text || null;
+}
+
+function numberOrNull(value) {
+    if (value === undefined || value === null || value === '') return null;
+    const number = Number(value);
+    return Number.isFinite(number) ? number : null;
+}
+
+function numberOrZero(value) {
+    if (value === undefined || value === null || value === '') return 0;
+    const number = Number(value);
+    return Number.isFinite(number) ? number : 0;
+}
+
+const travelIdeaCategories = [
+    { slug: 'russia', name: 'Россия', order_index: 1 },
+    { slug: 'europe', name: 'Европа', order_index: 2 },
+    { slug: 'asia', name: 'Азия', order_index: 3 },
+    { slug: 'antarctica', name: 'Антарктида', order_index: 4 },
+    { slug: 'cruises', name: 'Круизы', order_index: 5 }
+];
+
+const travelIdeasSeed = [
+    ['russia', 'Камчатка без спешки', 'Август', '23', 'Камчатка', 'Гейзеры, вулканы и тихие бухты для тех, кто хочет увидеть дикий восток России без перегруза в программе.', 'travel-idea-russia-kamchatka.jpg', 'ideas.html', 1],
+    ['russia', 'Териберка и северное сияние', 'Февраль', '11', 'Кольский', 'Короткая поездка к Баренцеву морю: океан, скалы, арктический ветер и шанс поймать северное сияние.', 'travel-idea-russia-teriberka.jpg', 'ideas.html', 2],
+    ['russia', 'Алтайские озера', 'Июль', '28', 'Алтай', 'Маршрут по горным озерам, перевалам и долинам для первой большой поездки в Алтай.', 'travel-idea-russia-altai.jpg', 'ideas.html', 3],
+    ['europe', 'Исландия по кольцу', 'Июнь', '09', 'Исландия', 'Водопады, черные пляжи, ледниковые лагуны и геотермальные долины в одном мощном маршруте.', 'travel-idea-europe-iceland.jpg', 'ideas.html', 1],
+    ['europe', 'Доломиты на рассвете', 'Сентябрь', '17', 'Италия', 'Горные тропы, озера и уютные альпийские города для путешествия с красивыми пешими днями.', 'travel-idea-europe-dolomites.jpg', 'ideas.html', 2],
+    ['europe', 'Норвежские фьорды', 'Май', '24', 'Норвегия', 'Дорога вдоль фьордов, обзорные площадки и спокойный ритм северной Европы.', 'travel-idea-europe-norway.jpg', 'ideas.html', 3],
+    ['asia', 'Непал: тропа к Аннапурне', 'Октябрь', '05', 'Непал', 'Высокие горы, чайные домики и мягкая акклиматизация для первого гималайского маршрута.', 'travel-idea-asia-nepal.jpg', 'ideas.html', 1],
+    ['asia', 'Япония вне сезона', 'Ноябрь', '14', 'Япония', 'Храмы, горные деревни, горячие источники и спокойные города без плотного туристического потока.', 'travel-idea-asia-japan.jpg', 'ideas.html', 2],
+    ['asia', 'Бали и вулканы', 'Март', '19', 'Индонезия', 'Ранние подъемы к вулканам, океан, рисовые террасы и несколько дней на восстановление.', 'travel-idea-asia-bali.jpg', 'ideas.html', 3],
+    ['antarctica', 'Первый круиз в Антарктиду', 'Декабрь', '01', 'Антарктида', 'Экспедиционный лайнер, высадки на Зодиаке и ледовые пейзажи, которые выглядят как другая планета.', 'travel-idea-antarctica-first.jpg', 'ideas.html', 1],
+    ['antarctica', 'Фототур среди айсбергов', 'Январь', '16', 'Антарктида', 'Маршрут для сильных кадров: мягкий полярный свет, колонии пингвинов и огромные ледовые формы.', 'travel-idea-antarctica-photo.jpg', 'ideas.html', 2],
+    ['antarctica', 'Южная Георгия', 'Февраль', '08', 'Южная Атлантика', 'Редкий маршрут к королевским пингвинам, китам и суровым берегам Южной Атлантики.', 'travel-idea-antarctica-georgia.jpg', 'ideas.html', 3],
+    ['cruises', 'Круиз вдоль Камчатки', 'Август', '15', 'Круизы', 'Морские стоянки, бухты, вулканы на горизонте и выходы к местам, куда сложно добраться по суше.', 'travel-idea-cruise-kamchatka.jpg', 'cruises.html', 1],
+    ['cruises', 'Арктический маршрут', 'Июль', '04', 'Круизы', 'Северные острова, ледовая кромка и экспедиционный формат для тех, кто любит редкие направления.', 'travel-idea-cruise-arctic.jpg', 'cruises.html', 2],
+    ['cruises', 'Средиземное море без суеты', 'Май', '30', 'Круизы', 'Порты, старые города, мягкий климат и комфортный темп для спокойного путешествия по морю.', 'travel-idea-cruise-mediterranean.jpg', 'cruises.html', 3]
+];
+
+const travelIdeaDetails = [
+    {
+        title: 'Камчатка без спешки',
+        slug: 'kamchatka-bez-speshki',
+        intro: 'Маршрут для первого знакомства с Камчаткой без гонки за всеми точками сразу: вулканы, горячие источники, океан и дни с запасом на погоду.',
+        full_description: 'Эта идея подходит тем, кто хочет почувствовать Камчатку спокойно и глубоко. В программе лучше сочетать один-два вулкана, морскую прогулку, термальные источники и свободный день на случай тумана или ветра. Такой темп оставляет силы на впечатления, а не только на переезды.',
+        highlights_json: JSON.stringify(['Вулканические панорамы без перегруза', 'Термальные источники после активных дней', 'Морская прогулка к бухтам и скалам', 'Запасной день на погоду']),
+        route_json: JSON.stringify(['Петропавловск-Камчатский', 'Авачинская бухта', 'Вулканический район', 'Термальные источники', 'Тихоокеанское побережье']),
+        best_time: 'Июль - сентябрь',
+        duration_hint: '7-10 дней',
+        budget_hint: 'средний и выше',
+        difficulty_hint: 'комфортный активный формат',
+        packing_list_json: JSON.stringify(['мембранная куртка', 'треккинговые ботинки', 'купальник для источников', 'гермомешок для техники'])
+    },
+    {
+        title: 'Териберка и северное сияние',
+        slug: 'teriberka-severnoe-siyanie',
+        intro: 'Короткая арктическая поездка к Баренцеву морю с океаном, скалами, ветром и шансом увидеть северное сияние.',
+        full_description: 'Териберка хорошо работает как насыщенный уикенд или часть большого маршрута по Кольскому полуострову. Главное - заложить гибкость: сияние зависит от погоды, а дорога к океану зимой может закрываться. Зато при удачных условиях поездка дает очень сильное ощущение края земли.',
+        highlights_json: JSON.stringify(['Баренцево море и каменные пляжи', 'Охота за северным сиянием', 'Арктические пейзажи без сложной логистики', 'Морепродукты и северная кухня']),
+        route_json: JSON.stringify(['Мурманск', 'Териберка', 'Побережье Баренцева моря', 'Локации для наблюдения сияния']),
+        best_time: 'Ноябрь - март',
+        duration_hint: '3-5 дней',
+        budget_hint: 'доступный короткий выезд',
+        difficulty_hint: 'легкий, но погодозависимый',
+        packing_list_json: JSON.stringify(['теплый пуховик', 'термобелье', 'перчатки', 'штатив для фото'])
+    },
+    {
+        title: 'Алтайские озера',
+        slug: 'altayskie-ozera',
+        intro: 'Горные озера, перевалы и долины Алтая для поездки, где красивые дороги становятся частью маршрута.',
+        full_description: 'Алтай лучше раскрывается в формате автомобильного путешествия с короткими пешими выходами. Идея хороша для тех, кто хочет увидеть горы, но не готов к тяжелому автономному походу. Основу маршрута можно собрать вокруг Чуйского тракта, озер, смотровых площадок и спокойных ночевок.',
+        highlights_json: JSON.stringify(['Чуйский тракт и горные перевалы', 'Бирюзовые озера и долины', 'Короткие треки без тяжелых рюкзаков', 'Фотогеничные рассветы']),
+        route_json: JSON.stringify(['Горно-Алтайск', 'Чуйский тракт', 'Гейзерное озеро', 'Курайская степь', 'Горные долины']),
+        best_time: 'Июнь - сентябрь',
+        duration_hint: '6-9 дней',
+        budget_hint: 'средний',
+        difficulty_hint: 'легкий активный',
+        packing_list_json: JSON.stringify(['ветровка', 'удобные кроссовки', 'очки от солнца', 'пауэрбанк'])
+    },
+    {
+        title: 'Исландия по кольцу',
+        slug: 'islandiya-po-koltsu',
+        intro: 'Классический круг по Исландии: водопады, черные пляжи, ледниковые лагуны и лавовые поля в одном маршруте.',
+        full_description: 'Кольцевая дорога Исландии дает цельную картинку страны, если не пытаться проехать ее слишком быстро. Лучший сценарий - 9-12 дней с остановками у южных водопадов, ледниковой лагуны, восточных фьордов и северных геотермальных зон.',
+        highlights_json: JSON.stringify(['Водопады южного побережья', 'Ледниковая лагуна', 'Черные пляжи', 'Геотермальные зоны']),
+        route_json: JSON.stringify(['Рейкьявик', 'Южное побережье', 'Йокульсарлон', 'Восточные фьорды', 'Север Исландии']),
+        best_time: 'Июнь - сентябрь',
+        duration_hint: '9-12 дней',
+        budget_hint: 'выше среднего',
+        difficulty_hint: 'комфортный road trip',
+        packing_list_json: JSON.stringify(['дождевик', 'слои одежды', 'непромокаемая обувь', 'маска для сна летом'])
+    },
+    {
+        title: 'Доломиты на рассвете',
+        slug: 'dolomity-na-rassvete',
+        intro: 'Идея для тех, кто любит горные тропы, озера, канатки и рассветы в Альпах.',
+        full_description: 'Доломиты можно собрать как мягкий hiking-маршрут: жить в нескольких базовых точках, выходить на тропы утром и возвращаться к комфортной инфраструктуре вечером. Важно бронировать жилье заранее и не перегружать дни переездами.',
+        highlights_json: JSON.stringify(['Озера Брайес и Сорапис', 'Рассветные смотровые', 'Канатки и панорамные тропы', 'Альпийские городки']),
+        route_json: JSON.stringify(['Больцано', 'Кортина-д’Ампеццо', 'Озеро Брайес', 'Тре Чиме', 'Валь-Гардена']),
+        best_time: 'Июнь - октябрь',
+        duration_hint: '5-8 дней',
+        budget_hint: 'средний и выше',
+        difficulty_hint: 'легкий или средний',
+        packing_list_json: JSON.stringify(['треккинговые палки', 'флиска', 'солнцезащитный крем', 'маленький рюкзак'])
+    },
+    {
+        title: 'Норвежские фьорды',
+        slug: 'norvezhskie-fordy',
+        intro: 'Спокойный северный маршрут вдоль фьордов, обзорных площадок и маленьких прибрежных городов.',
+        full_description: 'Норвегия хороша для путешествия, где каждый день построен вокруг дороги и вида. Можно сочетать короткие паромы, смотровые, железную дорогу и легкие треки. Это не самый дешевый формат, но он очень предсказуем по качеству впечатлений.',
+        highlights_json: JSON.stringify(['Фьорды и паромные переправы', 'Смотровые площадки', 'Северная архитектура', 'Легкие треки']),
+        route_json: JSON.stringify(['Берген', 'Флом', 'Гейрангер-фьорд', 'Олесунн', 'Атлантическая дорога']),
+        best_time: 'Май - сентябрь',
+        duration_hint: '7-10 дней',
+        budget_hint: 'выше среднего',
+        difficulty_hint: 'комфортный',
+        packing_list_json: JSON.stringify(['ветрозащита', 'удобная обувь', 'дождевик', 'термос'])
+    },
+    {
+        title: 'Непал: тропа к Аннапурне',
+        slug: 'nepal-annapurna',
+        intro: 'Первый гималайский маршрут с чайными домиками, высокими видами и постепенной акклиматизацией.',
+        full_description: 'Тропа в районе Аннапурны подходит для первого знакомства с Непалом, если грамотно выбрать высоты и темп. Это не прогулка по парку, но и не экспедиция: ночевки в лоджах, понятная тропа и сильное ощущение гор каждый день.',
+        highlights_json: JSON.stringify(['Панорамы Аннапурны', 'Чайные домики на маршруте', 'Гималайские деревни', 'Мягкая акклиматизация']),
+        route_json: JSON.stringify(['Катманду', 'Покхара', 'Горные деревни', 'Смотровая на Аннапурну', 'Возврат в Покхару']),
+        best_time: 'Март - май, октябрь - ноябрь',
+        duration_hint: '10-14 дней',
+        budget_hint: 'средний',
+        difficulty_hint: 'средний треккинг',
+        packing_list_json: JSON.stringify(['спальник', 'треккинговые ботинки', 'пуховка', 'аптечка'])
+    },
+    {
+        title: 'Япония вне сезона',
+        slug: 'yaponiya-vne-sezona',
+        intro: 'Храмы, горячие источники, горные деревни и спокойные города без максимального туристического потока.',
+        full_description: 'Вне пиков сакуры и красных кленов Япония становится мягче по темпу. Можно сочетать Токио или Осаку с маленькими городами, онсэнами, храмами и железнодорожными переездами. Это идея для аккуратного культурного маршрута.',
+        highlights_json: JSON.stringify(['Онсэны и рёканы', 'Храмы без толп', 'Железные дороги', 'Горные деревни']),
+        route_json: JSON.stringify(['Токио', 'Канадзава', 'Такаяма', 'Киото', 'Осака']),
+        best_time: 'Февраль, июнь, ноябрь',
+        duration_hint: '8-12 дней',
+        budget_hint: 'средний и выше',
+        difficulty_hint: 'легкий городской маршрут',
+        packing_list_json: JSON.stringify(['удобная обувь', 'адаптер питания', 'наличные йены', 'легкая куртка'])
+    },
+    {
+        title: 'Бали и вулканы',
+        slug: 'bali-i-vulkany',
+        intro: 'Ранние подъемы к вулканам, рисовые террасы, океан и несколько дней на восстановление.',
+        full_description: 'Бали можно сделать не только пляжным направлением. Сильная программа строится вокруг Убуда, вулканов, водопадов и океана. Главное - не ставить активные подъемы каждый день подряд и оставить время на отдых.',
+        highlights_json: JSON.stringify(['Вулканические рассветы', 'Рисовые террасы', 'Водопады', 'Океан после активных дней']),
+        route_json: JSON.stringify(['Денпасар', 'Убуд', 'Вулкан Батур', 'Северные водопады', 'Побережье']),
+        best_time: 'Апрель - октябрь',
+        duration_hint: '8-11 дней',
+        budget_hint: 'гибкий',
+        difficulty_hint: 'легкий активный',
+        packing_list_json: JSON.stringify(['легкая треккинговая обувь', 'дождевик', 'солнцезащита', 'купальник'])
+    },
+    {
+        title: 'Первый круиз в Антарктиду',
+        slug: 'pervy-kruiz-v-antarktidu',
+        intro: 'Экспедиционный лайнер, высадки на лодках и ледовые пейзажи для первого полярного путешествия.',
+        full_description: 'Антарктида требует бюджета и подготовки, но формат экспедиционного круиза делает маршрут понятным. Дни зависят от погоды и льда: команда выбирает места высадок, а путешественники получают максимум из доступных окон.',
+        highlights_json: JSON.stringify(['Пролив Дрейка', 'Высадки на Зодиаке', 'Айсберги и ледники', 'Лекции экспедиционной команды']),
+        route_json: JSON.stringify(['Ушуайя', 'Пролив Дрейка', 'Антарктический полуостров', 'Экспедиционные высадки', 'Возврат в Ушуайю']),
+        best_time: 'Ноябрь - март',
+        duration_hint: '10-13 дней',
+        budget_hint: 'премиальный',
+        difficulty_hint: 'комфортный, но погодный',
+        packing_list_json: JSON.stringify(['теплая парка', 'непромокаемые брюки', 'морская аптечка', 'бинокль'])
+    },
+    {
+        title: 'Фототур среди айсбергов',
+        slug: 'fototur-sredi-aysbergov',
+        intro: 'Полярный свет, ледовые формы и маршрут, где день строится вокруг сильных кадров.',
+        full_description: 'Фототур в полярных широтах требует терпения: свет, ветер и лед постоянно меняют планы. Зато именно здесь можно получить кадры, которые невозможно повторить в стандартном маршруте. Лучше выбирать небольшой экспедиционный формат.',
+        highlights_json: JSON.stringify(['Мягкий полярный свет', 'Айсберги крупным планом', 'Фото с лодок', 'Гибкий график под погоду']),
+        route_json: JSON.stringify(['Экспедиционное судно', 'Ледовые поля', 'Фотолокации у айсбергов', 'Наблюдение за животными']),
+        best_time: 'Декабрь - февраль',
+        duration_hint: '9-12 дней',
+        budget_hint: 'премиальный',
+        difficulty_hint: 'для увлеченных фотографией',
+        packing_list_json: JSON.stringify(['защита камеры от влаги', 'запасные батареи', 'телевик', 'теплые перчатки'])
+    },
+    {
+        title: 'Южная Георгия',
+        slug: 'yuzhnaya-georgiya',
+        intro: 'Редкое направление Южной Атлантики с огромными колониями птиц, суровыми берегами и экспедиционным духом.',
+        full_description: 'Южная Георгия часто становится главным открытием для тех, кто уже видел классическую Антарктиду. Здесь меньше привычной инфраструктуры, зато больше ощущения настоящей экспедиции и невероятных природных сцен.',
+        highlights_json: JSON.stringify(['Колонии королевских пингвинов', 'История полярных экспедиций', 'Суровые берега', 'Редкий маршрут']),
+        route_json: JSON.stringify(['Ушуайя', 'Фолклендские острова', 'Южная Георгия', 'Южная Атлантика']),
+        best_time: 'Октябрь - март',
+        duration_hint: '15-20 дней',
+        budget_hint: 'премиальный',
+        difficulty_hint: 'длинная экспедиция',
+        packing_list_json: JSON.stringify(['морская аптечка', 'теплые слои', 'бинокль', 'непромокаемый рюкзак'])
+    },
+    {
+        title: 'Круиз вдоль Камчатки',
+        slug: 'kruiz-vdol-kamchatki',
+        intro: 'Морской маршрут к бухтам, вулканам и диким стоянкам, куда сложно добраться по суше.',
+        full_description: 'Камчатка с воды выглядит иначе: береговые линии, бухты, птичьи базары и вулканы на горизонте. Такой формат хорош для тех, кто хочет больше природы и меньше дорожной логистики.',
+        highlights_json: JSON.stringify(['Бухты и дикие стоянки', 'Вулканы с моря', 'Морская рыбалка', 'Наблюдение за птицами']),
+        route_json: JSON.stringify(['Петропавловск-Камчатский', 'Авачинская бухта', 'Дикие бухты', 'Побережье Камчатки']),
+        best_time: 'Июль - сентябрь',
+        duration_hint: '5-8 дней',
+        budget_hint: 'средний и выше',
+        difficulty_hint: 'морской комфортный',
+        packing_list_json: JSON.stringify(['ветровка', 'таблетки от укачивания', 'гермомешок', 'теплая шапка'])
+    },
+    {
+        title: 'Арктический маршрут',
+        slug: 'arkticheskiy-marshrut',
+        intro: 'Северные острова, ледовая кромка и экспедиционный формат для тех, кто любит редкие направления.',
+        full_description: 'Арктический маршрут строится вокруг погоды, льда и возможностей судна. Здесь ценят не расписание по минутам, а шанс оказаться в местах, куда попадает очень мало людей.',
+        highlights_json: JSON.stringify(['Ледовая кромка', 'Северные острова', 'Экспедиционные лекции', 'Редкие высадки']),
+        route_json: JSON.stringify(['Арктический порт', 'Северные острова', 'Ледовая зона', 'Экспедиционные стоянки']),
+        best_time: 'Июнь - август',
+        duration_hint: '8-14 дней',
+        budget_hint: 'высокий',
+        difficulty_hint: 'экспедиционный комфорт',
+        packing_list_json: JSON.stringify(['термобелье', 'непромокаемые перчатки', 'бинокль', 'теплая обувь'])
+    },
+    {
+        title: 'Средиземное море без суеты',
+        slug: 'sredizemnoe-more-bez-suety',
+        intro: 'Порты, старые города, мягкий климат и спокойный темп морского путешествия.',
+        full_description: 'Средиземноморский маршрут хорош, когда хочется красивых городов без постоянной смены отелей. Днем можно гулять по старым кварталам, вечером возвращаться на борт, а программу легко сделать комфортной даже для первого круиза.',
+        highlights_json: JSON.stringify(['Старые портовые города', 'Мягкий климат', 'Комфорт без частых переездов', 'Кухня разных побережий']),
+        route_json: JSON.stringify(['Барселона', 'Лазурный берег', 'Италия', 'Греческие острова']),
+        best_time: 'Май - июнь, сентябрь - октябрь',
+        duration_hint: '6-9 дней',
+        budget_hint: 'гибкий',
+        difficulty_hint: 'легкий комфортный',
+        packing_list_json: JSON.stringify(['легкая одежда', 'удобная обувь', 'солнцезащита', 'вечерний комплект'])
+    }
+];
+
+async function ensureUserProfileColumns() {
+    const columns = await dbAll('PRAGMA table_info(users)');
+    const existingColumns = new Set(columns.map(column => column.name));
+    const requiredColumns = [
+        ['phone', 'VARCHAR(50)'],
+        ['birth_date', 'DATE'],
+        ['city', 'VARCHAR(100)'],
+        ['avatar_url', 'VARCHAR(500)'],
+        ['registration_date', 'DATETIME'],
+        ['last_login', 'DATETIME'],
+        ['is_active', 'BOOLEAN DEFAULT 1'],
+        ['is_admin', 'BOOLEAN DEFAULT 0'],
+        ['email_notifications', 'BOOLEAN DEFAULT 1'],
+        ['sms_notifications', 'BOOLEAN DEFAULT 0'],
+        ['promo_notifications', 'BOOLEAN DEFAULT 1'],
+        ['created_at', 'DATETIME'],
+        ['updated_at', 'DATETIME']
+    ];
+
+    for (const [columnName, columnType] of requiredColumns) {
+        if (!existingColumns.has(columnName)) {
+            await dbRun(`ALTER TABLE users ADD COLUMN ${columnName} ${columnType}`);
+        }
+    }
+
+    await dbRun('CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email_unique ON users(lower(trim(email)))');
+    await dbRun('DROP TRIGGER IF EXISTS users_phone_unique_insert');
+    await dbRun('DROP TRIGGER IF EXISTS users_phone_unique_update');
+    await dbRun(`
+        CREATE TRIGGER users_phone_unique_insert
+        BEFORE INSERT ON users
+        WHEN trim(coalesce(NEW.phone, '')) <> ''
+        BEGIN
+            SELECT RAISE(ABORT, 'PHONE_ALREADY_EXISTS')
+            WHERE EXISTS (
+                SELECT 1
+                FROM users
+                WHERE replace(replace(replace(replace(replace(coalesce(phone, ''), ' ', ''), '-', ''), '(', ''), ')', ''), '+', '') =
+                      replace(replace(replace(replace(replace(coalesce(NEW.phone, ''), ' ', ''), '-', ''), '(', ''), ')', ''), '+', '')
+            );
+        END
+    `);
+    await dbRun(`
+        CREATE TRIGGER users_phone_unique_update
+        BEFORE UPDATE OF phone ON users
+        WHEN trim(coalesce(NEW.phone, '')) <> ''
+        BEGIN
+            SELECT RAISE(ABORT, 'PHONE_ALREADY_EXISTS')
+            WHERE EXISTS (
+                SELECT 1
+                FROM users
+                WHERE id <> NEW.id
+                  AND replace(replace(replace(replace(replace(coalesce(phone, ''), ' ', ''), '-', ''), '(', ''), ')', ''), '+', '') =
+                      replace(replace(replace(replace(replace(coalesce(NEW.phone, ''), ' ', ''), '-', ''), '(', ''), ')', ''), '+', '')
+            );
+        END
+    `);
+}
+
+async function ensureTravelIdeas() {
+    await dbRun(`
+        CREATE TABLE IF NOT EXISTS travel_idea_categories (
+            slug TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            order_index INTEGER DEFAULT 0,
+            is_active INTEGER DEFAULT 1
+        )
+    `);
+
+    await dbRun(`
+        CREATE TABLE IF NOT EXISTS travel_ideas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            category_slug TEXT NOT NULL,
+            title TEXT NOT NULL,
+            month_label TEXT NOT NULL,
+            day_label TEXT NOT NULL,
+            tag TEXT,
+            description TEXT NOT NULL,
+            image_url TEXT NOT NULL,
+            slug TEXT,
+            intro TEXT,
+            full_description TEXT,
+            highlights_json TEXT,
+            route_json TEXT,
+            best_time TEXT,
+            duration_hint TEXT,
+            budget_hint TEXT,
+            difficulty_hint TEXT,
+            packing_list_json TEXT,
+            link_url TEXT DEFAULT 'ideas.html',
+            order_index INTEGER DEFAULT 0,
+            is_active INTEGER DEFAULT 1,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (category_slug) REFERENCES travel_idea_categories(slug)
+        )
+    `);
+
+    await dbRun('CREATE UNIQUE INDEX IF NOT EXISTS idx_travel_ideas_category_title ON travel_ideas(category_slug, title)');
+    const ideaColumns = await dbAll('PRAGMA table_info(travel_ideas)');
+    const existingIdeaColumns = new Set(ideaColumns.map(column => column.name));
+    const requiredIdeaColumns = [
+        ['slug', 'TEXT'],
+        ['intro', 'TEXT'],
+        ['full_description', 'TEXT'],
+        ['highlights_json', 'TEXT'],
+        ['route_json', 'TEXT'],
+        ['best_time', 'TEXT'],
+        ['duration_hint', 'TEXT'],
+        ['budget_hint', 'TEXT'],
+        ['difficulty_hint', 'TEXT'],
+        ['packing_list_json', 'TEXT']
+    ];
+
+    for (const [columnName, columnType] of requiredIdeaColumns) {
+        if (!existingIdeaColumns.has(columnName)) {
+            await dbRun(`ALTER TABLE travel_ideas ADD COLUMN ${columnName} ${columnType}`);
+        }
+    }
+
+    for (const category of travelIdeaCategories) {
+        await dbRun(
+            `INSERT OR IGNORE INTO travel_idea_categories (slug, name, order_index, is_active)
+             VALUES (?, ?, ?, 1)`,
+            [category.slug, category.name, category.order_index]
+        );
+    }
+
+    for (const idea of travelIdeasSeed) {
+        await dbRun(
+            `INSERT OR IGNORE INTO travel_ideas
+             (category_slug, title, month_label, day_label, tag, description, image_url, link_url, order_index, is_active)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`,
+            idea
+        );
+    }
+
+    for (const detail of travelIdeaDetails) {
+        await dbRun(
+            `UPDATE travel_ideas
+             SET slug = ?,
+                 intro = ?,
+                 full_description = ?,
+                 highlights_json = ?,
+                 route_json = ?,
+                 best_time = ?,
+                 duration_hint = ?,
+                 budget_hint = ?,
+                 difficulty_hint = ?,
+                 packing_list_json = ?,
+                 link_url = ?
+             WHERE title = ?`,
+            [
+                detail.slug,
+                detail.intro,
+                detail.full_description,
+                detail.highlights_json,
+                detail.route_json,
+                detail.best_time,
+                detail.duration_hint,
+                detail.budget_hint,
+                detail.difficulty_hint,
+                detail.packing_list_json,
+                `idea.html?slug=${detail.slug}`,
+                detail.title
+            ]
+        );
+    }
+
+    await dbRun('CREATE UNIQUE INDEX IF NOT EXISTS idx_travel_ideas_slug ON travel_ideas(slug)');
+}
+
+async function ensureDreamRequests() {
+    await dbRun(`
+        CREATE TABLE IF NOT EXISTS dream_requests (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            name VARCHAR(255) NOT NULL,
+            phone VARCHAR(50) NOT NULL,
+            email VARCHAR(255),
+            destination VARCHAR(255),
+            budget VARCHAR(100),
+            date_from DATE,
+            date_to DATE,
+            people INTEGER,
+            message TEXT,
+            status VARCHAR(50) DEFAULT 'new',
+            admin_comment TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+    `);
 }
 
 // Middleware для проверки JWT токена
@@ -420,12 +906,45 @@ app.post('/api/chat', async (req, res) => {
 // Регистрация пользователя
 app.post('/api/auth/register', async (req, res) => {
     try {
-        const { email, password, full_name, phone, birth_date, city } = req.body;
+        const email = normalizeEmail(req.body.email);
+        const password = String(req.body.password || '');
+        const full_name = cleanOptionalText(req.body.full_name);
+        const phone = cleanOptionalText(req.body.phone);
+        const birth_date = cleanOptionalText(req.body.birth_date);
+        const city = cleanOptionalText(req.body.city);
+        const normalizedPhone = normalizePhone(phone);
+
+        if (!email || !password || !full_name) {
+            return res.status(400).json({ error: 'Укажите имя, email и пароль' });
+        }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            return res.status(400).json({ error: 'Укажите корректный email' });
+        }
+
+        if (password.length < 6) {
+            return res.status(400).json({ error: 'Пароль должен быть не короче 6 символов' });
+        }
+
+        if (phone && normalizedPhone.length < 10) {
+            return res.status(400).json({ error: 'Укажите корректный телефон' });
+        }
 
         // Проверяем, существует ли пользователь
-        const existingUser = await dbGet('SELECT id FROM users WHERE email = ?', [email]);
+        const existingUser = await dbGet('SELECT id FROM users WHERE lower(trim(email)) = ?', [email]);
         if (existingUser) {
             return res.status(400).json({ error: 'Пользователь с таким email уже существует' });
+        }
+
+        if (normalizedPhone) {
+            const existingPhone = await dbGet(
+                `SELECT id FROM users
+                 WHERE replace(replace(replace(replace(replace(coalesce(phone, ''), ' ', ''), '-', ''), '(', ''), ')', ''), '+', '') = ?`,
+                [normalizedPhone]
+            );
+            if (existingPhone) {
+                return res.status(400).json({ error: 'Пользователь с таким телефоном уже существует' });
+            }
         }
 
         // Хешируем пароль
@@ -459,6 +978,12 @@ app.post('/api/auth/register', async (req, res) => {
         });
     } catch (error) {
         console.error('Ошибка регистрации:', error);
+        if (error.message && error.message.includes('SQLITE_CONSTRAINT')) {
+            const message = error.message.includes('PHONE_ALREADY_EXISTS')
+                ? 'Пользователь с таким телефоном уже существует'
+                : 'Пользователь с таким email уже существует';
+            return res.status(400).json({ error: message });
+        }
         res.status(500).json({ error: 'Внутренняя ошибка сервера' });
     }
 });
@@ -466,12 +991,13 @@ app.post('/api/auth/register', async (req, res) => {
 // Вход пользователя
 app.post('/api/auth/login', async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const email = normalizeEmail(req.body.email);
+        const password = String(req.body.password || '');
 
         const user = await dbGet(
-            `SELECT id, email, password_hash, full_name, phone, birth_date, city, is_admin, 
+            `SELECT id, email, password_hash, full_name, phone, birth_date, city, avatar_url, is_admin, 
                     email_notifications, sms_notifications, promo_notifications
-             FROM users WHERE email = ? AND is_active = 1`,
+             FROM users WHERE lower(trim(email)) = ? AND is_active = 1`,
             [email]
         );
 
@@ -503,6 +1029,7 @@ app.post('/api/auth/login', async (req, res) => {
                 phone: user.phone,
                 birth_date: user.birth_date,
                 city: user.city,
+                avatar_url: user.avatar_url,
                 is_admin: user.is_admin,
                 email_notifications: user.email_notifications,
                 sms_notifications: user.sms_notifications,
@@ -519,7 +1046,7 @@ app.post('/api/auth/login', async (req, res) => {
 app.get('/api/users/profile', authenticateToken, async (req, res) => {
     try {
         const user = await dbGet(
-            `SELECT id, email, full_name, phone, birth_date, city, registration_date, last_login,
+            `SELECT id, email, full_name, phone, birth_date, city, avatar_url, registration_date, last_login,
                     email_notifications, sms_notifications, promo_notifications, is_admin
              FROM users WHERE id = ?`,
             [req.user.id]
@@ -571,20 +1098,66 @@ app.get('/api/users/profile', authenticateToken, async (req, res) => {
 // Обновление профиля пользователя
 app.put('/api/users/profile', authenticateToken, async (req, res) => {
     try {
-        const { full_name, phone, birth_date, city, email_notifications, sms_notifications, promo_notifications } = req.body;
+        const email = normalizeEmail(req.body.email);
+        const full_name = cleanOptionalText(req.body.full_name);
+        const phone = cleanOptionalText(req.body.phone);
+        const birth_date = cleanOptionalText(req.body.birth_date);
+        const city = cleanOptionalText(req.body.city);
+        const normalizedPhone = normalizePhone(phone);
+        const email_notifications = req.body.email_notifications ? 1 : 0;
+        const sms_notifications = req.body.sms_notifications ? 1 : 0;
+        const promo_notifications = req.body.promo_notifications ? 1 : 0;
+
+        if (!email || !full_name) {
+            return res.status(400).json({ error: 'Укажите имя и email' });
+        }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            return res.status(400).json({ error: 'Укажите корректный email' });
+        }
+
+        if (phone && normalizedPhone.length < 10) {
+            return res.status(400).json({ error: 'Укажите корректный телефон' });
+        }
+
+        const existingEmail = await dbGet(
+            'SELECT id FROM users WHERE lower(trim(email)) = ? AND id <> ?',
+            [email, req.user.id]
+        );
+        if (existingEmail) {
+            return res.status(400).json({ error: 'Пользователь с таким email уже существует' });
+        }
+
+        if (normalizedPhone) {
+            const existingPhone = await dbGet(
+                `SELECT id FROM users
+                 WHERE id <> ?
+                   AND replace(replace(replace(replace(replace(coalesce(phone, ''), ' ', ''), '-', ''), '(', ''), ')', ''), '+', '') = ?`,
+                [req.user.id, normalizedPhone]
+            );
+            if (existingPhone) {
+                return res.status(400).json({ error: 'Пользователь с таким телефоном уже существует' });
+            }
+        }
 
         await dbRun(
             `UPDATE users 
-             SET full_name = ?, phone = ?, birth_date = ?, city = ?,
+             SET email = ?, full_name = ?, phone = ?, birth_date = ?, city = ?,
                  email_notifications = ?, sms_notifications = ?, promo_notifications = ?,
                  updated_at = datetime('now')
              WHERE id = ?`,
-            [full_name, phone, birth_date, city, email_notifications || 0, sms_notifications || 0, promo_notifications || 0, req.user.id]
+            [email, full_name, phone, birth_date, city, email_notifications, sms_notifications, promo_notifications, req.user.id]
         );
 
         res.json({ success: true, message: 'Профиль успешно обновлен' });
     } catch (error) {
         console.error('Ошибка обновления профиля:', error);
+        if (error.message && error.message.includes('SQLITE_CONSTRAINT')) {
+            const message = error.message.includes('PHONE_ALREADY_EXISTS')
+                ? 'Пользователь с таким телефоном уже существует'
+                : 'Пользователь с таким email уже существует';
+            return res.status(400).json({ error: message });
+        }
         res.status(500).json({ error: 'Внутренняя ошибка сервера' });
     }
 });
@@ -597,7 +1170,7 @@ app.post('/api/users/avatar', authenticateToken, upload.single('avatar'), async 
         }
 
         const avatarUrl = `/uploads/${req.file.filename}`;
-        await dbRun('UPDATE users SET avatar_url = ? WHERE id = ?', [avatarUrl, req.user.id]);
+        await dbRun('UPDATE users SET avatar_url = ?, updated_at = datetime("now") WHERE id = ?', [avatarUrl, req.user.id]);
 
         res.json({ success: true, avatar_url: avatarUrl });
     } catch (error) {
@@ -657,6 +1230,8 @@ app.get('/api/tours', async (req, res) => {
         }
         if (is_cruise === '1' || is_cruise === 'true') {
             sql += ' AND t.is_cruise = 1';
+        } else if (is_cruise === '0' || is_cruise === 'false') {
+            sql += ' AND COALESCE(t.is_cruise, 0) = 0';
         }
 
         sql += ' ORDER BY t.start_date ASC';
@@ -996,6 +1571,95 @@ app.get('/api/guides/:slug', async (req, res) => {
 // =====================================================
 
 // Подписка на новости
+app.get('/api/travel-ideas', async (req, res) => {
+    try {
+        const { category, limit = 3 } = req.query;
+        const params = [];
+
+        let sql = `
+            SELECT ti.*, tic.name as category_name, tic.order_index as category_order
+            FROM travel_ideas ti
+            JOIN travel_idea_categories tic ON tic.slug = ti.category_slug
+            WHERE ti.is_active = 1 AND tic.is_active = 1
+        `;
+
+        if (category) {
+            sql += ' AND ti.category_slug = ?';
+            params.push(category);
+        }
+
+        sql += ' ORDER BY tic.order_index ASC, ti.order_index ASC, ti.id ASC';
+
+        const rows = await dbAll(sql, params);
+        const maxPerCategory = Math.max(1, parseInt(limit, 10) || 3);
+        const ideasByCategory = {};
+
+        rows.forEach((idea) => {
+            if (!ideasByCategory[idea.category_slug]) ideasByCategory[idea.category_slug] = [];
+            if (ideasByCategory[idea.category_slug].length < maxPerCategory) {
+                ideasByCategory[idea.category_slug].push(idea);
+            }
+        });
+
+        const categories = await dbAll(`
+            SELECT slug, name, order_index
+            FROM travel_idea_categories
+            WHERE is_active = 1
+            ORDER BY order_index ASC
+        `);
+
+        res.json({ categories, ideasByCategory });
+    } catch (error) {
+        console.error('Ошибка получения идей для путешествий:', error);
+        res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+    }
+});
+
+app.get('/api/travel-ideas/:slug', async (req, res) => {
+    try {
+        const idea = await dbGet(`
+            SELECT ti.*, tic.name as category_name
+            FROM travel_ideas ti
+            JOIN travel_idea_categories tic ON tic.slug = ti.category_slug
+            WHERE ti.slug = ? AND ti.is_active = 1 AND tic.is_active = 1
+        `, [req.params.slug]);
+
+        if (!idea) {
+            return res.status(404).json({ error: 'Идея не найдена' });
+        }
+
+        const parseList = (value) => {
+            try {
+                const parsed = JSON.parse(value || '[]');
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (error) {
+                return [];
+            }
+        };
+
+        const related = await dbAll(`
+            SELECT id, slug, title, tag, image_url, link_url
+            FROM travel_ideas
+            WHERE category_slug = ? AND slug != ? AND is_active = 1
+            ORDER BY order_index ASC, id ASC
+            LIMIT 3
+        `, [idea.category_slug, idea.slug]);
+
+        res.json({
+            idea: {
+                ...idea,
+                highlights: parseList(idea.highlights_json),
+                route: parseList(idea.route_json),
+                packing_list: parseList(idea.packing_list_json)
+            },
+            related
+        });
+    } catch (error) {
+        console.error('Ошибка получения идеи путешествия:', error);
+        res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+    }
+});
+
 app.post('/api/subscribe', async (req, res) => {
     try {
         const { email, name } = req.body;
@@ -1035,6 +1699,55 @@ app.post('/api/contacts', async (req, res) => {
     }
 });
 
+app.post('/api/dream-requests', async (req, res) => {
+    try {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        let userId = null;
+
+        if (token) {
+            try {
+                const user = jwt.verify(token, JWT_SECRET);
+                userId = user.id;
+            } catch (error) {}
+        }
+
+        const name = cleanOptionalText(req.body.name);
+        const phone = cleanOptionalText(req.body.phone);
+        const email = cleanOptionalText(req.body.email);
+        const destination = cleanOptionalText(req.body.destination);
+        const budget = cleanOptionalText(req.body.budget);
+        const date_from = cleanOptionalText(req.body.date_from);
+        const date_to = cleanOptionalText(req.body.date_to);
+        const people = Number(req.body.people || 0) || null;
+        const message = cleanOptionalText(req.body.message);
+
+        if (!name || !phone) {
+            return res.status(400).json({ error: 'Укажите имя и телефон' });
+        }
+
+        if (date_from && date_to && date_to < date_from) {
+            return res.status(400).json({ error: 'Дата окончания не может быть раньше даты начала' });
+        }
+
+        const result = await dbRun(
+            `INSERT INTO dream_requests
+             (user_id, name, phone, email, destination, budget, date_from, date_to, people, message, status, created_at, updated_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', datetime('now'), datetime('now'))`,
+            [userId, name, phone, email, destination, budget, date_from, date_to, people, message]
+        );
+
+        res.json({
+            success: true,
+            request: { id: result.lastID },
+            message: 'Заявка отправлена. Менеджер свяжется с вами для сборки путешествия.'
+        });
+    } catch (error) {
+        console.error('Ошибка заявки мечты:', error);
+        res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+    }
+});
+
 // =====================================================
 // СТАТИСТИКА (ТОЛЬКО ДЛЯ АДМИНА)
 // =====================================================
@@ -1069,14 +1782,252 @@ app.get('/api/admin/stats', authenticateToken, authenticateAdmin, async (req, re
     }
 });
 
+app.get('/api/admin/dream-requests', authenticateToken, authenticateAdmin, async (req, res) => {
+    try {
+        const requests = await dbAll(`
+            SELECT dr.*, u.full_name as user_name, u.email as user_email
+            FROM dream_requests dr
+            LEFT JOIN users u ON u.id = dr.user_id
+            ORDER BY dr.created_at DESC
+        `);
+        res.json({ requests });
+    } catch (error) {
+        console.error('Ошибка админ-заявок мечты:', error);
+        res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+    }
+});
+
+app.put('/api/admin/dream-requests/:id', authenticateToken, authenticateAdmin, async (req, res) => {
+    try {
+        const status = cleanOptionalText(req.body.status) || 'new';
+        const adminComment = cleanOptionalText(req.body.admin_comment);
+        await dbRun(
+            `UPDATE dream_requests SET status = ?, admin_comment = ?, updated_at = datetime('now') WHERE id = ?`,
+            [status, adminComment, req.params.id]
+        );
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Ошибка обновления заявки мечты:', error);
+        res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+    }
+});
+
+app.get('/api/admin/contacts', authenticateToken, authenticateAdmin, async (req, res) => {
+    try {
+        const contacts = await dbAll('SELECT * FROM contacts ORDER BY created_at DESC');
+        res.json({ contacts });
+    } catch (error) {
+        console.error('Ошибка админ-контактов:', error);
+        res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+    }
+});
+
+app.put('/api/admin/contacts/:id', authenticateToken, authenticateAdmin, async (req, res) => {
+    try {
+        const status = cleanOptionalText(req.body.status) || 'new';
+        await dbRun('UPDATE contacts SET status = ? WHERE id = ?', [status, req.params.id]);
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Ошибка обновления контакта:', error);
+        res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+    }
+});
+
+app.get('/api/admin/bookings', authenticateToken, authenticateAdmin, async (req, res) => {
+    try {
+        const bookings = await dbAll(`
+            SELECT b.*, u.full_name, u.email, u.phone, t.title
+            FROM bookings b
+            LEFT JOIN users u ON u.id = b.user_id
+            LEFT JOIN tours t ON t.id = b.tour_id
+            ORDER BY b.booking_date DESC, b.created_at DESC
+        `);
+        res.json({ bookings });
+    } catch (error) {
+        console.error('Ошибка админ-броней:', error);
+        res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+    }
+});
+
+app.put('/api/admin/bookings/:id', authenticateToken, authenticateAdmin, async (req, res) => {
+    try {
+        const status = cleanOptionalText(req.body.status) || 'pending';
+        const paymentStatus = cleanOptionalText(req.body.payment_status) || 'unpaid';
+        await dbRun(
+            `UPDATE bookings SET status = ?, payment_status = ?, updated_at = datetime('now') WHERE id = ?`,
+            [status, paymentStatus, req.params.id]
+        );
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Ошибка обновления брони:', error);
+        res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+    }
+});
+
+function tourPayload(body) {
+    return {
+        title: cleanOptionalText(body.title),
+        slug: cleanOptionalText(body.slug),
+        destination: cleanOptionalText(body.destination),
+        country: cleanOptionalText(body.country),
+        region: cleanOptionalText(body.region),
+        duration_days: numberOrNull(body.duration_days),
+        duration_nights: numberOrZero(body.duration_nights),
+        price_rub: numberOrNull(body.price_rub),
+        price_usd: numberOrZero(body.price_usd),
+        difficulty_level: cleanOptionalText(body.difficulty_level) || 'moderate',
+        max_group_size: numberOrNull(body.max_group_size),
+        is_cruise: body.is_cruise ? 1 : 0,
+        start_date: cleanOptionalText(body.start_date),
+        end_date: cleanOptionalText(body.end_date),
+        main_image_url: cleanOptionalText(body.main_image_url),
+        short_description: cleanOptionalText(body.short_description),
+        full_description: cleanOptionalText(body.full_description),
+        available_spots: numberOrNull(body.available_spots),
+        total_spots: numberOrNull(body.total_spots),
+        status: cleanOptionalText(body.status) || 'active'
+    };
+}
+
+app.get('/api/admin/tours', authenticateToken, authenticateAdmin, async (req, res) => {
+    try {
+        const tours = await dbAll('SELECT * FROM tours ORDER BY updated_at DESC, id DESC');
+        res.json({ tours });
+    } catch (error) {
+        console.error('Ошибка админ-туров:', error);
+        res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+    }
+});
+
+app.post('/api/admin/tours/image', authenticateToken, authenticateAdmin, (req, res) => {
+    adminImageUpload.single('image')(req, res, (error) => {
+        if (error) {
+            return res.status(400).json({ error: error.message || 'Не удалось загрузить картинку' });
+        }
+        if (!req.file) {
+            return res.status(400).json({ error: 'Выберите картинку' });
+        }
+        res.json({
+            success: true,
+            image_url: `img/${req.file.filename}`,
+            filename: req.file.filename
+        });
+    });
+});
+
+app.post('/api/admin/tours', authenticateToken, authenticateAdmin, async (req, res) => {
+    try {
+        const tour = tourPayload(req.body);
+        if (!tour.title || !tour.slug) {
+            return res.status(400).json({ error: 'Укажите название и slug' });
+        }
+
+        const result = await dbRun(
+            `INSERT INTO tours
+             (title, slug, destination, country, region, duration_days, duration_nights, price_rub, price_usd,
+              difficulty_level, max_group_size, is_cruise, start_date, end_date, main_image_url,
+              short_description, full_description, available_spots, total_spots, status, created_at, updated_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))`,
+            [tour.title, tour.slug, tour.destination, tour.country, tour.region, tour.duration_days, tour.duration_nights,
+                tour.price_rub, tour.price_usd, tour.difficulty_level, tour.max_group_size, tour.is_cruise,
+                tour.start_date, tour.end_date, tour.main_image_url, tour.short_description, tour.full_description,
+                tour.available_spots, tour.total_spots, tour.status]
+        );
+        res.json({ success: true, id: result.lastID });
+    } catch (error) {
+        console.error('Ошибка создания тура:', error);
+        res.status(500).json({ error: error.message?.includes('UNIQUE') ? 'Такой slug уже существует' : 'Внутренняя ошибка сервера' });
+    }
+});
+
+app.put('/api/admin/tours/:id', authenticateToken, authenticateAdmin, async (req, res) => {
+    try {
+        const tour = tourPayload(req.body);
+        if (!tour.title || !tour.slug) {
+            return res.status(400).json({ error: 'Укажите название и slug' });
+        }
+
+        await dbRun(
+            `UPDATE tours SET
+                title = ?, slug = ?, destination = ?, country = ?, region = ?, duration_days = ?, duration_nights = ?,
+                price_rub = ?, price_usd = ?, difficulty_level = ?, max_group_size = ?, is_cruise = ?,
+                start_date = ?, end_date = ?, main_image_url = ?, short_description = ?, full_description = ?,
+                available_spots = ?, total_spots = ?, status = ?, updated_at = datetime('now')
+             WHERE id = ?`,
+            [tour.title, tour.slug, tour.destination, tour.country, tour.region, tour.duration_days, tour.duration_nights,
+                tour.price_rub, tour.price_usd, tour.difficulty_level, tour.max_group_size, tour.is_cruise,
+                tour.start_date, tour.end_date, tour.main_image_url, tour.short_description, tour.full_description,
+                tour.available_spots, tour.total_spots, tour.status, req.params.id]
+        );
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Ошибка обновления тура:', error);
+        res.status(500).json({ error: error.message?.includes('UNIQUE') ? 'Такой slug уже существует' : 'Внутренняя ошибка сервера' });
+    }
+});
+
+app.delete('/api/admin/tours/:id', authenticateToken, authenticateAdmin, async (req, res) => {
+    try {
+        if (req.query.hard === '1' || req.query.hard === 'true') {
+            const tour = await dbGet('SELECT id FROM tours WHERE id = ?', [req.params.id]);
+            if (!tour) {
+                return res.status(404).json({ error: 'Тур не найден' });
+            }
+
+            await dbRun('BEGIN TRANSACTION');
+            try {
+                await dbRun('DELETE FROM favorites WHERE tour_id = ?', [req.params.id]);
+                await dbRun('DELETE FROM reviews WHERE tour_id = ?', [req.params.id]);
+                await dbRun('DELETE FROM bookings WHERE tour_id = ?', [req.params.id]);
+                await dbRun('DELETE FROM tour_guides WHERE tour_id = ?', [req.params.id]);
+                await dbRun('DELETE FROM tours WHERE id = ?', [req.params.id]);
+                await dbRun('COMMIT');
+                return res.json({ success: true, deleted: true });
+            } catch (deleteError) {
+                await dbRun('ROLLBACK');
+                throw deleteError;
+            }
+        }
+
+        await dbRun('UPDATE tours SET status = "cancelled", updated_at = datetime("now") WHERE id = ?', [req.params.id]);
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Ошибка архивации тура:', error);
+        res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+    }
+});
+
+app.get('/api/admin/users', authenticateToken, authenticateAdmin, async (req, res) => {
+    try {
+        const users = await dbAll(`
+            SELECT id, email, full_name, phone, city, is_admin, is_active, registration_date, last_login
+            FROM users
+            ORDER BY registration_date DESC, id DESC
+        `);
+        res.json({ users });
+    } catch (error) {
+        console.error('Ошибка админ-пользователей:', error);
+        res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+    }
+});
+
 // =====================================================
 // ЗАПУСК СЕРВЕРА
 // =====================================================
 
-app.listen(PORT, () => {
-    console.log(`Сервер запущен на порту ${PORT}`);
-    console.log(`http://localhost:${PORT}`);
-});
+ensureUserProfileColumns()
+    .then(() => ensureTravelIdeas())
+    .then(() => ensureDreamRequests())
+    .then(() => {
+        app.listen(PORT, () => {
+            console.log(`Сервер запущен на порту ${PORT}`);
+            console.log(`http://localhost:${PORT}`);
+        });
+    })
+    .catch((error) => {
+        console.error('Ошибка подготовки базы данных:', error);
+        process.exit(1);
+    });
 
 // Обработка закрытия приложения
 process.on('SIGINT', () => {

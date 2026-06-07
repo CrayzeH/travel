@@ -187,6 +187,333 @@
         @media (max-width: 768px) {
             .cruise-section { padding: 40px 0; }
         }
+
+        .cruise-hero {
+            height: auto;
+            min-height: 640px;
+            display: flex;
+            align-items: flex-end;
+            background: #172129;
+        }
+        .cruise-hero__bg img {
+            transform: scale(1.03);
+        }
+        .cruise-hero__overlay {
+            background:
+                radial-gradient(circle at 74% 24%, rgba(255,189,78,0.18), transparent 30%),
+                linear-gradient(90deg, rgba(18,27,34,0.96) 0%, rgba(18,27,34,0.64) 48%, rgba(18,27,34,0.28) 100%),
+                linear-gradient(180deg, rgba(18,27,34,0.1) 0%, #29343e 100%);
+        }
+        .cruise-hero__content {
+            position: relative;
+            bottom: auto;
+            padding: 120px 0 70px;
+            text-align: left;
+            width: 100%;
+        }
+        .cruise-hero__layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 360px;
+            gap: 44px;
+            align-items: end;
+        }
+        .cruise-hero__eyebrow {
+            display: inline-flex;
+            margin-bottom: 18px;
+            color: #ffbd4e;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+        }
+        .cruise-hero__title {
+            max-width: 860px;
+            margin: 0;
+            line-height: 1.02;
+            letter-spacing: 0;
+        }
+        .cruise-hero__lead {
+            max-width: 680px;
+            margin: 22px 0 0;
+            color: rgba(255,255,255,0.76);
+            font-size: 18px;
+            line-height: 1.7;
+        }
+        .cruise-hero__chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        .cruise-chip {
+            border: 1px solid rgba(255,255,255,0.18);
+            background: rgba(255,255,255,0.06);
+            color: rgba(255,255,255,0.86);
+            padding: 10px 13px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            backdrop-filter: blur(10px);
+        }
+        .cruise-hero__summary {
+            border: 1px solid rgba(255,189,78,0.35);
+            background: rgba(14,21,27,0.68);
+            backdrop-filter: blur(18px);
+            padding: 24px;
+            box-shadow: 0 22px 50px rgba(0,0,0,0.28);
+        }
+        .cruise-hero__price {
+            margin-top: 0;
+            font-size: 14px;
+            color: rgba(255,255,255,0.54);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .cruise-hero__price strong {
+            display: block;
+            margin-top: 8px;
+            color: #ffbd4e;
+            font-size: 34px;
+            line-height: 1;
+            letter-spacing: 0;
+        }
+        .cruise-hero__summary-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 18px;
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.78);
+            font-size: 14px;
+        }
+        .cruise-section {
+            padding: 72px 0 90px;
+        }
+        .cruise-info-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 42px;
+        }
+        .cruise-info-card {
+            min-width: 0;
+            border-radius: 8px;
+            padding: 22px;
+            text-align: left;
+            background: rgba(255,255,255,0.045);
+            border-color: rgba(255,255,255,0.1);
+        }
+        .cruise-info-card .icon {
+            display: none;
+        }
+        .cruise-info-card .label {
+            color: rgba(255,255,255,0.46);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .cruise-info-card .value {
+            color: #fff;
+            font-size: 20px;
+            line-height: 1.25;
+        }
+        .cruise-detail-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 390px;
+            gap: 34px;
+            align-items: start;
+        }
+        .cruise-description {
+            margin: 0;
+            padding: 34px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(18,27,34,0.52);
+        }
+        .cruise-description h2 {
+            color: #fff;
+            font-size: 34px;
+            margin-bottom: 18px;
+        }
+        .cruise-description p {
+            color: rgba(255,255,255,0.78);
+            font-size: 16px;
+            line-height: 1.85;
+        }
+        .cruise-feature-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 28px;
+        }
+        .cruise-feature {
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.04);
+            padding: 16px;
+            color: rgba(255,255,255,0.76);
+            font-size: 14px;
+            line-height: 1.45;
+        }
+        .booking-section {
+            position: sticky;
+            top: 110px;
+            margin-top: 0;
+            padding: 26px;
+            border-radius: 8px;
+            text-align: left;
+            background:
+                radial-gradient(circle at 0 100%, rgba(255,83,121,0.16), transparent 36%),
+                linear-gradient(145deg, rgba(28,39,48,0.98), rgba(12,18,23,0.96));
+            border: 1px solid rgba(255,189,78,0.26);
+            box-shadow: 0 22px 52px rgba(0,0,0,0.28);
+        }
+        .booking-section h3 {
+            margin: 0 0 16px;
+            color: #fff;
+            font-size: 24px;
+            line-height: 1.2;
+        }
+        .booking-price {
+            margin: 12px 0 22px;
+            font-size: 30px;
+            line-height: 1.1;
+        }
+        .booking-label {
+            display: block;
+            margin-bottom: 8px;
+            color: rgba(255,255,255,0.52);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .people-selector {
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 18px;
+            padding: 8px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.04);
+        }
+        .people-selector button {
+            border-radius: 4px;
+            background: rgba(255,255,255,0.08);
+        }
+        .payment-methods {
+            display: grid;
+            gap: 8px;
+            margin: 18px 0 20px;
+        }
+        .payment-method {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-height: 44px;
+            padding: 10px 12px;
+            border: 1px solid rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.78);
+            cursor: pointer;
+            transition: border-color 0.25s ease, background 0.25s ease;
+        }
+        .payment-method:hover {
+            border-color: rgba(255,189,78,0.55);
+            background: rgba(255,189,78,0.06);
+        }
+        .payment-method input {
+            accent-color: #ffbd4e;
+        }
+        .booking-btn {
+            width: 100%;
+            border-radius: 4px;
+            padding: 15px 18px;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+        .booking-note {
+            margin: 14px 0 0;
+            color: rgba(255,255,255,0.52);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        .dream-form {
+            display: grid;
+            gap: 12px;
+            margin-top: 18px;
+        }
+        .dream-form__row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+        .dream-form input,
+        .dream-form textarea,
+        .dream-form select {
+            width: 100%;
+            border: 1px solid rgba(255,255,255,0.14);
+            background: rgba(255,255,255,0.06);
+            color: #fff;
+            padding: 13px 14px;
+            border-radius: 4px;
+            font: inherit;
+        }
+        .dream-form textarea {
+            min-height: 104px;
+            resize: vertical;
+        }
+        .dream-form input::placeholder,
+        .dream-form textarea::placeholder {
+            color: rgba(255,255,255,0.44);
+        }
+        .dream-form select option {
+            color: #111820;
+        }
+        .dream-form__field {
+            display: grid;
+            gap: 6px;
+        }
+        .dream-form__field label {
+            color: rgba(255,255,255,0.58);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+        .dream-form input[type="date"] {
+            color-scheme: dark;
+        }
+        @media (max-width: 992px) {
+            .cruise-hero__layout,
+            .cruise-detail-layout {
+                grid-template-columns: 1fr;
+            }
+            .cruise-hero__summary,
+            .booking-section {
+                max-width: 520px;
+            }
+            .booking-section {
+                position: static;
+            }
+            .cruise-info-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+        @media (max-width: 768px) {
+            .cruise-hero {
+                margin-top: 90px;
+                min-height: 0;
+            }
+            .cruise-hero__content {
+                padding: 90px 0 48px;
+            }
+            .cruise-info-grid,
+            .cruise-feature-list,
+            .dream-form__row {
+                grid-template-columns: 1fr;
+            }
+            .cruise-description,
+            .booking-section {
+                padding: 22px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -198,6 +525,8 @@
             </a>
             <nav class="navbar">
                 <a href="index.html" class="nav-link">ГЛАВНАЯ</a>
+                <a href="tours.html" class="nav-link">ТУРЫ</a>
+
                 <a href="cruises.html" class="nav-link" style="color: #ffbd4e;">КРУИЗЫ</a>
                 <a href="ideas.html" class="nav-link">ИДЕИ</a>
                 <a href="calendar.html" class="nav-link">КАЛЕНДАРЬ</a>
@@ -270,6 +599,7 @@
     const API_URL = 'http://localhost:3000/api';
     let currentTour = null;
     let peopleCount = 1;
+    let currentUser = null;
 
     function getToken() {
         return localStorage.getItem('token');
@@ -290,6 +620,108 @@
         }
         document.body.appendChild(notification);
         setTimeout(() => notification.remove(), 3000);
+    }
+
+    async function loadCurrentUser() {
+        const token = getToken();
+        if (!token) return null;
+
+        try {
+            const response = await fetch(`${API_URL}/users/profile`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await response.json();
+            if (!response.ok || !data.user) return null;
+            currentUser = data.user;
+            localStorage.setItem('user', JSON.stringify(data.user));
+            return data.user;
+        } catch (error) {
+            try {
+                currentUser = JSON.parse(localStorage.getItem('user') || 'null');
+                return currentUser;
+            } catch (parseError) {
+                return null;
+            }
+        }
+    }
+
+    function fillInputIfEmpty(form, selector, value) {
+        const input = form?.querySelector(selector);
+        if (!input || !value || input.value.trim()) return;
+        input.value = value;
+    }
+
+    async function prefillUserForms() {
+        const user = currentUser || await loadCurrentUser();
+        if (!user) return;
+
+        const dreamForm = document.getElementById('dreamRequestForm');
+        if (dreamForm) {
+            fillInputIfEmpty(dreamForm, '[name="name"]', user.full_name);
+            fillInputIfEmpty(dreamForm, '[name="phone"]', user.phone);
+            fillInputIfEmpty(dreamForm, '[name="email"]', user.email);
+        }
+    }
+
+    function initDreamDateRange() {
+        const from = document.getElementById('dreamDateFrom');
+        const to = document.getElementById('dreamDateTo');
+        if (!from || !to) return;
+
+        from.addEventListener('change', () => {
+            to.min = from.value || '';
+            if (from.value && to.value && to.value < from.value) {
+                to.value = from.value;
+            }
+        });
+
+        to.addEventListener('change', () => {
+            from.max = to.value || '';
+            if (from.value && to.value && from.value > to.value) {
+                from.value = to.value;
+            }
+        });
+    }
+
+    function escapeHtml(value) {
+        return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        })[char]);
+    }
+
+    function isDreamTour(tour) {
+        return tour.slug === 'dream-journey' || Number(tour.price_rub || 0) === 0 && Number(tour.price_usd || 0) === 0;
+    }
+
+    function getBasePrice(tour) {
+        if (tour.price_rub) return { value: Number(tour.price_rub), currency: '₽' };
+        if (tour.price_usd) return { value: Number(tour.price_usd), currency: '$' };
+        return { value: 0, currency: '$' };
+    }
+
+    function formatPrice(tour, multiplier = 1) {
+        const price = getBasePrice(tour);
+        if (!price.value) return 'по запросу';
+        return `${(price.value * multiplier).toLocaleString('ru-RU')} ${price.currency}`;
+    }
+
+    function formatDate(dateString) {
+        if (!dateString) return 'даты гибкие';
+        return new Date(dateString).toLocaleDateString('ru-RU', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    function getDifficultyLabel(level) {
+        const labels = {
+            easy: 'легкий',
+            moderate: 'средний',
+            challenging: 'сложный',
+            extreme: 'экстремальный'
+        };
+        return labels[level] || 'комфортный';
     }
 
     async function loadCruise() {
@@ -458,6 +890,252 @@
     }
 
     // Подписка
+    function renderCruise(data) {
+        const tour = data.tour;
+        const dreamTour = isDreamTour(tour);
+        const title = escapeHtml(tour.title);
+        const destination = escapeHtml([tour.destination, tour.region || tour.country].filter(Boolean).join(' / '));
+        const description = escapeHtml(tour.full_description || tour.short_description || 'Информация о путешествии скоро появится.');
+        const dates = `${formatDate(tour.start_date)} - ${formatDate(tour.end_date)}`;
+        const typeLabel = tour.is_cruise ? 'круиз' : dreamTour ? 'индивидуальная заявка' : 'тур';
+
+        document.getElementById('cruiseContent').innerHTML = `
+            <section class="cruise-hero">
+                <div class="cruise-hero__bg">
+                    <img src="${escapeHtml(tour.main_image_url || 'img/Group%20193%201.png')}" alt="${title}">
+                </div>
+                <div class="cruise-hero__overlay"></div>
+                <div class="cruise-hero__content">
+                    <div class="container">
+                        <div class="cruise-hero__layout">
+                            <div>
+                                <span class="cruise-hero__eyebrow">${escapeHtml(typeLabel)} / ${escapeHtml(tour.country || 'Generation Travel')}</span>
+                                <h1 class="cruise-hero__title">${title}</h1>
+                                <p class="cruise-hero__lead">${escapeHtml(tour.short_description || tour.full_description || 'Соберем путешествие под ваш темп, даты и ожидания.')}</p>
+                                <div class="cruise-hero__chips">
+                                    <span class="cruise-chip">${escapeHtml(getDifficultyLabel(tour.difficulty_level))}</span>
+                                    <span class="cruise-chip">${escapeHtml(tour.duration_days || 'индивидуально')} дней</span>
+                                    <span class="cruise-chip">до ${escapeHtml(tour.max_group_size || 'инд.')} чел</span>
+                                    <span class="cruise-chip">${destination || 'маршрут подбирается'}</span>
+                                </div>
+                            </div>
+                            <aside class="cruise-hero__summary">
+                                <div class="cruise-hero__price">
+                                    стоимость от
+                                    <strong>${escapeHtml(formatPrice(tour))}</strong>
+                                </div>
+                                <div class="cruise-hero__summary-row">
+                                    <span>Даты</span>
+                                    <strong>${escapeHtml(dates)}</strong>
+                                </div>
+                                <div class="cruise-hero__summary-row">
+                                    <span>Места</span>
+                                    <strong>${escapeHtml(tour.available_spots ?? tour.total_spots ?? 'по запросу')}</strong>
+                                </div>
+                            </aside>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="cruise-section">
+                <div class="container">
+                    <div class="cruise-info-grid">
+                        <div class="cruise-info-card">
+                            <div class="icon"></div>
+                            <div class="label">Длительность</div>
+                            <div class="value">${escapeHtml(tour.duration_days || 'по запросу')} дней${tour.duration_nights ? ` / ${escapeHtml(tour.duration_nights)} ночей` : ''}</div>
+                        </div>
+                        <div class="cruise-info-card">
+                            <div class="icon"></div>
+                            <div class="label">Группа</div>
+                            <div class="value">до ${escapeHtml(tour.max_group_size || 'инд.')} человек</div>
+                        </div>
+                        <div class="cruise-info-card">
+                            <div class="icon"></div>
+                            <div class="label">Маршрут</div>
+                            <div class="value">${destination || 'подберем'}</div>
+                        </div>
+                        <div class="cruise-info-card">
+                            <div class="icon"></div>
+                            <div class="label">Рейтинг</div>
+                            <div class="value">${tour.avg_rating ? Number(tour.avg_rating).toFixed(1) : 'Новый'} / ${escapeHtml(tour.reviews_count || 0)} отзывов</div>
+                        </div>
+                    </div>
+
+                    <div class="cruise-detail-layout">
+                        <div class="cruise-description">
+                            <h2>О путешествии</h2>
+                            <p>${description}</p>
+                            <div class="cruise-feature-list">
+                                <div class="cruise-feature">Маршрут и темп подбираются под сезон, погоду и состав группы.</div>
+                                <div class="cruise-feature">Менеджер помогает с деталями, документами и подготовкой.</div>
+                                <div class="cruise-feature">Можно зафиксировать места сейчас и спокойно согласовать оплату.</div>
+                                <div class="cruise-feature">Формат подходит для тура, круиза или индивидуального путешествия.</div>
+                            </div>
+                        </div>
+                        ${dreamTour ? renderDreamRequestForm() : renderBookingPanel(tour)}
+                    </div>
+                </div>
+            </section>
+        `;
+
+        const dreamForm = document.getElementById('dreamRequestForm');
+        if (dreamForm) dreamForm.addEventListener('submit', submitDreamRequest);
+        initDreamDateRange();
+        prefillUserForms();
+    }
+
+    function renderBookingPanel(tour) {
+        return `
+            <aside class="booking-section">
+                <h3>${tour.is_cruise ? 'Забронировать круиз' : 'Забронировать тур'}</h3>
+                <label class="booking-label">Количество гостей</label>
+                <div class="people-selector">
+                    <button type="button" onclick="changePeople(-1)">-</button>
+                    <span id="peopleCount">1</span>
+                    <button type="button" onclick="changePeople(1)">+</button>
+                </div>
+                <span class="booking-label">Способ оплаты</span>
+                <div class="payment-methods">
+                    <label class="payment-method"><input type="radio" name="paymentMethod" value="card" checked> Картой после подтверждения</label>
+                    <label class="payment-method"><input type="radio" name="paymentMethod" value="invoice"> Счетом для оплаты</label>
+                    <label class="payment-method"><input type="radio" name="paymentMethod" value="manager"> Через менеджера</label>
+                </div>
+                <div class="booking-price" id="totalPrice">Итого: ${escapeHtml(formatPrice(tour, peopleCount))}</div>
+                <button class="booking-btn" type="button" onclick="bookTour()">Забронировать и перейти к оплате</button>
+                <p class="booking-note">После бронирования заявка появится в профиле. Оплату можно будет согласовать выбранным способом.</p>
+            </aside>
+        `;
+    }
+
+    function renderDreamRequestForm() {
+        return `
+            <aside class="booking-section">
+                <h3>Собрать путешествие мечты</h3>
+                <p class="booking-note">Оставьте контакты и пожелания. Сейчас заявка только отправляется на этой странице, позже подключим админку.</p>
+                <form class="dream-form" id="dreamRequestForm">
+                    <div class="dream-form__row">
+                        <input name="name" type="text" placeholder="Ваше имя" required>
+                        <input name="phone" type="tel" placeholder="Телефон" required>
+                    </div>
+                    <input name="email" type="email" placeholder="Email для связи">
+                    <div class="dream-form__row">
+                        <input name="destination" type="text" placeholder="Куда хотите">
+                        <select name="budget">
+                            <option value="">Бюджет</option>
+                            <option value="до 300 000 ₽">до 300 000 ₽</option>
+                            <option value="300 000 - 700 000 ₽">300 000 - 700 000 ₽</option>
+                            <option value="от 700 000 ₽">от 700 000 ₽</option>
+                        </select>
+                    </div>
+                    <div class="dream-form__row">
+                        <div class="dream-form__field">
+                            <label for="dreamDateFrom">Дата начала</label>
+                            <input id="dreamDateFrom" name="date_from" type="date">
+                        </div>
+                        <div class="dream-form__field">
+                            <label for="dreamDateTo">Дата окончания</label>
+                            <input id="dreamDateTo" name="date_to" type="date">
+                        </div>
+                    </div>
+                    <div class="dream-form__row">
+                        <input name="people" type="number" min="1" placeholder="Сколько человек">
+                    </div>
+                    <textarea name="message" placeholder="Что важно: уровень комфорта, активность, особые пожелания"></textarea>
+                    <button class="booking-btn" type="submit">Отправить заявку</button>
+                </form>
+            </aside>
+        `;
+    }
+
+    function changePeople(delta) {
+        if (!currentTour) return;
+        const newCount = peopleCount + delta;
+        const maxPeople = currentTour?.available_spots || currentTour?.max_group_size || 10;
+        if (newCount >= 1 && newCount <= maxPeople) {
+            peopleCount = newCount;
+            document.getElementById('peopleCount').textContent = peopleCount;
+            document.getElementById('totalPrice').innerHTML = `Итого: ${formatPrice(currentTour, peopleCount)}`;
+        }
+    }
+
+    async function bookTour() {
+        const token = getToken();
+        if (!token) {
+            showNotification('Войдите в аккаунт для бронирования и оплаты', true);
+            window.location.href = 'login.html';
+            return;
+        }
+
+        if (!currentTour || isDreamTour(currentTour)) return;
+
+        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || 'card';
+
+        try {
+            const response = await fetch(`${API_URL}/bookings`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    tour_id: currentTour.id,
+                    number_of_people: peopleCount,
+                    start_date: currentTour.start_date,
+                    end_date: currentTour.end_date,
+                    special_requests: `Предпочтительный способ оплаты: ${paymentMethod}`
+                })
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                showNotification('Бронь создана. Переходим к оплате в профиле.');
+                setTimeout(() => window.location.href = 'profile.html', 1500);
+            } else {
+                showNotification(data.error || 'Ошибка бронирования', true);
+            }
+        } catch (error) {
+            showNotification('Ошибка соединения с сервером', true);
+        }
+    }
+
+    async function submitDreamRequest(event) {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const formData = new FormData(form);
+        const dateFrom = formData.get('date_from');
+        const dateTo = formData.get('date_to');
+
+        if (dateFrom && dateTo && dateTo < dateFrom) {
+            showNotification('Дата окончания не может быть раньше даты начала', true);
+            return;
+        }
+
+        try {
+            const token = getToken();
+            const response = await fetch(`${API_URL}/dream-requests`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                },
+                body: JSON.stringify(Object.fromEntries(formData.entries()))
+            });
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                showNotification(data.error || 'Ошибка отправки заявки', true);
+                return;
+            }
+
+            form.reset();
+            showNotification(data.message || 'Заявка отправлена. Мы свяжемся с вами для подбора путешествия.');
+        } catch (error) {
+            showNotification('Ошибка соединения с сервером', true);
+        }
+    }
+
     const subscribeForm = document.getElementById('subscribeForm');
     if (subscribeForm) {
         subscribeForm.addEventListener('submit', async (e) => {
@@ -500,6 +1178,7 @@
     window.changePeople = changePeople;
     window.bookTour = bookTour;
 </script>
+<script src="/auth-nav.js"></script>
 <script src="/chat-widget.js"></script>
 </body>
 </html>

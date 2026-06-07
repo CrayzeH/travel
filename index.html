@@ -114,12 +114,16 @@
         /* ==================== СТИЛИ ДЛЯ ГИДОВ ==================== */
         .guides {
             position: relative;
-            min-height: 760px;
-            padding: 140px 0 92px;
+            min-height: 720px;
+            padding: 112px 0 82px;
             background: #17222b;
             overflow: hidden;
             display: flex;
             align-items: center;
+        }
+
+        .guides::before {
+            content: none;
         }
 
         .guides__bg {
@@ -135,17 +139,15 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            opacity: 0.55;
-            filter: saturate(0.9) contrast(1.08);
+            opacity: 1;
+            filter: saturate(1) contrast(1);
         }
 
         .guides__bg::after {
             content: '';
             position: absolute;
             inset: 0;
-            background:
-                linear-gradient(90deg, rgba(18, 29, 37, 0.92) 0%, rgba(18, 29, 37, 0.72) 38%, rgba(18, 29, 37, 0.6) 100%),
-                linear-gradient(180deg, rgba(18, 29, 37, 0.34), rgba(18, 29, 37, 0.9));
+            background: linear-gradient(90deg, rgba(18, 29, 37, 0.62) 0%, rgba(18, 29, 37, 0.34) 45%, rgba(18, 29, 37, 0.2) 100%);
         }
 
         .guides__container {
@@ -154,10 +156,10 @@
             width: 100%;
             max-width: 1440px;
             margin: 0 auto;
-            padding: 0 0 0 clamp(28px, 7vw, 176px);
+            padding: 0 0 0 clamp(26px, 7vw, 156px);
             display: grid;
-            grid-template-columns: minmax(310px, 0.9fr) minmax(0, 1.8fr);
-            gap: clamp(42px, 6vw, 96px);
+            grid-template-columns: minmax(300px, 0.86fr) minmax(0, 1.9fr);
+            gap: clamp(36px, 5vw, 82px);
             align-items: center;
         }
 
@@ -168,9 +170,19 @@
         }
 
         .guides__eyebrow {
-            color: rgba(255, 255, 255, 0.72);
+            color: rgba(255, 255, 255, 0.76);
             font-size: 16px;
             margin-bottom: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .guides__eyebrow::before {
+            content: '';
+            width: 42px;
+            height: 1px;
+            background: #ffbd4e;
         }
 
         .guides__title {
@@ -196,19 +208,58 @@
             margin: 0;
         }
 
+        .guides__stats {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 34px;
+        }
+
+        .guides__stat {
+            min-height: 86px;
+            padding: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.055);
+            backdrop-filter: blur(12px);
+        }
+
+        .guides__stat strong {
+            display: block;
+            color: #ffbd4e;
+            font-size: 30px;
+            line-height: 1;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .guides__stat span {
+            display: block;
+            margin-top: 8px;
+            color: rgba(255, 255, 255, 0.65);
+            font-size: 13px;
+        }
+
         .guides__slider-wrapper {
             position: relative;
             min-width: 0;
-            padding: 34px 0 40px;
+            padding: 36px 0 44px;
             overflow: hidden;
+        }
+
+        .guides__slider-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: 0 max(40px, 9vw) 18px 46px;
+            border: 1px solid rgba(255, 189, 78, 0.28);
+            transform: translateY(24px);
+            pointer-events: none;
         }
 
         .guides__slider {
             display: flex;
-            gap: 32px;
+            gap: 26px;
             overflow-x: auto;
             scroll-behavior: smooth;
-            padding: 0 max(40px, 9vw) 34px 0;
+            padding: 0 max(56px, 10vw) 38px 8px;
             cursor: grab;
             -ms-overflow-style: none;
             scrollbar-width: none;
@@ -225,23 +276,53 @@
         }
 
         .guide-card {
-            flex: 0 0 clamp(240px, 18.5vw, 342px);
-            min-width: 240px;
+            flex: 0 0 250px;
+            width: 250px;
+            height: 360px;
+            min-width: 250px;
             position: relative;
-            border-radius: 10px;
+            border-radius: 18px;
             overflow: hidden;
             background: rgba(18, 29, 37, 0.72);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 16px 26px rgba(3, 7, 10, 0.42);
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 18px 34px rgba(3, 7, 10, 0.44);
+            transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.45s ease, border-color 0.35s ease;
             user-select: none;
             scroll-snap-align: start;
-            aspect-ratio: 0.76;
+            isolation: isolate;
+        }
+
+        .guide-card:nth-child(1) {
+            flex-basis: 250px;
+            transform: none;
+        }
+
+        .guide-card:nth-child(1) .guide-card__name {
+            font-size: clamp(24px, 2vw, 34px);
+        }
+
+        .guide-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(145deg, rgba(255, 189, 78, 0.64), rgba(255, 255, 255, 0.08), rgba(67, 126, 141, 0.38));
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            z-index: 4;
         }
 
         .guide-card:hover {
-            transform: translateY(-12px);
-            box-shadow: 0 30px 46px rgba(3, 7, 10, 0.52);
+            transform: translateY(-14px) scale(1.015);
+            border-color: rgba(255, 189, 78, 0.28);
+            box-shadow: 0 34px 58px rgba(3, 7, 10, 0.58);
+        }
+
+        .guide-card:nth-child(1):hover {
+            transform: translateY(-14px) scale(1.015);
         }
 
         .guide-card__image-wrapper {
@@ -255,21 +336,24 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.85s cubic-bezier(0.4, 0, 0.2, 1), filter 0.85s ease;
         }
 
         .guide-card:hover .guide-card__image {
             transform: scale(1.08);
+            filter: saturate(1.1) contrast(1.05);
         }
 
         .guide-card__image-overlay {
             position: absolute;
             inset: 0;
-            background: linear-gradient(to top,
-                rgba(16, 22, 27, 0.9) 0%,
-                rgba(16, 22, 27, 0.52) 31%,
-                rgba(16, 22, 27, 0.12) 62%,
-                rgba(16, 22, 27, 0.02) 100%);
+            background:
+                linear-gradient(to top,
+                    rgba(16, 22, 27, 0.95) 0%,
+                    rgba(16, 22, 27, 0.62) 34%,
+                    rgba(16, 22, 27, 0.16) 66%,
+                    rgba(16, 22, 27, 0.04) 100%),
+                radial-gradient(circle at 18% 88%, rgba(255, 189, 78, 0.18), transparent 35%);
             pointer-events: none;
         }
 
@@ -279,8 +363,8 @@
             right: 0;
             bottom: 0;
             z-index: 2;
-            padding: 0 22px 24px;
-            background: transparent;
+            padding: 0 22px 22px;
+            background: linear-gradient(180deg, transparent, rgba(16, 22, 27, 0.16));
         }
 
         .guide-card__rating {
@@ -315,6 +399,26 @@
             letter-spacing: 0;
             margin-bottom: 0;
             display: block;
+        }
+
+        .guide-card__meta {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .guide-card__meta span {
+            display: inline-flex;
+            align-items: center;
+            min-height: 30px;
+            padding: 0 10px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.82);
+            font-size: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
         }
 
         .guide-card__position::before {
@@ -352,11 +456,11 @@
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            width: 44px;
-            height: 72px;
-            background: rgba(12, 18, 23, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.16);
-            border-radius: 4px;
+            width: 54px;
+            height: 54px;
+            background: rgba(12, 18, 23, 0.58);
+            border: 1px solid rgba(255, 189, 78, 0.24);
+            border-radius: 50%;
             cursor: pointer;
             font-size: 20px;
             display: flex;
@@ -369,10 +473,10 @@
         }
 
         .guides__nav:hover {
-            background: rgba(255, 189, 78, 0.18);
+            background: #ffbd4e;
             color: #fff;
-            transform: translateY(-50%);
-            box-shadow: none;
+            transform: translateY(-50%) scale(1.06);
+            box-shadow: 0 18px 30px rgba(0, 0, 0, 0.35);
         }
 
         .guides__nav--prev {
@@ -380,7 +484,7 @@
         }
 
         .guides__nav--next {
-            right: 18px;
+            right: 28px;
         }
 
         .guides__nav:disabled {
@@ -401,10 +505,11 @@
             justify-content: flex-start;
             gap: 0;
             width: calc(100% - max(40px, 9vw));
-            height: 5px;
+            height: 6px;
             margin-top: 0;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.2);
             overflow: hidden;
+            border-radius: 999px;
         }
 
         .guides__dot {
@@ -418,9 +523,9 @@
         }
 
         .guides__dot.active {
-            background: #ffbd4e;
+            background: linear-gradient(90deg, #ffbd4e, #ffd893);
             width: auto;
-            border-radius: 0;
+            border-radius: 999px;
         }
 
         @media (max-width: 1200px) {
@@ -438,12 +543,24 @@
                 max-width: 680px;
             }
 
+            .guides__stats {
+                max-width: 420px;
+            }
+
             .guides__slider-wrapper {
                 padding-top: 8px;
             }
 
             .guide-card {
-                flex-basis: 286px;
+                flex-basis: 250px;
+            }
+
+            .guide-card:nth-child(1) {
+                transform: translateY(0);
+            }
+
+            .guide-card:nth-child(1):hover {
+                transform: translateY(-12px) scale(1.012);
             }
         }
 
@@ -463,8 +580,14 @@
             }
 
             .guide-card {
-                flex: 0 0 min(78vw, 292px);
-                min-width: 230px;
+                flex: 0 0 min(78vw, 250px);
+                width: min(78vw, 250px);
+                min-width: 220px;
+                height: 340px;
+            }
+
+            .guides__stats {
+                grid-template-columns: 1fr 1fr;
             }
 
             .guide-card__image-wrapper {
@@ -492,6 +615,11 @@
                 padding-right: 24px;
             }
 
+            .guides__slider-wrapper::before {
+                inset: 0 0 18px 0;
+                transform: translateY(18px);
+            }
+
             .guides__dots {
                 width: 100%;
             }
@@ -504,6 +632,12 @@
 
             .guide-card {
                 flex-basis: 82vw;
+                width: 82vw;
+                height: 330px;
+            }
+
+            .guides__stats {
+                grid-template-columns: 1fr;
             }
 
             .guide-card__position {
@@ -525,6 +659,8 @@
             </a>
             <nav class="navbar">
                 <a href="index.html" class="nav-link" style="color: #ffbd4e;">ГЛАВНАЯ</a>
+                <a href="tours.html" class="nav-link">ТУРЫ</a>
+
                 <a href="cruises.html" class="nav-link">КРУИЗЫ</a>
                 <a href="ideas.html" class="nav-link">ИДЕИ</a>
                 <a href="calendar.html" class="nav-link">КАЛЕНДАРЬ</a>
@@ -565,11 +701,17 @@
                     <div class="about-card" data-tab="clients">
                         <h3><span>КТО</span> <span class="accent">НАШИ КЛИЕНТЫ?</span></h3>
                     </div>
+                    <div class="about-card" data-tab="routes">
+                        <h3><span>КАКИЕ</span> <span class="accent">МАРШРУТЫ?</span></h3>
+                    </div>
+                    <div class="about-card" data-tab="service">
+                        <h3><span>КАКОЙ</span> <span class="accent">СЕРВИС?</span></h3>
+                    </div>
                 </div>
                 <div class="about__content">
                     <div class="about__text">
                         <img src="img/Black%201.png" alt="Team">
-                        <p id="aboutText">Идейные соображения высшего порядка, а также начало повседневной работы по
+                        <p id="aboutText" class="about__text-copy--active">Идейные соображения высшего порядка, а также начало повседневной работы по
                             формированию позиции позволяет оценить значение соответствующий условий активизации.
                             Товарищи! консультация с широким активом играет важную роль в формировании дальнейших
                             направлений развития.</p>
@@ -604,6 +746,10 @@
                         Идейные соображения высшего порядка, а также начало повседневной работы по формированию позиции
                         позволяет оценить значение соответствующий условий активизации.
                     </p>
+                    <div class="guides__stats" id="guidesStats">
+                        <div class="guides__stat"><strong>4.8</strong><span>средний рейтинг</span></div>
+                        <div class="guides__stat"><strong>400+</strong><span>проведенных туров</span></div>
+                    </div>
                 </div>
 
                 <div class="guides__slider-wrapper">
@@ -621,9 +767,51 @@
             </div>
         </section>
 
-        <section class="stats">
-            <div class="container">
-                <img class="stats__img" src="img/Group%20182%201.png" alt="Stats">
+        <section class="travel-ideas" id="travelIdeas">
+            <div class="container travel-ideas__inner">
+                <div class="travel-ideas__header">
+                    <div>
+                        <p class="travel-ideas__eyebrow">Публикации</p>
+                        <h2 class="travel-ideas__title"><span>ИДЕИ</span> ПУТЕШЕСТВИЙ</h2>
+                    </div>
+                    <a class="travel-ideas__all" href="ideas.html">Смотреть все публикации <span>↗</span></a>
+                </div>
+
+                <div class="travel-ideas__tabs" id="travelIdeasTabs" aria-label="Разделы идей">
+                    <button class="travel-ideas__tab active" type="button">Загрузка...</button>
+                </div>
+
+                <div class="travel-ideas__list" id="travelIdeasList">
+                    <div class="travel-ideas__empty">Загрузка идей для путешествий...</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="compass-section">
+            <div class="container compass-section__inner">
+                <div class="compass-copy compass-copy--left">
+                    <p>
+                        <strong>Мы строим маршрут</strong> так, чтобы за неделю показать самые интересные места региона.
+                        Включаем в программу только лучшее проживание, транспорт, питание, людей и достопримечательности.
+                    </p>
+                </div>
+
+                <div class="compass-widget" aria-label="Компас путешествия">
+                    <span class="compass-widget__point compass-widget__point--n">N</span>
+                    <span class="compass-widget__point compass-widget__point--e">E</span>
+                    <span class="compass-widget__point compass-widget__point--s">S</span>
+                    <span class="compass-widget__point compass-widget__point--w">W</span>
+                    <div class="compass-widget__circle">
+                        <span class="compass-widget__needle"></span>
+                    </div>
+                </div>
+
+                <div class="compass-copy compass-copy--right">
+                    <p>
+                        <strong>Работаем с группами</strong> до 10 человек и лично их сопровождаем.
+                        Следим за темпом, погодой и безопасностью, чтобы маршрут ощущался продуманным с первого дня.
+                    </p>
+                </div>
             </div>
         </section>
     </main>
@@ -723,11 +911,21 @@
             const dotsContainer = document.getElementById('guidesDots');
             const prevBtn = document.getElementById('guidesPrev');
             const nextBtn = document.getElementById('guidesNext');
+            const statsContainer = document.getElementById('guidesStats');
 
             if (!slider) return;
 
             if (data.guides && data.guides.length > 0) {
-                slider.innerHTML = data.guides.map(guide => `
+                if (statsContainer) {
+                    const averageRating = data.guides.reduce((sum, guide) => sum + Number(guide.rating || 0), 0) / data.guides.length;
+                    const totalTours = data.guides.reduce((sum, guide) => sum + Number(guide.tours_conducted || 0), 0);
+                    statsContainer.innerHTML = `
+                        <div class="guides__stat"><strong>${averageRating.toFixed(1)}</strong><span>средний рейтинг</span></div>
+                        <div class="guides__stat"><strong>${totalTours}+</strong><span>проведенных туров</span></div>
+                    `;
+                }
+
+                slider.innerHTML = data.guides.map((guide, index) => `
                 <div class="guide-card">
                     <div class="guide-card__image-wrapper">
                         <img class="guide-card__image"
@@ -741,10 +939,16 @@
                             </div>
                             <h3 class="guide-card__name">${getGuideShortName(guide.full_name)}</h3>
                             <p class="guide-card__position">${getGuideDirection(guide)}</p>
+                            <div class="guide-card__meta">
+                                <span>${guide.experience_years || guide.experience || 1}+ лет опыта</span>
+                                <span>${guide.tours_conducted || 0} туров</span>
+                                ${index === 0 ? '<span>топ-гид</span>' : ''}
+                            </div>
                         </div>
                     </div>
                 </div>
-            `).join('');
+                `).join('');
+                slider.scrollLeft = 0;
 
                 const cardsPerView = window.innerWidth <= 768 ? 1 : window.innerWidth <= 1200 ? 2 : 3;
                 const totalPages = Math.ceil(data.guides.length / cardsPerView);
@@ -967,8 +1171,35 @@
         setTimeout(() => notification.remove(), 3000);
     }
 
+    function renderProfileLink(user = null) {
+        const profileLink = document.getElementById('profileLink');
+        if (!profileLink) return;
+
+        if (!user) {
+            profileLink.classList.remove('profile-avatar-link');
+            profileLink.textContent = 'ПРОФИЛЬ';
+            profileLink.href = 'login.html';
+            profileLink.removeAttribute('aria-label');
+            return;
+        }
+
+        const avatar = user.avatar_url || 'img/avatar-placeholder.png';
+        profileLink.href = 'profile.html';
+        profileLink.classList.add('profile-avatar-link');
+        profileLink.setAttribute('aria-label', 'Открыть профиль');
+        profileLink.innerHTML = `<img src="${avatar}" alt="Профиль">`;
+    }
+
     function checkAuth() {
         const token = getToken();
+        if (!token) {
+            renderProfileLink(null);
+            return;
+        }
+
+        const savedUser = JSON.parse(localStorage.getItem('user') || 'null');
+        if (savedUser) renderProfileLink(savedUser);
+
         if (token) {
             fetch(`${API_URL}/users/profile`, {
                 headers: {'Authorization': `Bearer ${token}`}
@@ -977,13 +1208,18 @@
                 .then(data => {
                     if (data.user) {
                         currentUser = data.user;
-                        const profileLink = document.getElementById('profileLink');
-                        if (profileLink) {
-                            profileLink.textContent = currentUser.full_name.split(' ')[0];
-                        }
+                        localStorage.setItem('user', JSON.stringify(currentUser));
+                        renderProfileLink(currentUser);
+                    } else {
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('user');
+                        renderProfileLink(null);
                     }
                 })
                 .catch(() => {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    renderProfileLink(null);
                 });
         }
     }
@@ -1000,7 +1236,7 @@
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
                 showNotification('Добро пожаловать!');
-                setTimeout(() => location.reload(), 1500);
+                setTimeout(() => window.location.href = 'profile.html', 1500);
             } else {
                 showNotification(data.error || 'Ошибка входа', true);
             }
@@ -1021,7 +1257,7 @@
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
                 showNotification('Регистрация успешна!');
-                setTimeout(() => location.reload(), 1500);
+                setTimeout(() => window.location.href = 'profile.html', 1500);
             } else {
                 showNotification(data.error || 'Ошибка регистрации', true);
             }
@@ -1053,6 +1289,36 @@
 
     function getTourTitle(tour) {
         return (tour.destination || tour.title || 'Тур').toUpperCase();
+    }
+
+    const aboutTabsContent = {
+        who: `Мы собираем авторские туры, круизы и экспедиции для тех, кто хочет увидеть место живым: с сильным маршрутом, понятной организацией и вниманием к деталям. В каждом путешествии продумываем темп, логистику, размещение и точки, ради которых действительно стоит ехать.`,
+        what: `Мы проектируем путешествие под задачу: подбираем направление, собираем программу по дням, подключаем гидов, транспорт, проживание и бронирования. Клиент получает не набор случайных экскурсий, а цельный маршрут, где каждый день работает на впечатление.`,
+        clients: `К нам приходят путешественники, пары, семьи, небольшие компании и корпоративные группы. Одним нужен комфортный отпуск без организационной суеты, другим — редкий маршрут, экспедиционный формат или круиз с продуманной программой на берегу.`,
+        routes: `В маршрутах держим баланс между природой, культурой и свободным временем. Добавляем красивые видовые точки, локальную кухню, прогулки, морские выходы, фотолокации и запасные сценарии на случай погоды, чтобы поездка не разваливалась от мелочей.`,
+        service: `До старта помогаем с документами, оплатой, подбором билетов и подготовкой. Во время поездки остаёмся на связи, быстро решаем бытовые вопросы и держим прозрачную коммуникацию по программе, срокам, доплатам и изменениям.`
+    };
+
+    function initAboutTabs() {
+        const cards = document.querySelectorAll('.about-card');
+        const text = document.getElementById('aboutText');
+        if (!cards.length || !text) return;
+
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                const content = aboutTabsContent[card.dataset.tab];
+                if (!content) return;
+
+                cards.forEach(item => item.classList.remove('about-card--active'));
+                card.classList.add('about-card--active');
+                text.classList.remove('about__text-copy--active');
+
+                window.setTimeout(() => {
+                    text.textContent = content;
+                    text.classList.add('about__text-copy--active');
+                }, 120);
+            });
+        });
     }
 
     async function loadTours() {
@@ -1121,6 +1387,100 @@
         }
     }
 
+    let travelIdeasState = {
+        categories: [],
+        ideasByCategory: {},
+        activeCategory: null
+    };
+
+    function escapeIdeaHtml(value) {
+        return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        })[char]);
+    }
+
+    function renderTravelIdeaTabs() {
+        const tabs = document.getElementById('travelIdeasTabs');
+        if (!tabs) return;
+
+        tabs.innerHTML = travelIdeasState.categories.map((category) => `
+            <button class="travel-ideas__tab${category.slug === travelIdeasState.activeCategory ? ' active' : ''}"
+                    type="button"
+                    data-category="${escapeIdeaHtml(category.slug)}">
+                ${escapeIdeaHtml(category.name)}
+            </button>
+        `).join('');
+    }
+
+    function renderTravelIdeas(categorySlug) {
+        const list = document.getElementById('travelIdeasList');
+        if (!list) return;
+
+        travelIdeasState.activeCategory = categorySlug;
+        const ideas = travelIdeasState.ideasByCategory[categorySlug] || [];
+        renderTravelIdeaTabs();
+
+        if (!ideas.length) {
+            list.innerHTML = '<div class="travel-ideas__empty">В этом разделе идеи скоро появятся</div>';
+            return;
+        }
+
+        list.innerHTML = ideas.slice(0, 3).map((idea) => {
+            const imageUrl = `img/${idea.image_url}`;
+            return `
+                <article class="travel-idea-card">
+                    <div class="travel-idea-card__date">
+                        <span>${escapeIdeaHtml(idea.month_label)}</span>
+                        <span class="travel-idea-card__day">${escapeIdeaHtml(idea.day_label)}</span>
+                    </div>
+                    <a class="travel-idea-card__media" href="${escapeIdeaHtml(idea.link_url || 'ideas.html')}" aria-label="${escapeIdeaHtml(idea.title)}">
+                        <img src="${escapeIdeaHtml(imageUrl)}" alt="${escapeIdeaHtml(idea.title)}" loading="lazy" onload="this.nextElementSibling.hidden=true;" onerror="this.style.display='none'; this.nextElementSibling.hidden=false;">
+                        <span class="travel-idea-card__missing" hidden>Нет картинки:<br>${escapeIdeaHtml(idea.image_url)}</span>
+                    </a>
+                    <div class="travel-idea-card__content">
+                        <h3 class="travel-idea-card__title">${escapeIdeaHtml(idea.title)}</h3>
+                        <p class="travel-idea-card__description">${escapeIdeaHtml(idea.description)}</p>
+                        <a class="travel-idea-card__link" href="${escapeIdeaHtml(idea.link_url || 'ideas.html')}">Узнать больше <span>↗</span></a>
+                        <span class="travel-idea-card__tag">${escapeIdeaHtml(idea.tag || idea.category_name || '')}</span>
+                    </div>
+                </article>
+            `;
+        }).join('');
+    }
+
+    async function loadTravelIdeas() {
+        const tabs = document.getElementById('travelIdeasTabs');
+        const list = document.getElementById('travelIdeasList');
+        if (!tabs || !list) return;
+
+        try {
+            const response = await fetch(`${API_URL}/travel-ideas?limit=3`);
+            const data = await response.json();
+
+            travelIdeasState = {
+                categories: data.categories || [],
+                ideasByCategory: data.ideasByCategory || {},
+                activeCategory: data.categories?.[0]?.slug || null
+            };
+
+            if (!travelIdeasState.activeCategory) {
+                tabs.innerHTML = '';
+                list.innerHTML = '<div class="travel-ideas__empty">Идеи временно недоступны</div>';
+                return;
+            }
+
+            renderTravelIdeas(travelIdeasState.activeCategory);
+        } catch (error) {
+            console.error('Ошибка загрузки идей:', error);
+            tabs.innerHTML = '';
+            list.innerHTML = '<div class="travel-ideas__empty">Ошибка загрузки идей для путешествий</div>';
+        }
+    }
+
     async function bookTour(tourId) {
         const token = getToken();
         if (!token) {
@@ -1153,6 +1513,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         // Загрузка гидов из API
         loadGuides();
+        initAboutTabs();
 
         // Параллакс героя
         window.addEventListener('scroll', () => {
@@ -1192,9 +1553,7 @@
             profileLink.addEventListener('click', (e) => {
                 const token = getToken();
                 if (!token) {
-                    e.preventDefault();
-                    const modal = document.getElementById('authModal');
-                    if (modal) modal.classList.add('active');
+                    profileLink.href = 'login.html';
                 }
             });
         }
@@ -1258,8 +1617,20 @@
 
         // Запуск
         checkAuth();
+        const travelIdeasTabs = document.getElementById('travelIdeasTabs');
+        if (travelIdeasTabs) {
+            travelIdeasTabs.addEventListener('click', (e) => {
+                const tab = e.target.closest('.travel-ideas__tab');
+                if (!tab || !tab.dataset.category) return;
+                renderTravelIdeas(tab.dataset.category);
+            });
+        }
+
         loadTours();
+        loadTravelIdeas();
     });
 </script>
+<script src="/auth-nav.js"></script>
+<script src="/chat-widget.js"></script>
 </body>
 </html>

@@ -1,6 +1,27 @@
 // ИИ-ассистент Travel & Discover
 (function() {
     let isSending = false;
+    const botIcon = `
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M12 3.25c4.35 0 7.9 3.12 7.9 6.95v4.05c0 3.83-3.55 6.95-7.9 6.95s-7.9-3.12-7.9-6.95V10.2c0-3.83 3.55-6.95 7.9-6.95Zm-3.95 8.7a1.15 1.15 0 1 0 0-2.3 1.15 1.15 0 0 0 0 2.3Zm7.9 0a1.15 1.15 0 1 0 0-2.3 1.15 1.15 0 0 0 0 2.3Zm-6.3 3.15a.75.75 0 0 0 0 1.5h4.7a.75.75 0 0 0 0-1.5h-4.7Z"/>
+            <path d="M12 1.75v2.3M3.25 12.2H2.1m19.8 0h-1.15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+    `;
+    const userIcon = `
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M12 12.2a4.15 4.15 0 1 0 0-8.3 4.15 4.15 0 0 0 0 8.3Zm0 2.05c-4.1 0-7.35 2.15-7.35 4.8 0 .66.54 1.2 1.2 1.2h12.3c.66 0 1.2-.54 1.2-1.2 0-2.65-3.25-4.8-7.35-4.8Z"/>
+        </svg>
+    `;
+    const planeIcon = `
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M21 3.8 13.7 21l-3.1-7.6L3 10.3 21 3.8Z"/>
+        </svg>
+    `;
+    const sendIcon = `
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M21 3.8 3.5 11.1l7.2 2.2 2.2 7.2L21 3.8Zm-9.5 8.7 4.8-4.8"/>
+        </svg>
+    `;
 
     function addMessage(text, isUser) {
         const container = document.getElementById('travelChatMessages');
@@ -9,7 +30,7 @@
         const messageDiv = document.createElement('div');
         messageDiv.className = `travel-message ${isUser ? 'travel-user' : 'travel-bot'}`;
         messageDiv.innerHTML = `
-            <div class="travel-message-avatar">${isUser ? '👤' : '🌍'}</div>
+            <div class="travel-message-avatar">${isUser ? userIcon : botIcon}</div>
             <div class="travel-message-bubble">
                 <div class="travel-message-text">${text.replace(/\n/g, '<br>')}</div>
                 <div class="travel-message-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}</div>
@@ -42,7 +63,7 @@
         typingDiv.className = 'travel-message travel-bot';
         typingDiv.id = 'travelTypingIndicator';
         typingDiv.innerHTML = `
-            <div class="travel-message-avatar">🌍</div>
+            <div class="travel-message-avatar">${botIcon}</div>
             <div class="travel-message-bubble">
                 <div class="travel-message-text">
                     <span class="travel-typing">✈️ ищу ответ</span>
@@ -110,9 +131,19 @@
                 background: #ffaa2e !important;
                 box-shadow: 0 6px 20px rgba(255, 189, 78, 0.5) !important;
             }
-            .travel-chat-toggle i {
-                font-size: 28px !important;
-                color: #29343e !important;
+            .travel-chat-toggle svg,
+            .travel-chat-header-info svg,
+            .travel-chat-send svg,
+            .travel-message-avatar svg {
+                width: 1em !important;
+                height: 1em !important;
+                display: block !important;
+                fill: currentColor !important;
+                color: currentColor !important;
+            }
+            .travel-chat-toggle svg {
+                width: 30px !important;
+                height: 30px !important;
             }
             .travel-chat-window {
                 position: fixed !important;
@@ -143,8 +174,9 @@
                 font-weight: 700 !important;
                 font-size: 16px !important;
             }
-            .travel-chat-header-info i {
-                font-size: 22px !important;
+            .travel-chat-header-info svg {
+                width: 22px !important;
+                height: 22px !important;
             }
             .travel-chat-close {
                 background: none !important;
@@ -275,9 +307,15 @@
                 transform: scale(1.05) !important;
                 background: #ffaa2e !important;
             }
-            .travel-chat-send i {
+            .travel-chat-send svg {
+                width: 18px !important;
+                height: 18px !important;
                 color: #29343e !important;
-                font-size: 14px !important;
+                fill: none !important;
+                stroke: currentColor !important;
+                stroke-width: 1.8 !important;
+                stroke-linecap: round !important;
+                stroke-linejoin: round !important;
             }
             @media (max-width: 480px) {
                 .travel-chat-window {
@@ -294,29 +332,22 @@
         `;
         document.head.appendChild(styles);
 
-        if (!document.querySelector('link[href*="font-awesome"]')) {
-            const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
-            document.head.appendChild(link);
-        }
-
         const widgetHtml = `
             <div id="travelChatRoot">
                 <button class="travel-chat-toggle" id="travelChatToggleBtn">
-                    <i class="fas fa-globe-asia"></i>
+                    ${botIcon}
                 </button>
                 <div class="travel-chat-window" id="travelChatWindow">
                     <div class="travel-chat-header">
                         <div class="travel-chat-header-info">
-                            <i class="fas fa-plane"></i>
+                            ${planeIcon}
                             <span>Travel Assistant</span>
                         </div>
                         <button class="travel-chat-close" id="travelChatCloseBtn">✕</button>
                     </div>
                     <div class="travel-chat-messages" id="travelChatMessages">
                         <div class="travel-message travel-bot">
-                            <div class="travel-message-avatar">🌍</div>
+                            <div class="travel-message-avatar">${botIcon}</div>
                             <div class="travel-message-bubble">
                                 <div class="travel-message-text">
                                     ✈️ Привет! Я ваш гид по путешествиям.<br><br>
@@ -335,7 +366,7 @@
                     <div class="travel-chat-input-area">
                         <input type="text" class="travel-chat-input" id="travelChatInput" placeholder="Напишите сообщение..." autocomplete="off">
                         <button class="travel-chat-send" id="travelChatSendBtn">
-                            <i class="fas fa-paper-plane"></i>
+                            ${sendIcon}
                         </button>
                     </div>
                 </div>

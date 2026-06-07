@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { background: #202b34; color: #fff; }
+        .admin-shell { min-height: 100vh; padding: 34px; }
+        .admin-top { display: flex; justify-content: space-between; align-items: center; gap: 20px; margin-bottom: 28px; }
+        .admin-title { margin: 0; font-size: clamp(30px, 5vw, 58px); text-transform: uppercase; }
+        .admin-title span { color: #ffbd4e; }
+        .admin-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .admin-btn { border: 1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.06); color: #fff; padding: 11px 16px; border-radius: 6px; cursor: pointer; font-weight: 700; }
+        .admin-btn--main, .admin-btn.active { background: #ffbd4e; color: #111820; border-color: #ffbd4e; }
+        .admin-btn--danger { background: rgba(220, 58, 58, .14); border-color: rgba(255, 102, 102, .42); color: #ff9a9a; }
+        .admin-btn--danger:hover { background: #dc3a3a; border-color: #dc3a3a; color: #fff; }
+        .admin-tabs { display: grid; grid-template-columns: repeat(5, minmax(130px, 1fr)); gap: 10px; margin-bottom: 22px; }
+        .admin-panel { display: none; }
+        .admin-panel.active { display: block; animation: fadeIn .25s ease; }
+        .admin-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 22px; }
+        .stat-card, .admin-card, .admin-form { background: #18242d; border: 1px solid rgba(255,189,78,.18); border-radius: 8px; box-shadow: 0 18px 42px rgba(0,0,0,.18); }
+        .stat-card { padding: 20px; }
+        .stat-card span { color: rgba(255,255,255,.58); font-size: 12px; text-transform: uppercase; }
+        .stat-card strong { display: block; margin-top: 8px; color: #ffbd4e; font-size: 30px; }
+        .admin-list { display: grid; gap: 12px; }
+        .admin-card { padding: 18px; display: grid; gap: 12px; }
+        .admin-card__head { display: flex; justify-content: space-between; gap: 14px; align-items: flex-start; }
+        .admin-card h3 { margin: 0; font-size: 20px; }
+        .admin-card p { margin: 0; color: rgba(255,255,255,.72); line-height: 1.55; }
+        .admin-meta { display: flex; gap: 8px; flex-wrap: wrap; color: rgba(255,255,255,.68); font-size: 13px; }
+        .admin-pill { border: 1px solid rgba(255,255,255,.12); padding: 6px 9px; border-radius: 999px; background: rgba(255,255,255,.05); }
+        .admin-check-card {
+            min-height: 44px; display: flex; align-items: center; gap: 10px; border: 1px solid rgba(255,255,255,.14);
+            background: rgba(255,255,255,.06); color: #fff; padding: 11px 12px; border-radius: 5px; font-weight: 700; cursor: pointer;
+        }
+        .admin-check-card input { width: 16px; height: 16px; accent-color: #ffbd4e; }
+        .admin-card select, .admin-card textarea, .admin-form input, .admin-form select, .admin-form textarea {
+            width: 100%; border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.06); color: #fff; padding: 11px 12px; border-radius: 5px; font: inherit;
+        }
+        .admin-card option, .admin-form option { color: #111820; }
+        .admin-card textarea, .admin-form textarea { min-height: 78px; resize: vertical; }
+        .admin-form { padding: 18px; margin-bottom: 18px; display: grid; gap: 12px; }
+        .admin-form-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+        .admin-form-wide { grid-column: span 2; }
+        .admin-upload-box {
+            grid-column: span 2; display: grid; gap: 10px; border: 1px solid rgba(255,255,255,.14);
+            background: rgba(255,255,255,.04); padding: 12px; border-radius: 6px;
+        }
+        .admin-upload-box input[type="file"] { color: rgba(255,255,255,.82); }
+        .admin-upload-tools { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .admin-upload-status { color: rgba(255,255,255,.68); font-size: 13px; }
+        .admin-image-preview { display: none; width: 160px; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 6px; border: 1px solid rgba(255,255,255,.14); }
+        .admin-image-preview.is-visible { display: block; }
+        .admin-row-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .admin-empty { padding: 30px; text-align: center; color: rgba(255,255,255,.62); border: 1px dashed rgba(255,255,255,.18); border-radius: 8px; }
+        @media (max-width: 1100px) { .admin-tabs, .admin-grid { grid-template-columns: repeat(2, 1fr); } .admin-form-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 640px) { .admin-shell { padding: 18px; } .admin-tabs, .admin-grid, .admin-form-grid { grid-template-columns: 1fr; } .admin-form-wide, .admin-upload-box { grid-column: span 1; } .admin-card__head { flex-direction: column; } }
+    </style>
+</head>
+<body>
+<main class="admin-shell">
+    <div class="admin-top">
+        <div>
+            <h1 class="admin-title"><span>Админ</span> панель</h1>
+            <p id="adminUser">Проверка доступа...</p>
+        </div>
+        <div class="admin-actions">
+            <a class="admin-btn" href="index.html">На сайт</a>
+            <button class="admin-btn" id="logoutBtn" type="button">Выйти</button>
+        </div>
+    </div>
+
+    <div class="admin-tabs">
+        <button class="admin-btn active" data-tab="overview">Обзор</button>
+        <button class="admin-btn" data-tab="dream">Заявки мечты</button>
+        <button class="admin-btn" data-tab="tours">Туры и круизы</button>
+        <button class="admin-btn" data-tab="bookings">Брони</button>
+        <button class="admin-btn" data-tab="users">Пользователи</button>
+    </div>
+
+    <section class="admin-panel active" id="panel-overview">
+        <div class="admin-grid" id="statsGrid"></div>
+        <h2>Контактные обращения</h2>
+        <div class="admin-list" id="contactsList"></div>
+    </section>
+
+    <section class="admin-panel" id="panel-dream">
+        <h2>Заявки “Путешествие вашей мечты”</h2>
+        <div class="admin-list" id="dreamList"></div>
+    </section>
+
+    <section class="admin-panel" id="panel-tours">
+        <h2>Туры и круизы</h2>
+        <form class="admin-form" id="tourForm">
+            <input type="hidden" name="id">
+            <div class="admin-form-grid">
+                <input name="title" placeholder="Название" required>
+                <input name="slug" placeholder="Адрес страницы (латиницей)" required>
+                <input name="destination" placeholder="Направление">
+                <input name="country" placeholder="Страна">
+                <input name="region" placeholder="Регион">
+                <input name="duration_days" type="number" min="1" placeholder="Дней">
+                <input name="duration_nights" type="number" min="0" placeholder="Ночей">
+                <input name="price_rub" type="number" min="0" placeholder="Цена ₽">
+                <input name="price_usd" type="number" min="0" placeholder="Цена $">
+                <input name="max_group_size" type="number" min="1" placeholder="Группа до">
+                <input name="available_spots" type="number" min="0" placeholder="Свободно мест">
+                <input name="total_spots" type="number" min="0" placeholder="Всего мест">
+                <input name="start_date" type="date">
+                <input name="end_date" type="date">
+                <input name="main_image_url" class="admin-form-wide" placeholder="Картинка, например img/example.jpg">
+                <div class="admin-upload-box">
+                    <input id="tourImageFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
+                    <div class="admin-upload-tools">
+                        <button class="admin-btn" type="button" id="uploadTourImage">Загрузить картинку</button>
+                        <span class="admin-upload-status" id="tourImageStatus">Файл сохранится в папку img/</span>
+                    </div>
+                    <img class="admin-image-preview" id="tourImagePreview" alt="">
+                </div>
+                <select name="difficulty_level">
+                    <option value="easy">Легкий</option>
+                    <option value="moderate">Средний</option>
+                    <option value="challenging">Сложный</option>
+                    <option value="extreme">Экстрим</option>
+                </select>
+                <select name="status">
+                    <option value="active">Активен</option>
+                    <option value="upcoming">Скоро</option>
+                    <option value="completed">Завершен</option>
+                    <option value="cancelled">Снят с публикации</option>
+                </select>
+                <label class="admin-check-card"><input name="is_cruise" type="checkbox"> Это круиз</label>
+                <textarea name="short_description" class="admin-form-wide" placeholder="Короткое описание"></textarea>
+                <textarea name="full_description" class="admin-form-wide" placeholder="Полное описание"></textarea>
+            </div>
+            <div class="admin-row-actions">
+                <button class="admin-btn admin-btn--main" type="submit">Сохранить</button>
+                <button class="admin-btn" type="button" id="clearTourForm">Очистить</button>
+            </div>
+        </form>
+        <div class="admin-list" id="toursList"></div>
+    </section>
+
+    <section class="admin-panel" id="panel-bookings">
+        <h2>Брони и оплаты</h2>
+        <div class="admin-list" id="bookingsList"></div>
+    </section>
+
+    <section class="admin-panel" id="panel-users">
+        <h2>Пользователи</h2>
+        <div class="admin-list" id="usersList"></div>
+    </section>
+</main>
+
+<script>
+const API = 'http://localhost:3000/api';
+const token = localStorage.getItem('token');
+let toursCache = [];
+
+const adminLabels = {
+    status: { active: 'Активен', upcoming: 'Скоро', completed: 'Завершен', cancelled: 'Снят с публикации' },
+    contactStatus: { new: 'Новое', in_progress: 'В работе', done: 'Готово', spam: 'Спам' },
+    dreamStatus: { new: 'Новая', contacted: 'Связались', planning: 'Планируем', offer_sent: 'Предложение отправлено', closed: 'Закрыта', cancelled: 'Отменена' },
+    bookingStatus: { pending: 'Ожидает', confirmed: 'Подтверждена', paid: 'Оплачена', completed: 'Завершена', cancelled: 'Отменена' },
+    paymentStatus: { unpaid: 'Не оплачено', pending: 'Ожидает оплаты', paid: 'Оплачено', refunded: 'Возврат' },
+    role: { admin: 'Админ', user: 'Пользователь' },
+    userState: { active: 'Активен', blocked: 'Заблокирован' }
+};
+
+function adminLabel(group, value) {
+    return adminLabels[group]?.[value] || value || '—';
+}
+
+function adminOptions(group, values, current) {
+    return values.map(value => `<option value="${value}" ${value === current ? 'selected' : ''}>${adminLabel(group, value)}</option>`).join('');
+}
+
+function authHeaders() {
+    return { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` };
+}
+
+function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+}
+
+async function api(path, options = {}) {
+    const response = await fetch(`${API}${path}`, {
+        ...options,
+        headers: { ...authHeaders(), ...(options.headers || {}) }
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || 'Ошибка запроса');
+    return data;
+}
+
+function empty(text) {
+    return `<div class="admin-empty">${escapeHtml(text)}</div>`;
+}
+
+async function checkAdmin() {
+    if (!token) {
+        location.href = 'login.html';
+        return false;
+    }
+    const data = await api('/users/profile');
+    if (!data.user?.is_admin) {
+        document.body.innerHTML = '<main class="admin-shell"><h1>Доступ запрещен</h1><p>Нужен аккаунт администратора.</p><a class="admin-btn" href="index.html">На сайт</a></main>';
+        return false;
+    }
+    document.getElementById('adminUser').textContent = `${data.user.full_name} / ${data.user.email}`;
+    return true;
+}
+
+function renderStats(stats) {
+    document.getElementById('statsGrid').innerHTML = [
+        ['Пользователи', stats.users],
+        ['Туры и круизы', stats.tours],
+        ['Брони', stats.bookings],
+        ['Выручка ₽', Number(stats.revenue || 0).toLocaleString('ru-RU')]
+    ].map(([label, value]) => `<div class="stat-card"><span>${label}</span><strong>${value}</strong></div>`).join('');
+}
+
+async function loadOverview() {
+    const [{ stats }, { contacts }] = await Promise.all([api('/admin/stats'), api('/admin/contacts')]);
+    renderStats(stats);
+    renderContacts(contacts);
+}
+
+function renderContacts(contacts) {
+    document.getElementById('contactsList').innerHTML = contacts.length ? contacts.map(item => `
+        <article class="admin-card">
+            <div class="admin-card__head"><h3>${escapeHtml(item.subject || 'Обращение')}</h3><span class="admin-pill">${escapeHtml(adminLabel('contactStatus', item.status))}</span></div>
+            <div class="admin-meta"><span>${escapeHtml(item.name)}</span><span>${escapeHtml(item.phone)}</span><span>${escapeHtml(item.email)}</span><span>${escapeHtml(item.created_at)}</span></div>
+            <p>${escapeHtml(item.message)}</p>
+            <div class="admin-row-actions">
+                <select data-contact-status="${item.id}">
+                    ${adminOptions('contactStatus', ['new','in_progress','done','spam'], item.status)}
+                </select>
+                <button class="admin-btn" data-save-contact="${item.id}">Сохранить статус</button>
+            </div>
+        </article>
+    `).join('') : empty('Обращений нет');
+}
+
+async function loadDream() {
+    const { requests } = await api('/admin/dream-requests');
+    document.getElementById('dreamList').innerHTML = requests.length ? requests.map(item => `
+        <article class="admin-card">
+            <div class="admin-card__head"><h3>${escapeHtml(item.destination || 'Любая точка мира')}</h3><span class="admin-pill">${escapeHtml(adminLabel('dreamStatus', item.status))}</span></div>
+            <div class="admin-meta">
+                <span>${escapeHtml(item.name)}</span><span>${escapeHtml(item.phone)}</span><span>${escapeHtml(item.email || '')}</span>
+                <span>${escapeHtml(item.date_from || 'дата не указана')} - ${escapeHtml(item.date_to || 'дата не указана')}</span>
+                <span>${escapeHtml(item.people || '-')} чел.</span><span>${escapeHtml(item.budget || 'бюджет не указан')}</span>
+            </div>
+            <p>${escapeHtml(item.message || 'Без комментария')}</p>
+            <textarea data-dream-comment="${item.id}" placeholder="Комментарий администратора">${escapeHtml(item.admin_comment || '')}</textarea>
+            <div class="admin-row-actions">
+                <select data-dream-status="${item.id}">
+                    ${adminOptions('dreamStatus', ['new','contacted','planning','offer_sent','closed','cancelled'], item.status)}
+                </select>
+                <button class="admin-btn" data-save-dream="${item.id}">Сохранить</button>
+            </div>
+        </article>
+    `).join('') : empty('Заявок пока нет');
+}
+
+async function loadTours() {
+    const { tours } = await api('/admin/tours');
+    toursCache = tours;
+    document.getElementById('toursList').innerHTML = tours.length ? tours.map(tour => `
+        <article class="admin-card">
+            <div class="admin-card__head"><h3>${escapeHtml(tour.title)}</h3><span class="admin-pill">${tour.is_cruise ? 'Круиз' : 'Тур'} / ${escapeHtml(adminLabel('status', tour.status))}</span></div>
+            <div class="admin-meta"><span>${escapeHtml(tour.slug)}</span><span>${escapeHtml(tour.destination || '')}</span><span>${escapeHtml(tour.start_date || '')}</span><span>${Number(tour.price_rub || tour.price_usd || 0).toLocaleString('ru-RU')}</span></div>
+            <p>${escapeHtml(tour.short_description || '')}</p>
+            <div class="admin-row-actions">
+                <button class="admin-btn" data-edit-tour="${tour.id}">Редактировать</button>
+                <button class="admin-btn" data-archive-tour="${tour.id}">Снять с публикации</button>
+                <button class="admin-btn admin-btn--danger" data-delete-tour="${tour.id}">Удалить</button>
+                <a class="admin-btn" href="cruise.html?slug=${encodeURIComponent(tour.slug)}">Открыть</a>
+            </div>
+        </article>
+    `).join('') : empty('Туров нет');
+}
+
+function updateTourImagePreview(src) {
+    const preview = document.getElementById('tourImagePreview');
+    if (!preview) return;
+    if (src) {
+        preview.src = src;
+        preview.classList.add('is-visible');
+    } else {
+        preview.removeAttribute('src');
+        preview.classList.remove('is-visible');
+    }
+}
+
+async function uploadTourImage() {
+    const form = document.getElementById('tourForm');
+    const fileInput = document.getElementById('tourImageFile');
+    const status = document.getElementById('tourImageStatus');
+    const button = document.getElementById('uploadTourImage');
+    const file = fileInput.files?.[0];
+
+    if (!file) {
+        status.textContent = 'Сначала выберите файл';
+        return;
+    }
+
+    const payload = new FormData();
+    payload.append('image', file);
+    payload.append('title', form.elements.title.value || file.name);
+    payload.append('slug', form.elements.slug.value || '');
+
+    button.disabled = true;
+    status.textContent = 'Загружаю...';
+
+    try {
+        const response = await fetch(`${API}/admin/tours/image`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${token}` },
+            body: payload
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || 'Не удалось загрузить картинку');
+
+        form.elements.main_image_url.value = data.image_url;
+        updateTourImagePreview(data.image_url);
+        status.textContent = `Загружено: ${data.image_url}`;
+    } catch (error) {
+        status.textContent = error.message;
+    } finally {
+        button.disabled = false;
+    }
+}
+
+function fillTourForm(tour = {}) {
+    const form = document.getElementById('tourForm');
+    for (const element of form.elements) {
+        if (!element.name) continue;
+        if (element.type === 'checkbox') element.checked = Boolean(tour[element.name]);
+        else element.value = tour[element.name] ?? '';
+    }
+    document.getElementById('tourImageFile').value = '';
+    document.getElementById('tourImageStatus').textContent = tour.main_image_url ? `Текущая картинка: ${tour.main_image_url}` : 'Файл сохранится в папку img/';
+    updateTourImagePreview(tour.main_image_url);
+    window.scrollTo({ top: form.offsetTop - 20, behavior: 'smooth' });
+}
+
+async function saveTour(event) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const data = Object.fromEntries(new FormData(form).entries());
+    data.is_cruise = form.elements.is_cruise.checked ? 1 : 0;
+    const id = data.id;
+    delete data.id;
+    await api(id ? `/admin/tours/${id}` : '/admin/tours', {
+        method: id ? 'PUT' : 'POST',
+        body: JSON.stringify(data)
+    });
+    form.reset();
+    await loadTours();
+}
+
+async function loadBookings() {
+    const { bookings } = await api('/admin/bookings');
+    document.getElementById('bookingsList').innerHTML = bookings.length ? bookings.map(item => `
+        <article class="admin-card">
+            <div class="admin-card__head"><h3>${escapeHtml(item.title || item.booking_number)}</h3><span class="admin-pill">${escapeHtml(adminLabel('bookingStatus', item.status))} / ${escapeHtml(adminLabel('paymentStatus', item.payment_status))}</span></div>
+            <div class="admin-meta"><span>${escapeHtml(item.full_name || '')}</span><span>${escapeHtml(item.phone || '')}</span><span>${escapeHtml(item.email || '')}</span><span>${escapeHtml(item.number_of_people)} чел.</span></div>
+            <p>${escapeHtml(item.special_requests || '')}</p>
+            <div class="admin-row-actions">
+                <select data-booking-status="${item.id}">${adminOptions('bookingStatus', ['pending','confirmed','paid','completed','cancelled'], item.status)}</select>
+                <select data-payment-status="${item.id}">${adminOptions('paymentStatus', ['unpaid','pending','paid','refunded'], item.payment_status)}</select>
+                <button class="admin-btn" data-save-booking="${item.id}">Сохранить</button>
+            </div>
+        </article>
+    `).join('') : empty('Броней нет');
+}
+
+async function loadUsers() {
+    const { users } = await api('/admin/users');
+    document.getElementById('usersList').innerHTML = users.length ? users.map(user => `
+        <article class="admin-card">
+            <div class="admin-card__head"><h3>${escapeHtml(user.full_name)}</h3><span class="admin-pill">${user.is_admin ? adminLabel('role', 'admin') : adminLabel('role', 'user')} / ${user.is_active ? adminLabel('userState', 'active') : adminLabel('userState', 'blocked')}</span></div>
+            <div class="admin-meta"><span>${escapeHtml(user.email)}</span><span>${escapeHtml(user.phone || '')}</span><span>${escapeHtml(user.city || '')}</span><span>${escapeHtml(user.registration_date || '')}</span></div>
+        </article>
+    `).join('') : empty('Пользователей нет');
+}
+
+document.querySelectorAll('[data-tab]').forEach(button => {
+    button.addEventListener('click', async () => {
+        document.querySelectorAll('[data-tab]').forEach(item => item.classList.remove('active'));
+        document.querySelectorAll('.admin-panel').forEach(item => item.classList.remove('active'));
+        button.classList.add('active');
+        document.getElementById(`panel-${button.dataset.tab}`).classList.add('active');
+        if (button.dataset.tab === 'dream') await loadDream();
+        if (button.dataset.tab === 'tours') await loadTours();
+        if (button.dataset.tab === 'bookings') await loadBookings();
+        if (button.dataset.tab === 'users') await loadUsers();
+    });
+});
+
+document.addEventListener('click', async (event) => {
+    const target = event.target;
+    if (target.dataset.saveDream) {
+        const id = target.dataset.saveDream;
+        await api(`/admin/dream-requests/${id}`, { method: 'PUT', body: JSON.stringify({
+            status: document.querySelector(`[data-dream-status="${id}"]`).value,
+            admin_comment: document.querySelector(`[data-dream-comment="${id}"]`).value
+        })});
+        await loadDream();
+    }
+    if (target.dataset.saveContact) {
+        const id = target.dataset.saveContact;
+        await api(`/admin/contacts/${id}`, { method: 'PUT', body: JSON.stringify({ status: document.querySelector(`[data-contact-status="${id}"]`).value }) });
+        await loadOverview();
+    }
+    if (target.dataset.editTour) fillTourForm(toursCache.find(t => String(t.id) === String(target.dataset.editTour)));
+    if (target.dataset.archiveTour && confirm('Переместить в архив?')) {
+        await api(`/admin/tours/${target.dataset.archiveTour}`, { method: 'DELETE' });
+        await loadTours();
+    }
+    if (target.dataset.deleteTour) {
+        const tour = toursCache.find(t => String(t.id) === String(target.dataset.deleteTour));
+        const name = tour?.title ? ` "${tour.title}"` : '';
+        if (confirm(`Удалить${name} навсегда? Связанные брони, отзывы и избранное тоже будут удалены.`)) {
+            await api(`/admin/tours/${target.dataset.deleteTour}?hard=1`, { method: 'DELETE' });
+            await loadTours();
+        }
+    }
+    if (target.dataset.saveBooking) {
+        const id = target.dataset.saveBooking;
+        await api(`/admin/bookings/${id}`, { method: 'PUT', body: JSON.stringify({
+            status: document.querySelector(`[data-booking-status="${id}"]`).value,
+            payment_status: document.querySelector(`[data-payment-status="${id}"]`).value
+        })});
+        await loadBookings();
+    }
+});
+
+document.getElementById('tourForm').addEventListener('submit', saveTour);
+document.getElementById('uploadTourImage').addEventListener('click', uploadTourImage);
+document.getElementById('tourForm').elements.main_image_url.addEventListener('input', (event) => updateTourImagePreview(event.target.value));
+document.getElementById('clearTourForm').addEventListener('click', () => {
+    document.getElementById('tourForm').reset();
+    document.getElementById('tourImageFile').value = '';
+    document.getElementById('tourImageStatus').textContent = 'Файл сохранится в папку img/';
+    updateTourImagePreview('');
+});
+document.getElementById('logoutBtn').addEventListener('click', () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    location.href = 'login.html';
+});
+
+(async function init() {
+    try {
+        if (await checkAdmin()) await loadOverview();
+    } catch (error) {
+        document.body.innerHTML = `<main class="admin-shell"><h1>Ошибка</h1><p>${escapeHtml(error.message)}</p><a class="admin-btn" href="login.html">Войти</a></main>`;
+    }
+})();
+</script>
+</body>
+</html>

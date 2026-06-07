@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Идея путешествия - Туры на Камчатку</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&family=Gadugi:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #29343e;
+        }
+        .idea-detail-hero {
+            position: relative;
+            min-height: 620px;
+            margin-top: 120px;
+            display: flex;
+            align-items: flex-end;
+            overflow: hidden;
+        }
+        .idea-detail-hero__image {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+        .idea-detail-hero__image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scale(1.03);
+            filter: saturate(1.05);
+        }
+        .idea-detail-hero__overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background:
+                radial-gradient(circle at 76% 20%, rgba(255,189,78,0.2), transparent 28%),
+                linear-gradient(90deg, rgba(18,26,32,0.96) 0%, rgba(18,26,32,0.72) 48%, rgba(18,26,32,0.25) 100%),
+                linear-gradient(180deg, rgba(18,26,32,0.1) 0%, #29343e 100%);
+        }
+        .idea-detail-hero .container {
+            position: relative;
+            z-index: 2;
+            padding-bottom: 70px;
+        }
+        .idea-detail-kicker {
+            margin: 0 0 18px;
+            color: #ffbd4e;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        .idea-detail-title {
+            max-width: 880px;
+            margin: 0;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            font-size: clamp(42px, 7vw, 86px);
+            line-height: 0.98;
+            text-transform: uppercase;
+        }
+        .idea-detail-lead {
+            max-width: 680px;
+            margin: 24px 0 0;
+            color: rgba(255,255,255,0.8);
+            font-size: clamp(16px, 2vw, 20px);
+            line-height: 1.7;
+        }
+        .idea-detail-meta {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 34px;
+            max-width: 920px;
+        }
+        .idea-detail-meta__item {
+            padding: 16px;
+            border: 1px solid rgba(255,255,255,0.14);
+            background: rgba(12,18,23,0.45);
+            backdrop-filter: blur(12px);
+        }
+        .idea-detail-meta__item span {
+            display: block;
+            margin-bottom: 8px;
+            color: rgba(255,255,255,0.5);
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .idea-detail-meta__item strong {
+            color: #fff;
+            font-size: 15px;
+            line-height: 1.35;
+        }
+        .idea-detail-main {
+            padding: 76px 0 92px;
+            background:
+                radial-gradient(circle at 4% 18%, rgba(255,189,78,0.08), transparent 30%),
+                #29343e;
+        }
+        .idea-detail-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 360px;
+            gap: 34px;
+            align-items: start;
+        }
+        .idea-detail-section,
+        .idea-detail-aside,
+        .idea-detail-cta,
+        .related-card {
+            border-radius: 8px;
+            border: 1px solid rgba(255,189,78,0.18);
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.025)),
+                #1d2831;
+            box-shadow: 0 18px 44px rgba(0,0,0,0.18);
+        }
+        .idea-detail-section {
+            padding: 34px;
+            margin-bottom: 22px;
+        }
+        .idea-detail-section h2,
+        .idea-detail-aside h3,
+        .idea-detail-related h2 {
+            margin: 0 0 20px;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+            line-height: 1.15;
+        }
+        .idea-detail-section h2 span,
+        .idea-detail-related h2 span {
+            color: #ffbd4e;
+        }
+        .idea-detail-section p {
+            margin: 0;
+            color: rgba(255,255,255,0.78);
+            font-size: 16px;
+            line-height: 1.85;
+        }
+        .idea-detail-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .idea-detail-list li,
+        .idea-route li,
+        .idea-pack li {
+            color: rgba(255,255,255,0.78);
+            border: 1px solid rgba(255,255,255,0.09);
+            background: rgba(255,255,255,0.04);
+        }
+        .idea-detail-list li {
+            padding: 16px;
+        }
+        .idea-route,
+        .idea-pack {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .idea-route li {
+            position: relative;
+            padding: 16px 16px 16px 48px;
+            margin-bottom: 10px;
+        }
+        .idea-route li::before {
+            content: attr(data-step);
+            position: absolute;
+            left: 14px;
+            top: 14px;
+            width: 22px;
+            height: 22px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: #ffbd4e;
+            color: #111820;
+            font-size: 12px;
+            font-weight: 800;
+        }
+        .idea-detail-aside {
+            position: sticky;
+            top: 110px;
+            padding: 24px;
+        }
+        .idea-pack {
+            display: grid;
+            gap: 10px;
+        }
+        .idea-pack li {
+            padding: 12px 14px;
+        }
+        .idea-detail-cta {
+            margin-top: 20px;
+            padding: 22px;
+        }
+        .idea-detail-cta p {
+            margin: 0 0 16px;
+            color: rgba(255,255,255,0.72);
+            line-height: 1.6;
+        }
+        .idea-detail-actions {
+            display: grid;
+            gap: 10px;
+        }
+        .idea-detail-btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 46px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        .idea-detail-btn--primary {
+            background: #ffbd4e;
+            color: #111820;
+        }
+        .idea-detail-btn--ghost {
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #fff;
+        }
+        .idea-detail-related {
+            margin-top: 46px;
+        }
+        .related-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+        .related-card {
+            overflow: hidden;
+            text-decoration: none;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+        .related-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255,189,78,0.5);
+        }
+        .related-card img {
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            object-fit: cover;
+            display: block;
+        }
+        .related-card__body {
+            padding: 16px;
+        }
+        .related-card__body span {
+            color: #ffbd4e;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .related-card__body h3 {
+            margin: 8px 0 0;
+            color: #fff;
+            font-size: 18px;
+            line-height: 1.25;
+        }
+        .idea-detail-loading,
+        .idea-detail-error {
+            padding: 80px 0;
+            color: rgba(255,255,255,0.76);
+            text-align: center;
+        }
+        @media (max-width: 1024px) {
+            .idea-detail-grid {
+                grid-template-columns: 1fr;
+            }
+            .idea-detail-aside {
+                position: static;
+            }
+            .related-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 768px) {
+            .idea-detail-hero {
+                margin-top: 90px;
+                min-height: 560px;
+            }
+            .idea-detail-meta,
+            .idea-detail-list {
+                grid-template-columns: 1fr;
+            }
+            .idea-detail-section {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="site-container">
+    <header class="header">
+        <div class="container header__inner">
+            <a href="index.html">
+                <img class="logo" src="img/v0_2119.png" alt="Logo">
+            </a>
+            <nav class="navbar">
+                <a href="index.html" class="nav-link">ГЛАВНАЯ</a>
+                <a href="tours.html" class="nav-link">ТУРЫ</a>
+
+                <a href="cruises.html" class="nav-link">КРУИЗЫ</a>
+                <a href="ideas.html" class="nav-link">ИДЕИ</a>
+                <a href="calendar.html" class="nav-link">КАЛЕНДАРЬ</a>
+                <a href="contacts.html" class="nav-link">КОНТАКТЫ</a>
+                <a href="profile.html" class="nav-link" id="profileLink">ПРОФИЛЬ</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="ideaDetailRoot">
+        <div class="container idea-detail-loading">Загрузка идеи путешествия...</div>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer__inner">
+            <div class="footer__col">
+                <h4>О КОМПАНИИ</h4>
+                <ul>
+                    <li><a href="#">Преимущества</a></li>
+                    <li><a href="#">Команда</a></li>
+                    <li><a href="#">Фотоотчеты</a></li>
+                    <li><a href="#">Документы и лицензии</a></li>
+                </ul>
+            </div>
+            <div class="footer__col">
+                <h4>УСЛУГИ</h4>
+                <ul>
+                    <li><a href="calendar.html">Выбрать тур</a></li>
+                    <li><a href="profile.html">Бронь</a></li>
+                    <li><a href="cruises.html">Оплата</a></li>
+                    <li><a href="contacts.html">Гарантия</a></li>
+                </ul>
+            </div>
+            <div class="footer__col">
+                <h4>КОНТАКТЫ</h4>
+                <ul>
+                    <li><a href="tel:1-951-280-0269">1-951-280-0269</a></li>
+                    <li><a href="mailto:generation@mail.com">generation@mail.com</a></li>
+                    <li>Москва</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer__copyright">
+            <p>Политика обработки персональных данных</p>
+        </div>
+    </footer>
+</div>
+
+<script>
+    const API_URL = 'http://localhost:3000/api';
+
+    function escapeHtml(value) {
+        return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+        })[char]);
+    }
+
+    function getSlug() {
+        return new URLSearchParams(window.location.search).get('slug');
+    }
+
+    function renderList(items, className, numbered = false) {
+        return `<ul class="${className}">${(items || []).map((item, index) => (
+            `<li${numbered ? ` data-step="${index + 1}"` : ''}>${escapeHtml(item)}</li>`
+        )).join('')}</ul>`;
+    }
+
+    function imagePath(fileName) {
+        if (!fileName) return 'img/Group%20167%201.png';
+        return fileName.startsWith('img/') ? fileName : `img/${fileName}`;
+    }
+
+    function renderIdea(data) {
+        const { idea, related = [] } = data;
+        document.title = `${idea.title} - Идея путешествия`;
+        document.getElementById('ideaDetailRoot').innerHTML = `
+            <section class="idea-detail-hero">
+                <div class="idea-detail-hero__image">
+                    <img src="${escapeHtml(imagePath(idea.image_url))}" alt="${escapeHtml(idea.title)}">
+                </div>
+                <div class="idea-detail-hero__overlay"></div>
+                <div class="container">
+                    <p class="idea-detail-kicker">${escapeHtml(idea.category_name)} / ${escapeHtml(idea.tag || '')}</p>
+                    <h1 class="idea-detail-title">${escapeHtml(idea.title)}</h1>
+                    <p class="idea-detail-lead">${escapeHtml(idea.intro || idea.description)}</p>
+                    <div class="idea-detail-meta">
+                        <div class="idea-detail-meta__item"><span>Когда ехать</span><strong>${escapeHtml(idea.best_time || 'по сезону')}</strong></div>
+                        <div class="idea-detail-meta__item"><span>Длительность</span><strong>${escapeHtml(idea.duration_hint || 'по запросу')}</strong></div>
+                        <div class="idea-detail-meta__item"><span>Бюджет</span><strong>${escapeHtml(idea.budget_hint || 'по запросу')}</strong></div>
+                        <div class="idea-detail-meta__item"><span>Формат</span><strong>${escapeHtml(idea.difficulty_hint || 'комфортный')}</strong></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="idea-detail-main">
+                <div class="container idea-detail-grid">
+                    <div>
+                        <section class="idea-detail-section">
+                            <h2><span>Почему</span> стоит ехать</h2>
+                            <p>${escapeHtml(idea.full_description || idea.description)}</p>
+                        </section>
+                        <section class="idea-detail-section">
+                            <h2><span>Главные</span> впечатления</h2>
+                            ${renderList(idea.highlights, 'idea-detail-list')}
+                        </section>
+                        <section class="idea-detail-section">
+                            <h2><span>Примерный</span> маршрут</h2>
+                            ${renderList(idea.route, 'idea-route', true)}
+                        </section>
+                    </div>
+
+                    <aside class="idea-detail-aside">
+                        <h3>Что взять</h3>
+                        ${renderList(idea.packing_list, 'idea-pack')}
+                        <div class="idea-detail-cta">
+                            <p>Можно сохранить идею и подобрать под нее реальный тур, круиз или индивидуальную заявку.</p>
+                            <div class="idea-detail-actions">
+                                <a class="idea-detail-btn idea-detail-btn--primary" href="calendar.html">Смотреть даты</a>
+                                <a class="idea-detail-btn idea-detail-btn--ghost" href="contacts.html">Обсудить маршрут</a>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+
+                ${related.length ? `
+                    <div class="container idea-detail-related">
+                        <h2><span>Похожие</span> идеи</h2>
+                        <div class="related-grid">
+                            ${related.map(item => `
+                                <a class="related-card" href="${escapeHtml(item.link_url || `idea.html?slug=${item.slug}`)}">
+                                    <img src="${escapeHtml(imagePath(item.image_url))}" alt="${escapeHtml(item.title)}">
+                                    <div class="related-card__body">
+                                        <span>${escapeHtml(item.tag || '')}</span>
+                                        <h3>${escapeHtml(item.title)}</h3>
+                                    </div>
+                                </a>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+            </section>
+        `;
+    }
+
+    async function loadIdea() {
+        const slug = getSlug();
+        const root = document.getElementById('ideaDetailRoot');
+        if (!slug) {
+            root.innerHTML = '<div class="container idea-detail-error">Идея не выбрана. Вернитесь на страницу идей и откройте карточку заново.</div>';
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/travel-ideas/${encodeURIComponent(slug)}`);
+            if (!response.ok) throw new Error('not-found');
+            renderIdea(await response.json());
+        } catch (error) {
+            root.innerHTML = '<div class="container idea-detail-error">Не получилось загрузить идею. Попробуйте открыть другую карточку.</div>';
+        }
+    }
+
+    window.addEventListener('scroll', function() {
+        const header = document.querySelector('.header');
+        if (window.scrollY > 100) header.classList.add('scrolled');
+        else header.classList.remove('scrolled');
+    });
+
+    loadIdea();
+</script>
+<script src="/auth-nav.js"></script>
+<script src="/chat-widget.js"></script>
+</body>
+</html>

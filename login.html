@@ -281,7 +281,7 @@
                 localStorage.setItem('user', JSON.stringify(data.user));
                 showSuccess('Вход выполнен успешно!');
                 setTimeout(() => {
-                    window.location.href = 'index.html';
+                    window.location.href = 'profile.html';
                 }, 1500);
             } else {
                 showError(data.error || 'Ошибка входа');
@@ -305,7 +305,7 @@
                 localStorage.setItem('user', JSON.stringify(data.user));
                 showSuccess('Регистрация успешна!');
                 setTimeout(() => {
-                    window.location.href = 'index.html';
+                    window.location.href = 'profile.html';
                 }, 1500);
             } else {
                 showError(data.error || 'Ошибка регистрации');
@@ -375,8 +375,9 @@
     // Проверка, авторизован ли пользователь
     const token = localStorage.getItem('token');
     if (token) {
-        window.location.href = 'index.html';
+        window.location.href = 'profile.html';
     }
 </script>
+<script src="/chat-widget.js"></script>
 </body>
 </html>

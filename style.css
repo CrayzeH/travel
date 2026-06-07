@@ -233,6 +233,36 @@ body {
     color: #ffbd4e;
 }
 
+.profile-avatar-link {
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 189, 78, 0.72);
+    background: rgba(255, 255, 255, 0.08);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+}
+
+.profile-avatar-link::after {
+    display: none;
+}
+
+.profile-avatar-link:hover {
+    border-color: #ffbd4e;
+    transform: translateY(-2px);
+}
+
+.profile-avatar-link img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
 /* Hero */
 .hero {
     position: relative;
@@ -314,15 +344,16 @@ body {
 
 .about__cards {
     display: flex;
-    gap: 92px;
+    gap: 22px;
     margin-bottom: 60px;
     flex-wrap: wrap;
 }
 
 .about-card {
-    flex: 1;
-    min-width: 280px;
-    padding: 20px;
+    flex: 1 1 180px;
+    min-width: 170px;
+    min-height: 92px;
+    padding: 18px 16px;
     border-radius: 16px;
     border: 1px solid #ffbd4e;
     background: rgba(0,0,0,0.14);
@@ -333,11 +364,16 @@ body {
     opacity: 0;
     transform: translateY(30px);
     animation: fadeInUp 0.6s ease forwards;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .about-card:nth-child(1) { animation-delay: 0.2s; }
 .about-card:nth-child(2) { animation-delay: 0.4s; }
 .about-card:nth-child(3) { animation-delay: 0.6s; }
+.about-card:nth-child(4) { animation-delay: 0.8s; }
+.about-card:nth-child(5) { animation-delay: 1s; }
 
 .about-card:hover {
     transform: translateY(-10px);
@@ -353,9 +389,14 @@ body {
     color: #29343e;
 }
 
+.about-card--active .accent {
+    color: #29343e;
+}
+
 .about-card h3 {
-    font-size: 25px;
+    font-size: 21px;
     font-weight: 700;
+    line-height: 1.2;
     transition: color 0.3s;
 }
 
@@ -387,6 +428,17 @@ body {
 .about__text p {
     font-size: 16px;
     line-height: 1.6;
+    min-height: 154px;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.about__text p:not(.about__text-copy--active) {
+    opacity: 0.72;
+}
+
+.about__text-copy--active {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .about__image {
@@ -694,6 +746,241 @@ body {
     color: #5b9bae;
 }
 
+/* Travel Ideas */
+.travel-ideas {
+    position: relative;
+    padding: 74px 0 82px;
+    background:
+        linear-gradient(135deg, rgba(255, 189, 78, 0.04), transparent 34%),
+        #29343e;
+    overflow: hidden;
+}
+
+.travel-ideas::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(135deg, transparent 0 48%, rgba(255,255,255,0.035) 48.1%, transparent 48.35%),
+        linear-gradient(45deg, transparent 0 74%, rgba(255,255,255,0.025) 74.1%, transparent 74.35%);
+    pointer-events: none;
+}
+
+.travel-ideas__inner {
+    position: relative;
+    z-index: 1;
+}
+
+.travel-ideas__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 28px;
+    margin-bottom: 42px;
+}
+
+.travel-ideas__eyebrow {
+    margin: 0 0 6px;
+    color: rgba(255,255,255,0.56);
+    font-size: 14px;
+}
+
+.travel-ideas__title {
+    margin: 0;
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(30px, 4vw, 48px);
+    font-weight: 800;
+    line-height: 1.1;
+    text-transform: uppercase;
+    letter-spacing: 0;
+}
+
+.travel-ideas__title span {
+    color: #ffbd4e;
+}
+
+.travel-ideas__all {
+    color: #ffbd4e;
+    font-size: 14px;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    white-space: nowrap;
+    transition: color 0.25s ease;
+}
+
+.travel-ideas__all:hover {
+    color: #fff;
+}
+
+.travel-ideas__tabs {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(120px, 1fr));
+    gap: 54px;
+    margin-bottom: 58px;
+}
+
+.travel-ideas__tab {
+    min-height: 48px;
+    border: 1px solid rgba(255,255,255,0.72);
+    border-radius: 8px;
+    background: transparent;
+    color: #fff;
+    font-size: 13px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+.travel-ideas__tab:hover {
+    transform: translateY(-2px);
+    border-color: #ffbd4e;
+}
+
+.travel-ideas__tab.active {
+    background: rgba(255,255,255,0.76);
+    border-color: rgba(255,255,255,0.76);
+    color: #111820;
+}
+
+.travel-ideas__list {
+    border-top: 1px solid rgba(255,255,255,0.42);
+}
+
+.travel-idea-card {
+    display: grid;
+    grid-template-columns: 78px minmax(260px, 430px) minmax(0, 1fr);
+    gap: 54px;
+    align-items: center;
+    padding: 42px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.42);
+    opacity: 0;
+    transform: translateY(18px);
+    animation: travelIdeaIn 0.55s ease forwards;
+}
+
+.travel-idea-card:nth-child(2) { animation-delay: 0.08s; }
+.travel-idea-card:nth-child(3) { animation-delay: 0.16s; }
+
+.travel-idea-card__date {
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.82);
+    font-size: 13px;
+    line-height: 1.1;
+}
+
+.travel-idea-card__day {
+    display: block;
+    margin-top: 7px;
+    color: #5b9bae;
+    font-size: 34px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.travel-idea-card__media {
+    position: relative;
+    height: 250px;
+    border-radius: 8px;
+    overflow: hidden;
+    background:
+        linear-gradient(135deg, rgba(255,189,78,0.14), rgba(91,155,174,0.16)),
+        rgba(255,255,255,0.04);
+    border: 1px dashed rgba(255,255,255,0.34);
+}
+
+.travel-idea-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.55s ease, filter 0.55s ease;
+}
+
+.travel-idea-card:hover .travel-idea-card__media img {
+    transform: scale(1.045);
+    filter: saturate(1.08) contrast(1.04);
+}
+
+.travel-idea-card__missing {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 22px;
+    color: rgba(255,255,255,0.72);
+    font-size: 13px;
+    line-height: 1.45;
+    text-align: center;
+    word-break: break-word;
+}
+
+.travel-idea-card__missing[hidden] {
+    display: none !important;
+}
+
+.travel-idea-card__content {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+}
+
+.travel-idea-card__title {
+    margin: 0 0 18px;
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 22px;
+    line-height: 1.2;
+    text-transform: uppercase;
+}
+
+.travel-idea-card__description {
+    max-width: 610px;
+    margin: 0 0 18px;
+    color: rgba(255,255,255,0.82);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.travel-idea-card__link {
+    width: max-content;
+    color: #ffbd4e;
+    font-size: 14px;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.travel-idea-card__link:hover {
+    color: #fff;
+    transform: translateX(4px);
+}
+
+.travel-idea-card__tag {
+    margin-top: auto;
+    color: rgba(255,255,255,0.58);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.travel-ideas__empty {
+    padding: 48px 0;
+    color: rgba(255,255,255,0.72);
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.28);
+}
+
+@keyframes travelIdeaIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Guides */
 .guides {
     position: relative;
@@ -760,24 +1047,183 @@ body {
     filter: brightness(1.1);
 }
 
-/* Stats */
-.stats {
-    padding: 100px 0;
-    text-align: center;
-    background-color: #29343e;
+/* Compass section */
+.compass-section {
+    position: relative;
+    padding: 120px 0 140px;
+    overflow: hidden;
+    background:
+        linear-gradient(180deg, rgba(41, 52, 62, 0.98) 0%, rgba(41, 52, 62, 0.72) 52%, rgba(41, 52, 62, 0.98) 100%),
+        url("img/Group%20186%20(2).png") center/cover no-repeat;
 }
 
-.stats__img {
-    max-width: 100%;
-    height: auto;
-    opacity: 0;
-    transform: scale(0.95);
-    animation: scaleIn 0.8s ease forwards;
-    transition: all 0.5s ease;
+.compass-section::before,
+.compass-section::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: min(1420px, 118vw);
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+    transform-origin: center;
+    pointer-events: none;
 }
 
-.stats__img:hover {
-    transform: scale(1.02);
+.compass-section::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.compass-section::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.compass-section__inner {
+    display: grid;
+    grid-template-columns: minmax(240px, 1fr) 280px minmax(240px, 1fr);
+    align-items: center;
+    gap: clamp(34px, 6vw, 90px);
+    min-height: 430px;
+}
+
+.compass-copy {
+    position: relative;
+    z-index: 2;
+    max-width: 410px;
+    padding: 28px 0;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 18px;
+    line-height: 1.78;
+    letter-spacing: 0.01em;
+}
+
+.compass-copy--left {
+    justify-self: end;
+    text-align: right;
+}
+
+.compass-copy--right {
+    justify-self: start;
+    text-align: left;
+}
+
+.compass-copy strong {
+    color: #fff;
+    font-weight: 800;
+}
+
+.compass-copy::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 70px;
+    height: 1px;
+    background: rgba(255, 189, 78, 0.62);
+}
+
+.compass-copy--left::after {
+    right: -92px;
+}
+
+.compass-copy--right::after {
+    left: -92px;
+}
+
+.compass-widget {
+    position: relative;
+    z-index: 3;
+    width: 280px;
+    height: 280px;
+    margin: 0 auto;
+    display: grid;
+    place-items: center;
+    color: #25616b;
+}
+
+.compass-widget__circle {
+    position: relative;
+    width: 158px;
+    height: 158px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background:
+        radial-gradient(circle, rgba(255, 189, 78, 0.18) 0 22%, transparent 23%),
+        rgba(16, 22, 27, 0.24);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.22);
+}
+
+.compass-widget__circle::before,
+.compass-widget__circle::after {
+    content: '';
+    position: absolute;
+    background: rgba(255, 255, 255, 0.28);
+}
+
+.compass-widget__circle::before {
+    left: 50%;
+    top: -44px;
+    width: 1px;
+    height: 246px;
+}
+
+.compass-widget__circle::after {
+    top: 50%;
+    left: -44px;
+    width: 246px;
+    height: 1px;
+}
+
+.compass-widget__needle {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 56px;
+    height: 56px;
+    background: #ffbd4e;
+    transform: translate(-50%, -50%) rotate(45deg);
+    box-shadow: 0 0 0 10px rgba(255, 189, 78, 0.1);
+}
+
+.compass-widget__needle::after {
+    content: '';
+    position: absolute;
+    inset: 22px;
+    border-radius: 50%;
+    background: #29343e;
+}
+
+.compass-widget__point {
+    position: absolute;
+    z-index: 4;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 34px;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.compass-widget__point--n {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.compass-widget__point--e {
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.compass-widget__point--s {
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.compass-widget__point--w {
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 /* Footer */
@@ -917,13 +1363,21 @@ body {
     .header__inner {
         flex-direction: column;
         height: auto;
-        padding: 20px 0;
-        gap: 20px;
+        padding: 14px 0;
+        gap: 12px;
     }
 
     .header.scrolled .header__inner {
         height: auto;
-        padding: 15px 0;
+        padding: 10px 0;
+    }
+
+    .logo {
+        width: 230px;
+    }
+
+    .header.scrolled .logo {
+        width: 190px;
     }
 
     .hero {
@@ -933,7 +1387,11 @@ body {
     .navbar {
         flex-wrap: wrap;
         justify-content: center;
-        gap: 30px;
+        gap: 18px 24px;
+    }
+
+    .nav-link {
+        font-size: 14px;
     }
 
     .hero__content {
@@ -969,9 +1427,72 @@ body {
     .tour-card:hover .tour-card__info {
         transform: translateY(-4px);
     }
+
+    .travel-ideas__tabs {
+        gap: 16px;
+    }
+
+    .travel-idea-card {
+        grid-template-columns: 70px minmax(240px, 0.85fr) minmax(0, 1fr);
+        gap: 28px;
+    }
+
+    .travel-idea-card__media {
+        height: 220px;
+    }
+
+    .compass-section__inner {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        text-align: center;
+    }
+
+    .compass-copy,
+    .compass-copy--left,
+    .compass-copy--right {
+        justify-self: center;
+        text-align: center;
+        max-width: 680px;
+    }
+
+    .compass-copy::after {
+        display: none;
+    }
+
+    .compass-widget {
+        order: -1;
+    }
 }
 
 @media (max-width: 768px) {
+    .header__inner {
+        padding: 10px 0;
+        gap: 8px;
+    }
+
+    .header.scrolled .header__inner {
+        padding: 8px 0;
+    }
+
+    .logo,
+    .header.scrolled .logo {
+        width: 176px;
+    }
+
+    .navbar {
+        gap: 10px 14px;
+    }
+
+    .nav-link {
+        font-size: 12px;
+        letter-spacing: 0.24px;
+    }
+
+    .profile-avatar-link {
+        width: 34px;
+        height: 34px;
+    }
+
     .hero {
         height: 600px;
         min-height: 600px;
@@ -1066,9 +1587,89 @@ body {
         font-size: 14px;
     }
 
+    .travel-ideas {
+        padding: 58px 0 64px;
+    }
+
+    .travel-ideas__header {
+        flex-direction: column;
+        margin-bottom: 30px;
+    }
+
+    .travel-ideas__tabs {
+        display: flex;
+        overflow-x: auto;
+        gap: 10px;
+        margin-bottom: 34px;
+        padding-bottom: 6px;
+    }
+
+    .travel-ideas__tab {
+        flex: 0 0 150px;
+    }
+
+    .travel-idea-card {
+        grid-template-columns: 1fr;
+        gap: 18px;
+        padding: 32px 0;
+    }
+
+    .travel-idea-card__date {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+    }
+
+    .travel-idea-card__day {
+        display: inline;
+        margin-top: 0;
+        font-size: 30px;
+    }
+
+    .travel-idea-card__media {
+        height: 260px;
+    }
+
     .guides {
         height: auto;
         padding: 80px 0;
+    }
+
+    .compass-section {
+        padding: 80px 0 92px;
+    }
+
+    .compass-section__inner {
+        min-height: 0;
+    }
+
+    .compass-copy {
+        font-size: 16px;
+        padding: 10px 0;
+    }
+
+    .compass-widget {
+        width: 220px;
+        height: 220px;
+    }
+
+    .compass-widget__circle {
+        width: 128px;
+        height: 128px;
+    }
+
+    .compass-widget__circle::before {
+        top: -32px;
+        height: 192px;
+    }
+
+    .compass-widget__circle::after {
+        left: -32px;
+        width: 192px;
+    }
+
+    .compass-widget__point {
+        font-size: 27px;
     }
 
     .guides__list img {
@@ -1087,6 +1688,44 @@ body {
 }
 
 @media (max-width: 576px) {
+    .compass-section {
+        padding: 62px 0 72px;
+    }
+
+    .compass-widget {
+        width: 190px;
+        height: 190px;
+    }
+
+    .compass-widget__circle {
+        width: 112px;
+        height: 112px;
+    }
+
+    .compass-widget__circle::before {
+        top: -26px;
+        height: 164px;
+    }
+
+    .compass-widget__circle::after {
+        left: -26px;
+        width: 164px;
+    }
+
+    .compass-widget__needle {
+        width: 44px;
+        height: 44px;
+    }
+
+    .compass-widget__needle::after {
+        inset: 17px;
+    }
+
+    .compass-copy {
+        font-size: 15px;
+        line-height: 1.65;
+    }
+
     .tours {
         padding: 48px 0;
     }
@@ -1142,6 +1781,18 @@ body {
 
     .price {
         font-size: 29px;
+    }
+
+    .travel-ideas__all {
+        white-space: normal;
+    }
+
+    .travel-idea-card__media {
+        height: 210px;
+    }
+
+    .travel-idea-card__title {
+        font-size: 19px;
     }
 }
 
