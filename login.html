@@ -13,7 +13,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 100px 20px;
+            padding: 190px 20px 80px;
         }
         .auth-container {
             max-width: 480px;
@@ -162,6 +162,9 @@
             color: rgba(255, 255, 255, 0.5);
         }
         @media (max-width: 576px) {
+            .auth-page {
+                padding: 150px 16px 56px;
+            }
             .auth-container {
                 padding: 30px 25px;
             }
@@ -172,7 +175,25 @@
     </style>
 </head>
 <body>
-<div class="auth-page">
+<div class="site-container">
+    <header class="header">
+        <div class="container header__inner">
+            <a href="index.html">
+                <img class="logo" src="img/v0_2119.png" alt="Logo">
+            </a>
+            <nav class="navbar">
+                <a href="index.html" class="nav-link">ГЛАВНАЯ</a>
+                <a href="tours.html" class="nav-link">ТУРЫ</a>
+                <a href="cruises.html" class="nav-link">КРУИЗЫ</a>
+                <a href="ideas.html" class="nav-link">ИДЕИ</a>
+                <a href="calendar.html" class="nav-link">КАЛЕНДАРЬ</a>
+                <a href="contacts.html" class="nav-link">КОНТАКТЫ</a>
+                <a href="profile.html" class="nav-link" id="profileLink">ПРОФИЛЬ</a>
+            </nav>
+        </div>
+    </header>
+
+<main class="auth-page">
     <div class="auth-container">
         <div class="auth-logo">
             <img src="img/v0_2119.png" alt="Logo">
@@ -244,6 +265,7 @@
             </div>
         </form>
     </div>
+</main>
 </div>
 
 <script>
@@ -378,6 +400,7 @@
         window.location.href = 'profile.html';
     }
 </script>
+<script src="/auth-nav.js"></script>
 <script src="/chat-widget.js"></script>
 </body>
 </html>
