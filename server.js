@@ -14,21 +14,41 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = 'your-super-secret-jwt-key-change-this-in-production';
 const JWT_REFRESH_SECRET = 'your-refresh-secret-key-change-this';
+const DATA_DIR = process.env.DATA_DIR || process.env.PERSISTENT_STORAGE_DIR || __dirname;
+const DB_PATH = process.env.SQLITE_DB_PATH || process.env.DB_PATH || path.join(DATA_DIR, 'tours.db');
+const UPLOADS_DIR = process.env.UPLOADS_DIR || path.join(DATA_DIR, 'uploads');
+const ADMIN_IMAGES_DIR = process.env.ADMIN_IMAGES_DIR || path.join(DATA_DIR, 'img');
+
+function ensureDir(dirPath) {
+    if (!fs.existsSync(dirPath)) {
+        fs.mkdirSync(dirPath, { recursive: true });
+    }
+}
+
+function prepareDatabaseFile() {
+    ensureDir(path.dirname(DB_PATH));
+    const bundledDbPath = path.join(__dirname, 'tours.db');
+    if (DB_PATH !== bundledDbPath && !fs.existsSync(DB_PATH) && fs.existsSync(bundledDbPath)) {
+        fs.copyFileSync(bundledDbPath, DB_PATH);
+    }
+}
+
+prepareDatabaseFile();
+ensureDir(UPLOADS_DIR);
+ensureDir(ADMIN_IMAGES_DIR);
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use('/uploads', express.static(UPLOADS_DIR));
+app.use('/img', express.static(ADMIN_IMAGES_DIR));
 app.use(express.static(path.join(__dirname, '/')));
 
 // Настройка загрузки файлов
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const uploadDir = path.join(__dirname, 'uploads');
-        if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir, { recursive: true });
-        }
-        cb(null, uploadDir);
+        cb(null, UPLOADS_DIR);
     },
     filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -55,11 +75,7 @@ function safeImageBaseName(value) {
 
 const adminImageStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const imageDir = path.join(__dirname, 'img');
-        if (!fs.existsSync(imageDir)) {
-            fs.mkdirSync(imageDir, { recursive: true });
-        }
-        cb(null, imageDir);
+        cb(null, ADMIN_IMAGES_DIR);
     },
     filename: (req, file, cb) => {
         const extension = imageExtensionsByMime[file.mimetype] || path.extname(file.originalname).toLowerCase();
@@ -80,7 +96,7 @@ const adminImageUpload = multer({
 });
 
 // Подключение к базе данных
-const db = new sqlite3.Database(path.join(__dirname, 'tours.db'), (err) => {
+const db = new sqlite3.Database(DB_PATH, (err) => {
     if (err) {
         console.error('Ошибка подключения к базе данных:', err.message);
     } else {
