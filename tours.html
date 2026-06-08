@@ -35,19 +35,32 @@
         .tours-page-controls {
             padding: 24px 0; background: #1f2a33; border-top: 1px solid rgba(255,255,255,.06); border-bottom: 1px solid rgba(255,255,255,.06);
         }
-        .tours-page-controls__inner { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center; }
-        .tours-page-filters { display: flex; flex-wrap: wrap; gap: 10px; min-width: 0; }
-        .tour-filter {
-            border: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.055); color: #fff; padding: 10px 17px;
-            border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
-            transition: background .22s ease, color .22s ease, border-color .22s ease, transform .22s ease;
+        .tours-page-controls__inner { display: grid; grid-template-columns: minmax(240px, 360px) minmax(240px, 320px); gap: 14px; align-items: end; }
+        .tours-page-filter-field { display: grid; gap: 7px; min-width: 0; }
+        .tours-page-filter-field label {
+            color: rgba(255,255,255,.55); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
         }
-        .tour-filter:hover { border-color: rgba(255,189,78,.55); transform: translateY(-1px); }
-        .tour-filter.active { background: #ffbd4e; color: #111820; border-color: #ffbd4e; }
+        .tours-page-select,
         .tours-page-search {
             width: min(320px, 100%); border: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.055);
-            color: #fff; padding: 12px 14px; border-radius: 4px; font: inherit;
+            color: #fff; padding: 12px 42px 12px 14px; border-radius: 4px; font: inherit; min-height: 46px;
+            transition: border-color .22s ease, background .22s ease, box-shadow .22s ease;
         }
+        .tours-page-select {
+            appearance: none;
+            background-image:
+                linear-gradient(45deg, transparent 50%, #ffbd4e 50%),
+                linear-gradient(135deg, #ffbd4e 50%, transparent 50%);
+            background-position: calc(100% - 20px) 19px, calc(100% - 14px) 19px;
+            background-size: 6px 6px, 6px 6px;
+            background-repeat: no-repeat;
+            cursor: pointer;
+        }
+        .tours-page-select option { color: #111820; }
+        .tours-page-select:hover,
+        .tours-page-select:focus,
+        .tours-page-search:hover,
+        .tours-page-search:focus { border-color: rgba(255,189,78,.62); background-color: rgba(255,255,255,.08); outline: none; box-shadow: 0 0 0 3px rgba(255,189,78,.08); }
         .tours-page-search::placeholder { color: rgba(255,255,255,.52); }
         .tours-page-list { padding: 66px 0 86px; background: #29343e; }
         .tours-page-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; margin-bottom: 26px; }
@@ -102,7 +115,7 @@
         }
         @media (max-width: 900px) {
             .tours-page-controls__inner { grid-template-columns: 1fr; }
-            .tours-page-search { width: 100%; }
+            .tours-page-select, .tours-page-search { width: 100%; }
         }
         @media (max-width: 768px) {
             .tours-page-hero { min-height: 430px; margin-top: 90px; padding: 78px 0 66px; }
@@ -113,8 +126,6 @@
             .tour-list-card__footer { align-items: stretch; flex-direction: column; }
             .tour-list-card__cta { width: 100%; }
             .tours-page-head { align-items: flex-start; flex-direction: column; }
-            .tours-page-filters { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; }
-            .tour-filter { flex: 0 0 auto; }
         }
         @media (max-width: 420px) {
             .tours-page-stats { flex-direction: column; }
@@ -163,10 +174,16 @@
 
         <section class="tours-page-controls">
             <div class="container tours-page-controls__inner">
-                <div class="tours-page-filters" id="tourFilters">
-                    <button class="tour-filter active" data-filter="all">Все туры</button>
+                <div class="tours-page-filter-field">
+                    <label for="tourDestinationSelect">Направление</label>
+                    <select class="tours-page-select" id="tourDestinationSelect">
+                        <option value="all">Все туры</option>
+                    </select>
                 </div>
-                <input class="tours-page-search" id="tourSearch" type="search" placeholder="Поиск по названию или стране">
+                <div class="tours-page-filter-field">
+                    <label for="tourSearch">Поиск</label>
+                    <input class="tours-page-search" id="tourSearch" type="search" placeholder="Название, страна или регион">
+                </div>
             </div>
         </section>
 
@@ -332,20 +349,11 @@ function renderTours() {
 
 function renderFilters() {
     const destinations = [...new Set(allTours.map(tour => tour.destination).filter(Boolean))];
-    const filters = document.getElementById('tourFilters');
-    filters.innerHTML = `
-        <button class="tour-filter active" data-filter="all">Все туры</button>
-        ${destinations.map((destination, index) => `<button class="tour-filter" data-index="${index}">${escapeHtml(destination)}</button>`).join('')}
+    const select = document.getElementById('tourDestinationSelect');
+    select.innerHTML = `
+        <option value="all">Все туры</option>
+        ${destinations.map(destination => `<option value="${escapeHtml(destination)}">${escapeHtml(destination)}</option>`).join('')}
     `;
-
-    filters.querySelectorAll('.tour-filter').forEach((button) => {
-        button.addEventListener('click', () => {
-            filters.querySelectorAll('.tour-filter').forEach(item => item.classList.remove('active'));
-            button.classList.add('active');
-            currentDestination = button.dataset.filter === 'all' ? 'all' : destinations[Number(button.dataset.index)];
-            renderTours();
-        });
-    });
 }
 
 function plural(number, forms) {
@@ -374,6 +382,11 @@ async function loadTours() {
 
 document.getElementById('tourSearch').addEventListener('input', (event) => {
     currentSearch = event.target.value;
+    renderTours();
+});
+
+document.getElementById('tourDestinationSelect').addEventListener('change', (event) => {
+    currentDestination = event.target.value;
     renderTours();
 });
 

@@ -310,30 +310,48 @@
             border-top: 1px solid rgba(255,255,255,0.06);
             border-bottom: 1px solid rgba(255,255,255,0.06);
         }
-        .filter-buttons {
-            display: flex;
-            justify-content: flex-start;
-            flex-wrap: wrap;
-            gap: 10px;
+        .filter-select-wrap {
+            display: grid;
+            gap: 7px;
+            width: min(360px, 100%);
         }
-        .filter-chip {
-            background: rgba(255,255,255,0.055);
-            border: 1px solid rgba(255,255,255,0.16);
-            padding: 10px 18px;
-            border-radius: 4px;
-            color: #fff;
-            cursor: pointer;
-            transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
-            font-size: 13px;
+        .filter-select-wrap label {
+            color: rgba(255,255,255,0.55);
+            font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.04em;
+            letter-spacing: 0.08em;
         }
-        .filter-chip:hover { border-color: rgba(255,189,78,0.55); }
-        .filter-chip.active {
-            background: #ffbd4e;
+        .filter-select {
+            width: 100%;
+            min-height: 46px;
+            border: 1px solid rgba(255,255,255,0.16);
+            background-color: rgba(255,255,255,0.055);
+            background-image:
+                linear-gradient(45deg, transparent 50%, #ffbd4e 50%),
+                linear-gradient(135deg, #ffbd4e 50%, transparent 50%);
+            background-position: calc(100% - 20px) 19px, calc(100% - 14px) 19px;
+            background-size: 6px 6px, 6px 6px;
+            background-repeat: no-repeat;
+            color: #fff;
+            padding: 12px 42px 12px 14px;
+            border-radius: 4px;
+            font: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            appearance: none;
+            cursor: pointer;
+            transition: border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
+        }
+        .filter-select:hover,
+        .filter-select:focus {
+            border-color: rgba(255,189,78,0.62);
+            background-color: rgba(255,255,255,0.08);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255,189,78,0.08);
+        }
+        .filter-select option {
             color: #111820;
-            border-color: #ffbd4e;
         }
         .cruises-empty {
             grid-column: 1 / -1;
@@ -365,8 +383,7 @@
             .cruise-card__info { grid-template-columns: 1fr; }
             .cruise-card__footer { align-items: stretch; flex-direction: column; }
             .cruise-card__cta { width: 100%; }
-            .filter-buttons { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; }
-            .filter-chip { flex: 0 0 auto; }
+            .filter-select-wrap { width: 100%; }
         }
         @media (max-width: 420px) {
             .cruises-hero__stats { flex-direction: column; }
@@ -418,8 +435,11 @@
 
         <section class="filter-section">
             <div class="container">
-                <div class="filter-buttons" id="filterButtons">
-                    <button class="filter-chip active" data-filter="all">Все круизы</button>
+                <div class="filter-select-wrap">
+                    <label for="cruiseDestinationSelect">Направление</label>
+                    <select class="filter-select" id="cruiseDestinationSelect">
+                        <option value="all">Все круизы</option>
+                    </select>
                 </div>
             </div>
         </section>
@@ -629,31 +649,17 @@
 
     function renderFilters() {
         const destinations = [...new Set(allCruises.map(c => c.destination).filter(Boolean))];
-        const filterContainer = document.getElementById('filterButtons');
-
-        const filterButtons = `
-            <button class="filter-chip active" data-filter="all">Все круизы</button>
-            ${destinations.map((dest, index) => `<button class="filter-chip" data-filter-index="${index}">${escapeHtml(dest)}</button>`).join('')}
+        const select = document.getElementById('cruiseDestinationSelect');
+        select.innerHTML = `
+            <option value="all">Все круизы</option>
+            ${destinations.map(dest => `<option value="${escapeHtml(dest)}">${escapeHtml(dest)}</option>`).join('')}
         `;
-
-        filterContainer.innerHTML = filterButtons;
-
-        document.querySelectorAll('.filter-chip').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-
-                const filter = btn.dataset.filter;
-                if (filter === 'all') {
-                    renderCruises(allCruises);
-                } else {
-                    const destination = destinations[Number(btn.dataset.filterIndex)];
-                    const filtered = allCruises.filter(c => c.destination === destination);
-                    renderCruises(filtered);
-                }
-            });
-        });
     }
+
+    document.getElementById('cruiseDestinationSelect')?.addEventListener('change', (event) => {
+        const destination = event.target.value;
+        renderCruises(destination === 'all' ? allCruises : allCruises.filter(cruise => cruise.destination === destination));
+    });
 
     // Подписка
     document.getElementById('subscribeForm')?.addEventListener('submit', async (e) => {
